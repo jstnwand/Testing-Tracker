@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA Log — Wand</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0b08'/%3E%3Ctext x='32' y='45' font-family='Arial, sans-serif' font-weight='900' font-size='36' fill='%23d7ff3e' text-anchor='middle'%3EW%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0b08;
+  --bg-raised:#141509;
+  --card:#15160f;
+  --card-2:#1a1c12;
+  --border:#282c1a;
+  --border-soft:#1c1e14;
+  --text:#eef0e6;
+  --text-dim:#8d9280;
+  --text-faint:#5c6154;
+  --lime:#d7ff3e;
+  --lime-soft:rgba(215,255,62,0.12);
+  --amber:#f2b84b;
+  --green:#3ddc8a;
+  --red:#ff5c72;
+  --purple:#b490ff;
+  --slate:#7d8399;
+  --mono:'JetBrains Mono', monospace;
+  --sans:'Inter', sans-serif;
+  --radius:14px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(1200px 500px at 15% -10%, rgba(215,255,62,0.05), transparent),
+    radial-gradient(1000px 500px at 100% 0%, rgba(215,255,62,0.03), transparent),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(215,255,62,0.25);}
+a{color:var(--lime);}
+
+/* ---------- layout shell ---------- */
+.shell{max-width:1180px;margin:0 auto;padding:28px 20px 80px;}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand-mark{
+  width:40px;height:40px;border-radius:10px;background:#000;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:Arial, sans-serif;font-weight:900;color:var(--lime);font-size:20px;flex-shrink:0;
+}
+.brand-text h1{font-size:16px;margin:0;font-weight:700;letter-spacing:0.2px;}
+.brand-text p{margin:2px 0 0;font-size:12px;color:var(--text-dim);}
+
+.topbar-actions{display:flex;align-items:center;gap:10px;}
+.icon-btn{
+  background:var(--card);border:1px solid var(--border);color:var(--text-dim);
+  font-family:var(--sans);font-size:12.5px;font-weight:600;
+  padding:8px 12px;border-radius:9px;cursor:pointer;transition:.15s;
+  display:flex;align-items:center;gap:6px;
+}
+.icon-btn:hover{border-color:#3a4025;color:var(--text);background:var(--card-2);}
+.icon-btn.danger:hover{border-color:rgba(255,92,114,0.5);color:var(--red);}
+
+/* build-log ticker */
+.ticker-wrap{
+  border:1px solid var(--border-soft);background:linear-gradient(180deg, rgba(215,255,62,0.02), transparent);
+  border-radius:10px;padding:9px 14px;margin-bottom:22px;display:flex;align-items:center;gap:10px;overflow:hidden;
+  font-family:var(--mono);font-size:12px;color:var(--text-faint);
+}
+.ticker-dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 8px rgba(215,255,62,0.6);flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+.ticker-track{white-space:nowrap;overflow:hidden;position:relative;flex:1;}
+.ticker-inner{display:inline-block;animation:scroll-left 32s linear infinite;}
+.ticker-inner span{margin-right:36px;}
+.ticker-track:hover .ticker-inner{animation-play-state:paused;}
+@keyframes scroll-left{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.pass-tok{color:var(--green);}
+.fail-tok{color:var(--red);}
+.other-tok{color:var(--amber);}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:6px;margin-bottom:22px;background:var(--card);border:1px solid var(--border);padding:4px;border-radius:11px;width:fit-content;}
+.tab-btn{border:none;background:transparent;color:var(--text-dim);font-family:var(--sans);font-size:13.5px;font-weight:600;padding:9px 18px;border-radius:8px;cursor:pointer;transition:.15s;}
+.tab-btn.active{background:var(--lime);color:#0a0b08;}
+.tab-btn:not(.active):hover{color:var(--text);}
+
+.panel{display:none;}
+.panel.active{display:block;animation:fadein .2s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+/* ---------- cards / stats ---------- */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+@media(max-width:860px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;}
+.stat-label{font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:var(--text-faint);font-weight:700;margin-bottom:8px;}
+.stat-value{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1;}
+.stat-sub{font-size:11.5px;color:var(--text-dim);margin-top:6px;}
+.stat-value.lime{color:var(--lime);}
+.stat-value.amber{color:var(--amber);}
+.stat-value.green{color:var(--green);}
+.stat-value.red{color:var(--red);}
+.stat-value.purple{color:var(--purple);}
+
+/* ---------- month header (page-per-month) ---------- */
+.month-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
+.month-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);font-weight:700;margin-bottom:4px;}
+.month-title{font-size:28px;font-weight:800;margin:0;letter-spacing:-0.01em;}
+.month-controls{display:flex;align-items:center;gap:10px;}
+.month-controls select{
+  background:var(--card);border:1px solid var(--border);color:var(--text);
+  border-radius:9px;padding:9px 14px;font-family:var(--sans);font-size:13px;font-weight:600;outline:none;cursor:pointer;
+}
+.month-controls select:focus{border-color:var(--lime);}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(5,6,3,0.7);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:50;}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;width:280px;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+.modal-box h3{margin:0 0 14px;font-size:14px;font-weight:700;}
+.modal-box input[type="month"]{
+  width:100%;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:13px;outline:none;margin-bottom:16px;
+}
+.modal-box input[type="month"]:focus{border-color:var(--lime);}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;}
+
+.week-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;flex-wrap:wrap;}
+.week-status-badge{font-family:var(--mono);font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;letter-spacing:0.03em;}
+.badge-reached{background:rgba(61,220,138,0.12);color:var(--green);border:1px solid rgba(61,220,138,0.3);}
+.badge-missed{background:rgba(255,92,114,0.1);color:var(--red);border:1px solid rgba(255,92,114,0.28);}
+.badge-progress{background:rgba(242,184,75,0.1);color:var(--amber);border:1px solid rgba(242,184,75,0.28);}
+.badge-empty{background:rgba(125,131,153,0.1);color:var(--slate);border:1px solid rgba(125,131,153,0.28);}
+
+/* ---------- forms ---------- */
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;}
+.form-card h3{margin:0 0 14px;font-size:13px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-dim);font-weight:700;}
+.form-card p.hint{margin:-8px 0 14px;font-size:12px;color:var(--text-faint);}
+.form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+.field{display:flex;flex-direction:column;gap:6px;flex:1;min-width:120px;}
+.field label{font-size:11px;color:var(--text-faint);font-weight:600;}
+.field input, .field select, .field textarea{
+  background:var(--bg-raised);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:9px 11px;font-family:var(--sans);font-size:13px;outline:none;transition:.15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus{border-color:var(--lime);box-shadow:0 0 0 3px rgba(215,255,62,0.12);}
+.field.grow-2{flex:2;}
+.btn{border:none;border-radius:9px;padding:10px 18px;font-family:var(--sans);font-weight:700;font-size:13px;cursor:pointer;transition:.15s;white-space:nowrap;}
+.btn-primary{background:var(--lime);color:#0a0b08;}
+.btn-primary:hover{filter:brightness(1.08);}
+.btn-ghost{background:var(--card-2);border:1px solid var(--border);color:var(--text-dim);}
+.btn-ghost:hover{color:var(--text);}
+
+/* ---------- day groups / spreadsheet-style tables ---------- */
+.day-group{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;}
+.day-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--card-2);cursor:pointer;user-select:none;}
+.day-head-left{display:flex;align-items:center;gap:10px;}
+.day-head .chev{color:var(--text-faint);font-size:11px;transition:transform .15s;}
+.day-head.collapsed .chev{transform:rotate(-90deg);}
+.day-name{font-weight:700;font-size:13.5px;}
+.day-date{font-size:11.5px;color:var(--text-dim);font-family:var(--mono);}
+.day-total{font-family:var(--mono);font-weight:700;color:var(--lime);font-size:14px;}
+.day-cap-note{font-size:10.5px;color:var(--amber);font-family:var(--mono);margin-left:8px;}
+.weekend-tag{font-size:10px;color:var(--purple);font-family:var(--mono);margin-left:8px;letter-spacing:0.05em;}
+
+table{width:100%;border-collapse:collapse;}
+.game-table th{
+  text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-faint);
+  padding:8px 16px;border:1px solid var(--border-soft);font-weight:700;background:rgba(255,255,255,0.012);
+}
+.game-table td{padding:9px 16px;font-size:13px;border:1px solid var(--border-soft);}
+.game-table tr:hover td{background:rgba(215,255,62,0.015);}
+.platform-tag{font-size:11px;color:var(--text-dim);font-family:var(--mono);}
+.result-tag{font-family:var(--mono);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-block;}
+.result-passed{background:rgba(61,220,138,0.1);color:var(--green);}
+.result-failed{background:rgba(255,92,114,0.1);color:var(--red);}
+.pts-cell{font-family:var(--mono);font-weight:600;color:var(--text);}
+.row-actions{display:flex;gap:6px;justify-content:flex-end;}
+.mini-btn{background:transparent;border:1px solid var(--border);color:var(--text-faint);width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;justify-content:center;}
+.mini-btn:hover{color:var(--text);border-color:#3a4025;}
+.mini-btn.del:hover{color:var(--red);border-color:rgba(255,92,114,0.4);}
+.empty-row td{text-align:center;color:var(--text-faint);font-size:12.5px;padding:18px;font-style:italic;}
+.quick-add-row td{background:rgba(215,255,62,0.02);padding:8px 16px;}
+.quick-add-row .qa-game:focus, .quick-add-row .qa-platform:focus, .quick-add-row .qa-points:focus{border-color:var(--lime);}
+
+/* ---------- backend filters/table ---------- */
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.filter-bar input, .filter-bar select{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;outline:none;}
+.filter-bar input{flex:1;min-width:180px;}
+.filter-bar input:focus, .filter-bar select:focus{border-color:var(--lime);}
+
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.table-scroll{overflow-x:auto;}
+.status-pill{font-family:var(--mono);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;display:inline-block;white-space:nowrap;}
+.status-Passed{background:rgba(61,220,138,0.12);color:var(--green);border:1px solid rgba(61,220,138,0.3);}
+.status-Failed{background:rgba(255,92,114,0.1);color:var(--red);border:1px solid rgba(255,92,114,0.28);}
+.status-Testing{background:rgba(242,184,75,0.1);color:var(--amber);border:1px solid rgba(242,184,75,0.28);}
+.status-Downloading{background:rgba(180,144,255,0.1);color:var(--purple);border:1px solid rgba(180,144,255,0.28);}
+.status-Queued{background:rgba(125,131,153,0.1);color:var(--slate);border:1px solid rgba(125,131,153,0.25);}
+
+.cell-input{
+  width:100%;background:transparent;border:1px solid transparent;color:var(--text);
+  border-radius:6px;padding:6px 7px;font-family:var(--sans);font-size:13px;outline:none;transition:.15s;
+}
+.cell-input:hover{border-color:var(--border);background:var(--bg-raised);}
+.cell-input:focus{border-color:var(--lime);background:var(--bg-raised);box-shadow:0 0 0 2px rgba(215,255,62,0.12);}
+.cell-input.date-input{font-family:var(--mono);color-scheme:dark;min-width:130px;}
+.status-select{
+  width:100%;appearance:none;-webkit-appearance:none;cursor:pointer;
+  border:none;border-radius:7px;padding:7px 26px 7px 10px;font-family:var(--sans);font-size:13px;font-weight:700;
+  color:#fff;outline:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath d='M5.5 7.5l4.5 4.5 4.5-4.5' stroke='white' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;background-size:14px;
+}
+.status-select option{color:#000;background:#fff;font-weight:600;}
+
+.pager{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;font-size:12px;color:var(--text-dim);}
+.pager-btns{display:flex;gap:8px;}
+.notes-cell{color:var(--text-dim);font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:11.5px;font-family:var(--mono);}
+.hidden{display:none !important;}
+
+@media(max-width:640px){
+  .form-row{flex-direction:column;align-items:stretch;}
+  .field{width:100%;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">W</div>
+      <div class="brand-text">
+        <h1>QA Log — Wand</h1>
+        <p>Personal testing tracker · saved in this browser</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="btnExport">⭳ Export backup</button>
+      <button class="icon-btn" id="btnImport">⭱ Import</button>
+      <button class="icon-btn danger" id="btnReset">Reset data</button>
+      <input type="file" id="importFile" accept="application/json" class="hidden">
+    </div>
+  </div>
+
+  <div class="ticker-wrap">
+    <div class="ticker-dot"></div>
+    <div class="ticker-track">
+      <div class="ticker-inner" id="tickerInner"><span>loading log…</span></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="regular">Regular Testing</button>
+    <button class="tab-btn" data-tab="backend">Backend Testing</button>
+  </div>
+
+  <!-- ============ REGULAR TESTING ============ -->
+  <div class="panel active" id="panel-regular">
+
+    <div class="month-header">
+      <div>
+        <div class="month-eyebrow">Regular Testing</div>
+        <h2 class="month-title" id="monthTitleDisplay">—</h2>
+      </div>
+      <div class="month-controls">
+        <select id="monthSelect"></select>
+        <button class="icon-btn" id="addMonthBtn">+ Month</button>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Month Total</div>
+        <div class="stat-value lime" id="regMonthTotal">0</div>
+        <div class="stat-sub">points logged this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Monthly Target</div>
+        <div class="stat-value amber" id="regMonthTargetDisplay">0</div>
+        <div class="stat-sub">
+          <input type="number" id="regTargetInput" step="0.25" style="width:70px;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:3px 6px;font-family:var(--mono);font-size:11px;">
+          edit target
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Remaining / Excess</div>
+        <div class="stat-value" id="regRemaining">0</div>
+        <div class="stat-sub" id="regRemainingSub">to hit target</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Days Logged</div>
+        <div class="stat-value purple" id="regDaysLogged">0</div>
+        <div class="stat-sub" id="regDaysLoggedSub">out of — days</div>
+      </div>
+    </div>
+
+    <div class="week-nav">
+      <div class="week-status-badge badge-empty" id="monthStatusBadge">NO DATA</div>
+      <button class="icon-btn danger hidden" id="deleteMonthBtn">Delete this month page</button>
+    </div>
+
+    <div class="modal-overlay hidden" id="monthModalOverlay">
+      <div class="modal-box">
+        <h3>Add a month page</h3>
+        <input type="month" id="monthPicker">
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="monthModalCancel">Cancel</button>
+          <button class="btn btn-primary" id="monthModalAdd">Add page</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3>Log a test</h3>
+      <div class="form-row">
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="rgDate">
+        </div>
+        <div class="field grow-2">
+          <label>Game</label>
+          <input type="text" id="rgGame" placeholder="e.g. Hollow Knight: Silksong">
+        </div>
+        <div class="field">
+          <label>Platform</label>
+          <input type="text" id="rgPlatform" placeholder="Steam / Xbox / GOG…" list="platformList">
+          <datalist id="platformList"></datalist>
+        </div>
+        <div class="field">
+          <label>Result</label>
+          <select id="rgResult">
+            <option value="Passed">Passed</option>
+            <option value="Failed">Failed</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Points</label>
+          <input type="number" id="rgPoints" step="0.25" placeholder="0.5">
+        </div>
+        <button class="btn btn-primary" id="rgAddBtn">+ Add entry</button>
+      </div>
+    </div>
+
+    <div id="regDayGroups"></div>
+
+  </div>
+
+  <!-- ============ BACKEND TESTING ============ -->
+  <div class="panel" id="panel-backend">
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Tests</div>
+        <div class="stat-value lime" id="beTotal">0</div>
+        <div class="stat-sub">logged entries</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pass Rate</div>
+        <div class="stat-value green" id="bePassRate">0%</div>
+        <div class="stat-sub" id="bePassRateSub">— passed / — failed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Unique Games</div>
+        <div class="stat-value purple" id="beUniqueGames">0</div>
+        <div class="stat-sub">distinct titles tracked</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">In Queue</div>
+        <div class="stat-value amber" id="beQueued">0</div>
+        <div class="stat-sub">waiting to be tested</div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3>Log a backend test</h3>
+      <div class="form-row">
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="beDate">
+        </div>
+        <div class="field grow-2">
+          <label>Game</label>
+          <input type="text" id="beGame" placeholder="e.g. Resident Evil 4">
+        </div>
+        <div class="field">
+          <label>Source</label>
+          <input type="text" id="beSource" placeholder="Steam / Xbox / GOG…" list="sourceList">
+          <datalist id="sourceList"></datalist>
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select id="beStatus">
+            <option>Queued</option>
+            <option>Downloading</option>
+            <option>Testing</option>
+            <option>Passed</option>
+            <option>Failed</option>
+          </select>
+        </div>
+        <div class="field grow-2">
+          <label>Notes</label>
+          <input type="text" id="beNotes" placeholder="optional">
+        </div>
+        <button class="btn btn-primary" id="beAddBtn">+ Add entry</button>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3>Paste from sheet</h3>
+      <p class="hint">Copy Game + Source columns straight from your spreadsheet (tab-separated) and paste below — one row per line. New rows are added as "Queued".</p>
+      <div class="form-row">
+        <div class="field grow-2">
+          <textarea id="bePasteArea" rows="3" placeholder="Dragonsword: Awakening&#9;Steam&#10;Iron Frontier&#9;Xbox" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
+        </div>
+        <button class="btn btn-primary" id="bePasteBtn">+ Add pasted rows</button>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <input type="text" id="beSearch" placeholder="Search game…">
+      <select id="beSourceFilter"><option value="">All sources</option></select>
+      <select id="beStatusFilter">
+        <option value="">All statuses</option>
+        <option>Queued</option><option>Downloading</option><option>Testing</option><option>Passed</option><option>Failed</option>
+      </select>
+      <select id="beSort">
+        <option value="date_desc">Newest first</option>
+        <option value="date_asc">Oldest first</option>
+        <option value="game_asc">Game A–Z</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table class="game-table" id="beTable">
+          <thead>
+            <tr><th>Game</th><th>Source</th><th>Status</th><th>Date</th><th>Notes</th><th></th></tr>
+          </thead>
+          <tbody id="beTbody"></tbody>
+        </table>
+      </div>
+      <div class="pager">
+        <span id="pagerInfo">—</span>
+        <div class="pager-btns">
+          <button class="icon-btn" id="pagePrev">‹ Prev</button>
+          <button class="icon-btn" id="pageNext">Next ›</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="foot">QA Log · data lives only in this browser (localStorage) · export a backup before switching devices</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------- storage ---------------- */
+const LS_REG = 'qa_regular_entries_v2';
+const LS_BE  = 'qa_backend_entries_v2';
+const LS_SET = 'qa_settings_v2';
+
+function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4); }
+function loadJSON(key, fallback){
+  try{ const raw = localStorage.getItem(key); if(!raw) return fallback; return JSON.parse(raw); }
+  catch(e){ return fallback; }
+}
+function saveJSON(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }
+  catch(e){ console.error('Storage save failed', e); alert('Could not save — your browser storage may be full or blocked.'); }
+}
+
+let regularEntries = loadJSON(LS_REG, []);
+let backendEntries = loadJSON(LS_BE, []);
+let settings = loadJSON(LS_SET, { monthlyTarget: 150, dailyCap: 9, knownMonths: [] });
+if(!settings.knownMonths) settings.knownMonths = [];
+if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
+
+function persistAll(){
+  saveJSON(LS_REG, regularEntries);
+  saveJSON(LS_BE, backendEntries);
+  saveJSON(LS_SET, settings);
+}
+
+/* ---------------- date helpers ---------------- */
+function toDate(s){ if(!s) return null; const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
+function fmtISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fmtDayLabel(d){ return d.toLocaleDateString(undefined, { weekday:'long' }); }
+function fmtDateShort(d){ return d.toLocaleDateString(undefined, { month:'short', day:'numeric' }); }
+function fmtNum(n){ return Number(n||0).toFixed(2).replace(/\.00$/,''); }
+function ymOf(dateStr){ return dateStr.slice(0,7); }
+function ymNow(){ const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function daysInMonth(ym){ const [y,m] = ym.split('-').map(Number); return new Date(y, m, 0).getDate(); }
+function fmtMonthLabel(ym){ const [y,m] = ym.split('-').map(Number); return new Date(y,m-1,1).toLocaleDateString(undefined,{month:'long',year:'numeric'}); }
+function fmtMonthShort(ym){ const [y,m] = ym.split('-').map(Number); return new Date(y,m-1,1).toLocaleDateString(undefined,{month:'short',year:'numeric'}); }
+function isWeekendDay(d){ return d.getDay()===0 || d.getDay()===6; }
+
+/* =========================================================
+   TABS
+   ========================================================= */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* =========================================================
+   REGULAR TESTING TAB — month pages
+   ========================================================= */
+let regEntriesByDate = {};
+function reindexRegular(){
+  regEntriesByDate = {};
+  regularEntries.forEach(e=>{
+    if(!regEntriesByDate[e.date]) regEntriesByDate[e.date] = [];
+    regEntriesByDate[e.date].push(e);
+  });
+}
+
+function getAllMonths(){
+  const set = new Set(settings.knownMonths||[]);
+  regularEntries.forEach(e=> e.date && set.add(ymOf(e.date)));
+  return [...set].sort();
+}
+function ensureMonthKnown(ym){
+  if(!settings.knownMonths.includes(ym)){
+    settings.knownMonths.push(ym);
+    settings.knownMonths.sort();
+    persistAll();
+  }
+}
+
+let selectedMonth = null;
+(function initSelectedMonth(){
+  if(!settings.knownMonths.length) settings.knownMonths = [ymNow()];
+  const all = getAllMonths();
+  selectedMonth = all.includes(ymNow()) ? ymNow() : all[all.length-1];
+  persistAll();
+})();
+
+document.getElementById('regTargetInput').value = settings.monthlyTarget;
+document.getElementById('regTargetInput').addEventListener('change', (e)=>{
+  const v = parseFloat(e.target.value);
+  settings.monthlyTarget = isNaN(v) ? 0 : v;
+  persistAll();
+  renderRegular();
+});
+
+function populateMonthSelect(){
+  const sel = document.getElementById('monthSelect');
+  const months = getAllMonths();
+  sel.innerHTML = months.map(m=>`<option value="${m}" ${m===selectedMonth?'selected':''}>${fmtMonthShort(m)}</option>`).join('');
+}
+document.getElementById('monthSelect').addEventListener('change', (e)=>{ selectedMonth = e.target.value; renderRegular(); });
+
+document.getElementById('addMonthBtn').addEventListener('click', ()=>{
+  document.getElementById('monthPicker').value = selectedMonth;
+  document.getElementById('monthModalOverlay').classList.remove('hidden');
+});
+document.getElementById('monthModalCancel').addEventListener('click', ()=> document.getElementById('monthModalOverlay').classList.add('hidden'));
+document.getElementById('monthModalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='monthModalOverlay') e.currentTarget.classList.add('hidden'); });
+document.getElementById('monthModalAdd').addEventListener('click', ()=>{
+  const val = document.getElementById('monthPicker').value;
+  if(!val){ alert('Pick a month first.'); return; }
+  ensureMonthKnown(val);
+  selectedMonth = val;
+  document.getElementById('monthModalOverlay').classList.add('hidden');
+  renderRegular();
+});
+document.getElementById('deleteMonthBtn').addEventListener('click', ()=>{
+  if(!confirm('Remove the ' + fmtMonthLabel(selectedMonth) + ' page? (only allowed while it has no entries)')) return;
+  settings.knownMonths = settings.knownMonths.filter(m=>m!==selectedMonth);
+  persistAll();
+  const all = getAllMonths();
+  selectedMonth = all.length ? all[all.length-1] : ymNow();
+  ensureMonthKnown(selectedMonth);
+  renderRegular();
+});
+
+const collapsedDays = {};
+
+function renderRegular(){
+  reindexRegular();
+  ensureMonthKnown(selectedMonth);
+  populateMonthSelect();
+
+  document.getElementById('monthTitleDisplay').textContent = fmtMonthLabel(selectedMonth);
+
+  const nDays = daysInMonth(selectedMonth);
+  let monthTotal = 0, daysLogged = 0;
+  for(let day=1; day<=nDays; day++){
+    const iso = selectedMonth + '-' + String(day).padStart(2,'0');
+    const list = regEntriesByDate[iso] || [];
+    if(list.length) daysLogged++;
+    list.forEach(e=> monthTotal += Number(e.points||0));
+  }
+
+  const target = Number(settings.monthlyTarget||0);
+  const remaining = target - monthTotal;
+
+  document.getElementById('regMonthTotal').textContent = fmtNum(monthTotal);
+  document.getElementById('regMonthTargetDisplay').textContent = fmtNum(target);
+  document.getElementById('regDaysLogged').textContent = daysLogged + ' / ' + nDays;
+  document.getElementById('regDaysLoggedSub').textContent = 'out of ' + nDays + ' days';
+
+  const remEl = document.getElementById('regRemaining');
+  const remSub = document.getElementById('regRemainingSub');
+  if(target <= 0){ remEl.textContent='—'; remEl.className='stat-value'; remSub.textContent='no target set'; }
+  else if(remaining <= 0){ remEl.textContent='+'+fmtNum(Math.abs(remaining)); remEl.className='stat-value green'; remSub.textContent='over target'; }
+  else{ remEl.textContent=fmtNum(remaining); remEl.className='stat-value amber'; remSub.textContent='to hit target'; }
+
+  const badge = document.getElementById('monthStatusBadge');
+  const [my,mm] = selectedMonth.split('-').map(Number);
+  const monthEnd = new Date(my, mm-1, nDays);
+  const isPast = monthEnd < new Date(new Date().setHours(0,0,0,0));
+  badge.className = 'week-status-badge';
+  if(target<=0 && monthTotal===0){ badge.classList.add('badge-empty'); badge.textContent='NO DATA'; }
+  else if(monthTotal>=target && target>0){ badge.classList.add('badge-reached'); badge.textContent='QUOTA REACHED'; }
+  else if(isPast){ badge.classList.add('badge-missed'); badge.textContent='QUOTA MISSED'; }
+  else{ badge.classList.add('badge-progress'); badge.textContent='IN PROGRESS'; }
+
+  const delBtn = document.getElementById('deleteMonthBtn');
+  const allMonths = getAllMonths();
+  if(monthTotal===0 && allMonths.length>1) delBtn.classList.remove('hidden'); else delBtn.classList.add('hidden');
+
+  const container = document.getElementById('regDayGroups');
+  container.innerHTML = '';
+  for(let day=1; day<=nDays; day++){
+    const dObj = new Date(my, mm-1, day);
+    container.appendChild(buildDayGroup(dObj));
+  }
+
+  const platforms = new Set();
+  regularEntries.forEach(e=> e.platform && platforms.add(e.platform));
+  backendEntries.forEach(e=> e.platform && platforms.add(e.platform));
+  const dl1 = document.getElementById('platformList');
+  dl1.innerHTML = [...platforms].sort().map(p=>`<option value="${escapeHtml(p)}">`).join('');
+}
+
+function buildDayGroup(dateObj){
+  const iso = fmtISO(dateObj);
+  const label = fmtDayLabel(dateObj);
+  const weekend = isWeekendDay(dateObj);
+  const list = (regEntriesByDate[iso] || []).slice().sort((a,b)=> (a.game||'').localeCompare(b.game||''));
+  const total = list.reduce((s,e)=> s + Number(e.points||0), 0);
+  const key = 'day_'+iso;
+  const isToday = iso === fmtISO(new Date());
+  const collapsed = key in collapsedDays ? collapsedDays[key] : (list.length===0 && !isToday);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'day-group';
+
+  const head = document.createElement('div');
+  head.className = 'day-head' + (collapsed?' collapsed':'');
+  head.innerHTML = `
+    <div class="day-head-left">
+      <span class="chev">▾</span>
+      <span class="day-name">${label}</span>
+      <span class="day-date">${fmtDateShort(dateObj)}</span>
+      ${weekend ? '<span class="weekend-tag">WEEKEND</span>' : ''}
+      ${total >= settings.dailyCap && settings.dailyCap>0 ? '<span class="day-cap-note">LIMIT REACHED</span>' : ''}
+    </div>
+    <div class="day-total">${fmtNum(total)} pts</div>
+  `;
+  head.addEventListener('click', ()=>{ collapsedDays[key] = !collapsed; renderRegular(); });
+  wrap.appendChild(head);
+
+  if(!collapsed){
+    const tblWrap = document.createElement('div');
+    let rows = '';
+    if(list.length === 0){
+      rows = `<tr class="empty-row"><td colspan="4">No games logged for this day.</td></tr>`;
+    } else {
+      list.forEach(e=>{
+        rows += `<tr>
+          <td><div style="font-weight:600;">${escapeHtml(e.game||'')}</div>${e.platform ? `<div class="platform-tag">(${escapeHtml(e.platform)})</div>` : ''}</td>
+          <td><span class="result-tag ${e.result==='Passed'?'result-passed':'result-failed'}">${e.result}</span></td>
+          <td class="pts-cell">${fmtNum(e.points)}</td>
+          <td><div class="row-actions">
+            <button class="mini-btn" data-edit="${e.id}" title="Edit">✎</button>
+            <button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button>
+          </div></td>
+        </tr>`;
+      });
+    }
+    rows += quickAddRowHtml(iso);
+    tblWrap.innerHTML = `<table class="game-table">
+      <thead><tr><th>Game (Platform)</th><th>Results</th><th>Points</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+    wrap.appendChild(tblWrap);
+
+    tblWrap.querySelectorAll('[data-edit]').forEach(b=> b.addEventListener('click', (ev)=>{ ev.stopPropagation(); editRegularEntry(b.dataset.edit); }));
+    tblWrap.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', (ev)=>{ ev.stopPropagation(); deleteRegularEntry(b.dataset.del); }));
+    wireQuickAddRow(tblWrap, iso);
+  }
+
+  return wrap;
+}
+
+function quickAddRowHtml(dateIso){
+  return `<tr class="quick-add-row" data-quick-date="${dateIso}">
+    <td><input type="text" class="qa-game" placeholder="+ Add a game…" style="width:100%;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 8px;font-family:var(--sans);font-size:12.5px;"></td>
+    <td><select class="qa-result" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px;font-family:var(--sans);font-size:12.5px;"><option value="Passed">Passed</option><option value="Failed">Failed</option></select></td>
+    <td><input type="number" step="0.25" class="qa-points" placeholder="pts" style="width:64px;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 8px;font-family:var(--mono);font-size:12.5px;"></td>
+    <td><input type="text" class="qa-platform" placeholder="Platform" style="width:100%;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 8px;font-family:var(--sans);font-size:11.5px;margin-top:4px;" list="platformList"><button class="mini-btn qa-add-btn" title="Add row" style="color:var(--lime);border-color:rgba(215,255,62,0.35);margin-top:4px;">+</button></td>
+  </tr>`;
+}
+
+function wireQuickAddRow(scopeEl, iso){
+  const row = scopeEl.querySelector('.quick-add-row');
+  if(!row) return;
+  const gameInp = row.querySelector('.qa-game');
+  const platInp = row.querySelector('.qa-platform');
+  const resSel = row.querySelector('.qa-result');
+  const ptsInp = row.querySelector('.qa-points');
+  const submit = ()=>{
+    const game = gameInp.value.trim();
+    const points = parseFloat(ptsInp.value);
+    if(!game || isNaN(points)){ gameInp.focus(); return; }
+    regularEntries.push({ id: uid(), date: iso, game, platform: platInp.value.trim(), result: resSel.value, points });
+    persistAll();
+    renderRegular();
+    renderTicker();
+  };
+  row.querySelector('.qa-add-btn').addEventListener('click', (ev)=>{ ev.stopPropagation(); submit(); });
+  [gameInp, platInp, ptsInp].forEach(inp=>{
+    inp.addEventListener('click', ev=> ev.stopPropagation());
+    inp.addEventListener('keydown', (ev)=>{ if(ev.key==='Enter'){ ev.stopPropagation(); submit(); } });
+  });
+  resSel.addEventListener('click', ev=> ev.stopPropagation());
+}
+
+function editRegularEntry(id){
+  const e = regularEntries.find(x=>x.id===id);
+  if(!e) return;
+  const game = prompt('Game name:', e.game); if(game===null) return;
+  const platform = prompt('Platform:', e.platform||''); if(platform===null) return;
+  const result = prompt('Result (Passed/Failed):', e.result); if(result===null) return;
+  const points = prompt('Points:', e.points); if(points===null) return;
+  e.game = game.trim(); e.platform = platform.trim();
+  e.result = /^f/i.test(result.trim()) ? 'Failed' : 'Passed';
+  e.points = parseFloat(points) || 0;
+  persistAll(); renderRegular(); renderTicker();
+}
+function deleteRegularEntry(id){
+  if(!confirm('Delete this test entry?')) return;
+  regularEntries = regularEntries.filter(x=>x.id!==id);
+  persistAll(); renderRegular(); renderTicker();
+}
+
+document.getElementById('rgAddBtn').addEventListener('click', ()=>{
+  const date = document.getElementById('rgDate').value;
+  const game = document.getElementById('rgGame').value.trim();
+  const platform = document.getElementById('rgPlatform').value.trim();
+  const result = document.getElementById('rgResult').value;
+  const points = parseFloat(document.getElementById('rgPoints').value);
+  if(!date || !game || isNaN(points)){ alert('Please fill in date, game name, and points.'); return; }
+  regularEntries.push({ id: uid(), date, game, platform, result, points });
+  persistAll();
+  selectedMonth = ymOf(date);
+  ensureMonthKnown(selectedMonth);
+  document.getElementById('rgGame').value='';
+  document.getElementById('rgPlatform').value='';
+  document.getElementById('rgPoints').value='';
+  renderRegular(); renderTicker();
+});
+
+document.getElementById('rgDate').value = fmtISO(new Date());
+document.getElementById('beDate').value = fmtISO(new Date());
+
+/* =========================================================
+   BACKEND TESTING TAB — Game / Source / Status / Date
+   ========================================================= */
+let bePage = 0;
+const PAGE_SIZE = 25;
+
+document.getElementById('beAddBtn').addEventListener('click', ()=>{
+  const date = document.getElementById('beDate').value;
+  const game = document.getElementById('beGame').value.trim();
+  const source = document.getElementById('beSource').value.trim();
+  const status = document.getElementById('beStatus').value;
+  const notes = document.getElementById('beNotes').value.trim();
+  if(!game){ alert('Please enter a game name.'); return; }
+  backendEntries.push({ id: uid(), date: date || null, game, platform: source, status, notes });
+  persistAll();
+  document.getElementById('beGame').value='';
+  document.getElementById('beSource').value='';
+  document.getElementById('beNotes').value='';
+  bePage = 0;
+  renderBackend(); renderTicker();
+});
+
+document.getElementById('bePasteBtn').addEventListener('click', ()=>{
+  const raw = document.getElementById('bePasteArea').value;
+  if(!raw.trim()){ return; }
+  const today = fmtISO(new Date());
+  let count = 0;
+  raw.split(/\r?\n/).forEach(line=>{
+    if(!line.trim()) return;
+    let parts = line.split('\t');
+    if(parts.length < 2) parts = line.split(/ {2,}/); // fallback: 2+ spaces as separator
+    const game = (parts[0]||'').trim();
+    const source = (parts[1]||'').trim();
+    if(!game) return;
+    backendEntries.push({ id: uid(), date: today, game, platform: source, status: 'Queued', notes: '' });
+    count++;
+  });
+  if(count === 0){ alert('Could not find any Game rows in that paste.'); return; }
+  persistAll();
+  document.getElementById('bePasteArea').value = '';
+  bePage = 0;
+  renderBackend(); renderTicker();
+  const btn = document.getElementById('bePasteBtn');
+  const original = btn.textContent;
+  btn.textContent = `Added ${count} row${count===1?'':'s'} ✓`;
+  setTimeout(()=>{ btn.textContent = original; }, 1800);
+});
+
+['beSearch','beSourceFilter','beStatusFilter','beSort'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', ()=>{ bePage = 0; renderBackend(); });
+  document.getElementById(id).addEventListener('change', ()=>{ bePage = 0; renderBackend(); });
+});
+document.getElementById('pagePrev').addEventListener('click', ()=>{ if(bePage>0){ bePage--; renderBackend(); } });
+document.getElementById('pageNext').addEventListener('click', ()=>{ bePage++; renderBackend(); });
+
+function getFilteredBackend(){
+  const q = document.getElementById('beSearch').value.trim().toLowerCase();
+  const pf = document.getElementById('beSourceFilter').value;
+  const sf = document.getElementById('beStatusFilter').value;
+  const sort = document.getElementById('beSort').value;
+
+  let list = backendEntries.filter(e=>{
+    if(q && !(e.game||'').toLowerCase().includes(q)) return false;
+    if(pf && e.platform !== pf) return false;
+    if(sf && e.status !== sf) return false;
+    return true;
+  });
+
+  list = list.slice().sort((a,b)=>{
+    if(sort === 'game_asc') return (a.game||'').localeCompare(b.game||'');
+    const da = a.date || '0000-00-00', db = b.date || '0000-00-00';
+    if(sort === 'date_asc') return da.localeCompare(db);
+    return db.localeCompare(da);
+  });
+  return list;
+}
+
+const STATUS_COLORS = {
+  Passed:      '#1f8f5f',
+  Failed:      '#9a1f38',
+  Testing:     '#b8842a',
+  Downloading: '#6d4fc2',
+  Queued:      '#4a4f5c'
+};
+const STATUS_OPTIONS = ['Queued','Downloading','Testing','Passed','Failed'];
+
+function renderBackend(){
+  const sources = new Set();
+  backendEntries.forEach(e=> e.platform && sources.add(e.platform));
+  const pfSel = document.getElementById('beSourceFilter');
+  const currentVal = pfSel.value;
+  pfSel.innerHTML = '<option value="">All sources</option>' + [...sources].sort().map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
+  pfSel.value = currentVal;
+  document.getElementById('sourceList').innerHTML = [...sources].sort().map(p=>`<option value="${escapeHtml(p)}">`).join('');
+
+  const filtered = getFilteredBackend();
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if(bePage >= totalPages) bePage = totalPages - 1;
+  if(bePage < 0) bePage = 0;
+  const pageItems = filtered.slice(bePage*PAGE_SIZE, bePage*PAGE_SIZE + PAGE_SIZE);
+
+  const tbody = document.getElementById('beTbody');
+  if(pageItems.length===0){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="6">No matching entries.</td></tr>`;
+  } else {
+    tbody.innerHTML = pageItems.map(e=>{
+      const statusColor = STATUS_COLORS[e.status] || STATUS_COLORS.Queued;
+      const opts = STATUS_OPTIONS.map(s=>`<option value="${s}" ${s===e.status?'selected':''}>${s}</option>`).join('');
+      return `<tr data-row-id="${e.id}">
+        <td><input class="cell-input" data-field="game" value="${escAttr(e.game)}"></td>
+        <td><input class="cell-input" data-field="platform" value="${escAttr(e.platform)}" list="sourceList"></td>
+        <td><select class="status-select" data-field="status" style="background-color:${statusColor};">${opts}</select></td>
+        <td><input type="date" class="cell-input date-input" data-field="date" value="${e.date||''}"></td>
+        <td><input class="cell-input" data-field="notes" value="${escAttr(e.notes)}" placeholder="—"></td>
+        <td><div class="row-actions">
+          <button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+    tbody.querySelectorAll('tr[data-row-id]').forEach(tr=>{
+      const id = tr.dataset.rowId;
+      tr.querySelectorAll('[data-field]').forEach(el=>{
+        el.addEventListener('change', ()=> commitBackendCell(id, el.dataset.field, el.value, el));
+      });
+    });
+    tbody.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=> deleteBackendEntry(b.dataset.del)));
+  }
+
+  document.getElementById('pagerInfo').textContent =
+    total===0 ? 'No entries' : `Showing ${bePage*PAGE_SIZE+1}–${Math.min(total,(bePage+1)*PAGE_SIZE)} of ${total}`;
+
+  const passed = backendEntries.filter(e=>e.status==='Passed').length;
+  const failed = backendEntries.filter(e=>e.status==='Failed').length;
+  const queued = backendEntries.filter(e=>e.status==='Queued').length;
+  const rated = passed+failed;
+  document.getElementById('beTotal').textContent = backendEntries.length;
+  document.getElementById('bePassRate').textContent = rated ? Math.round(passed/rated*100)+'%' : '—';
+  document.getElementById('bePassRateSub').textContent = `${passed} passed / ${failed} failed`;
+  document.getElementById('beUniqueGames').textContent = new Set(backendEntries.map(e=>e.game)).size;
+  document.getElementById('beQueued').textContent = queued;
+}
+
+function commitBackendCell(id, field, value, el){
+  const e = backendEntries.find(x=>x.id===id);
+  if(!e) return;
+  if(field === 'date'){ e.date = value || null; }
+  else if(field === 'status'){
+    e.status = value;
+    if(el) el.style.backgroundColor = STATUS_COLORS[value] || STATUS_COLORS.Queued;
+  }
+  else { e[field] = value.trim(); }
+  persistAll();
+  renderTicker();
+  // lightweight refresh: only rebuild filter dropdowns/stats, not the whole table (keeps focus/scroll stable)
+  refreshBackendMeta();
+}
+function refreshBackendMeta(){
+  const sources = new Set();
+  backendEntries.forEach(e=> e.platform && sources.add(e.platform));
+  document.getElementById('sourceList').innerHTML = [...sources].sort().map(p=>`<option value="${escapeHtml(p)}">`).join('');
+  const passed = backendEntries.filter(e=>e.status==='Passed').length;
+  const failed = backendEntries.filter(e=>e.status==='Failed').length;
+  const queued = backendEntries.filter(e=>e.status==='Queued').length;
+  const rated = passed+failed;
+  document.getElementById('beTotal').textContent = backendEntries.length;
+  document.getElementById('bePassRate').textContent = rated ? Math.round(passed/rated*100)+'%' : '—';
+  document.getElementById('bePassRateSub').textContent = `${passed} passed / ${failed} failed`;
+  document.getElementById('beUniqueGames').textContent = new Set(backendEntries.map(e=>e.game)).size;
+  document.getElementById('beQueued').textContent = queued;
+}
+function deleteBackendEntry(id){
+  if(!confirm('Delete this backend test entry?')) return;
+  backendEntries = backendEntries.filter(x=>x.id!==id);
+  persistAll(); renderBackend(); renderTicker();
+}
+
+/* =========================================================
+   TICKER
+   ========================================================= */
+function renderTicker(){
+  const dated = backendEntries.filter(e=>e.date).slice().sort((a,b)=> b.date.localeCompare(a.date)).slice(0,14);
+  const recentReg = regularEntries.slice().sort((a,b)=> (b.date||'').localeCompare(a.date||'')).slice(0,6);
+  const items = [];
+  dated.forEach(e=>{
+    const cls = e.status==='Passed' ? 'pass-tok' : e.status==='Failed' ? 'fail-tok' : 'other-tok';
+    items.push(`<span><span class="${cls}">[${(e.status||'—').toUpperCase()}]</span> ${escapeHtml(e.game)} · ${escapeHtml(e.platform||'')}</span>`);
+  });
+  recentReg.forEach(e=>{
+    const cls = e.result==='Passed' ? 'pass-tok':'fail-tok';
+    items.push(`<span><span class="${cls}">[${e.result.toUpperCase()}]</span> ${escapeHtml(e.game)} · ${fmtNum(e.points)}pt</span>`);
+  });
+  if(items.length===0){ items.push('<span>No entries logged yet — add your first test above.</span>'); }
+  const html = items.join('') + items.join('');
+  document.getElementById('tickerInner').innerHTML = html;
+}
+
+/* ---------------- utils ---------------- */
+function escapeHtml(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escAttr(s){ return escapeHtml(s); }
+
+/* ---------------- export / import / reset ---------------- */
+document.getElementById('btnExport').addEventListener('click', ()=>{
+  const payload = { regularEntries, backendEntries, settings, exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'qa-log-backup-' + fmtISO(new Date()) + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+});
+document.getElementById('btnImport').addEventListener('click', ()=> document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', (ev)=>{
+  const file = ev.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = JSON.parse(reader.result);
+      if(!confirm('Import will replace your current data with this backup. Continue?')) return;
+      regularEntries = (data.regularEntries||[]).map(e=> e.id ? e : {...e, id:uid()});
+      backendEntries = (data.backendEntries||[]).map(e=> e.id ? e : {...e, id:uid()});
+      if(data.settings) settings = data.settings;
+      if(!settings.knownMonths) settings.knownMonths = [];
+      if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
+      persistAll();
+      document.getElementById('regTargetInput').value = settings.monthlyTarget;
+      const all = getAllMonths();
+      selectedMonth = all.includes(ymNow()) ? ymNow() : all[all.length-1];
+      renderRegular(); renderBackend(); renderTicker();
+      alert('Import complete.');
+    }catch(e){ alert('Could not read that file — is it a valid QA Log backup JSON?'); }
+  };
+  reader.readAsText(file);
+  ev.target.value = '';
+});
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  if(!confirm('This will permanently erase all data stored in this browser. Export a backup first if you want to keep it. Continue?')) return;
+  localStorage.removeItem(LS_REG); localStorage.removeItem(LS_BE); localStorage.removeItem(LS_SET);
+  location.reload();
+});
+
+/* ---------------- init ---------------- */
+renderRegular();
+renderBackend();
+renderTicker();
+
+})();
+</script>
+</body>
+</html>
