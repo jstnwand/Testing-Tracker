@@ -45,7 +45,7 @@ body{
 a{color:var(--lime);}
 
 /* ---------- layout shell ---------- */
-.shell{max-width:1180px;margin:0 auto;padding:28px 20px 80px;}
+.shell{max-width:1360px;margin:0 auto;padding:28px 20px 80px;}
 
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
 .brand{display:flex;align-items:center;gap:12px;}
@@ -97,6 +97,10 @@ a{color:var(--lime);}
 /* ---------- cards / stats ---------- */
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
 @media(max-width:860px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+.backend-layout{display:flex;gap:20px;align-items:flex-start;}
+.backend-main{flex:1;min-width:0;}
+.backend-sidebar{width:250px;flex-shrink:0;position:sticky;top:20px;display:flex;flex-direction:column;gap:14px;}
+@media(max-width:900px){.backend-layout{flex-direction:column;} .backend-sidebar{width:100%;position:static;flex-direction:row;flex-wrap:wrap;} .backend-sidebar .stat-card{flex:1;min-width:140px;}}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;}
 .stat-label{font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:var(--text-faint);font-weight:700;margin-bottom:8px;}
 .stat-value{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1;}
@@ -168,11 +172,11 @@ a{color:var(--lime);}
 
 table{width:100%;border-collapse:collapse;}
 .game-table th{
-  text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-faint);
-  padding:8px 16px;border:1px solid var(--border-soft);font-weight:700;background:rgba(255,255,255,0.012);
+  text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;color:#0a0b08;
+  padding:11px 16px;border:1px solid #0a0b08;font-weight:800;background:var(--lime);
 }
-.game-table td{padding:9px 16px;font-size:13px;border:1px solid var(--border-soft);}
-.game-table tr:hover td{background:rgba(215,255,62,0.015);}
+.game-table td{padding:10px 16px;font-size:13.5px;border:1px solid var(--border-soft);}
+.game-table tr:hover td{background:rgba(215,255,62,0.02);}
 .platform-tag{font-size:11px;color:var(--text-dim);font-family:var(--mono);}
 .result-tag{font-family:var(--mono);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-block;}
 .result-passed{background:rgba(61,220,138,0.1);color:var(--green);}
@@ -216,6 +220,27 @@ table{width:100%;border-collapse:collapse;}
   background-repeat:no-repeat;background-position:right 8px center;background-size:14px;
 }
 .status-select option{color:#000;background:#fff;font-weight:600;}
+.source-select{
+  width:100%;appearance:none;-webkit-appearance:none;cursor:pointer;
+  border:none;border-radius:7px;padding:7px 26px 7px 10px;font-family:var(--sans);font-size:12.5px;font-weight:700;
+  outline:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath d='M5.5 7.5l4.5 4.5 4.5-4.5' stroke='white' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;background-size:14px;
+}
+.source-select option{font-weight:600;}
+
+.drag-handle-cell{width:28px;text-align:center;cursor:grab;color:var(--text-faint);user-select:none;}
+.drag-handle-cell:hover{color:var(--text);}
+.game-table th[draggable="true"]{cursor:grab;}
+.game-table th.col-dragging{opacity:0.4;}
+.game-table tr.row-dragging{opacity:0.35;}
+.game-table tr.row-drop-target td{border-top:2px solid var(--lime);}
+.game-table th.col-drop-target{border-left:3px solid #0a0b08;}
+
+.source-row{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;background:var(--bg-raised);border:1px solid var(--border);}
+.source-swatch{width:16px;height:16px;border-radius:4px;flex-shrink:0;}
+.source-row .source-name{flex:1;font-size:13px;font-weight:600;}
+.source-row .mini-btn{flex-shrink:0;}
 
 .pager{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;font-size:12px;color:var(--text-dim);}
 .pager-btns{display:flex;gap:8px;}
@@ -243,6 +268,8 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
       </div>
     </div>
     <div class="topbar-actions">
+      <span class="icon-btn" id="syncStatus" style="cursor:default;">💾 Local only</span>
+      <button class="icon-btn" id="btnSyncNow">☁ Sync now</button>
       <button class="icon-btn" id="btnExport">⭳ Export backup</button>
       <button class="icon-btn" id="btnImport">⭱ Import</button>
       <button class="icon-btn danger" id="btnReset">Reset data</button>
@@ -356,102 +383,153 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
   <!-- ============ BACKEND TESTING ============ -->
   <div class="panel" id="panel-backend">
 
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="stat-label">Total Tests</div>
-        <div class="stat-value lime" id="beTotal">0</div>
-        <div class="stat-sub">logged entries</div>
+    <div class="month-header">
+      <div>
+        <div class="month-eyebrow">Backend Testing</div>
+        <h2 class="month-title" id="beDayTitleDisplay">—</h2>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Pass Rate</div>
-        <div class="stat-value green" id="bePassRate">0%</div>
-        <div class="stat-sub" id="bePassRateSub">— passed / — failed</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Unique Games</div>
-        <div class="stat-value purple" id="beUniqueGames">0</div>
-        <div class="stat-sub">distinct titles tracked</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">In Queue</div>
-        <div class="stat-value amber" id="beQueued">0</div>
-        <div class="stat-sub">waiting to be tested</div>
+      <div class="month-controls">
+        <select id="beDaySelect"></select>
+        <button class="icon-btn" id="addBeDayBtn">+ New day</button>
       </div>
     </div>
 
-    <div class="form-card">
-      <h3>Log a backend test</h3>
-      <div class="form-row">
-        <div class="field">
-          <label>Date</label>
-          <input type="date" id="beDate">
+    <div class="week-nav">
+      <span class="stat-sub" id="beDayInfo">—</span>
+      <button class="icon-btn danger hidden" id="deleteBeDayBtn">Delete this day page</button>
+    </div>
+
+    <div class="modal-overlay hidden" id="dayModalOverlay">
+      <div class="modal-box">
+        <h3>Add a day page</h3>
+        <input type="date" id="dayPicker">
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="dayModalCancel">Cancel</button>
+          <button class="btn btn-primary" id="dayModalAdd">Add page</button>
         </div>
-        <div class="field grow-2">
-          <label>Game</label>
-          <input type="text" id="beGame" placeholder="e.g. Resident Evil 4">
+      </div>
+    </div>
+
+    <div class="backend-layout">
+      <div class="backend-main">
+
+        <div class="form-card">
+          <h3>Log a backend test</h3>
+          <div class="form-row">
+            <div class="field">
+              <label>Date</label>
+              <input type="date" id="beDate">
+            </div>
+            <div class="field grow-2">
+              <label>Game</label>
+              <input type="text" id="beGame" placeholder="e.g. Resident Evil 4">
+            </div>
+            <div class="field">
+              <label>Source</label>
+              <select id="beSource"></select>
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <select id="beStatus">
+                <option>Queued</option>
+                <option>Downloading</option>
+                <option>Testing</option>
+                <option>Passed</option>
+                <option>Failed</option>
+              </select>
+            </div>
+            <div class="field grow-2">
+              <label>Notes</label>
+              <input type="text" id="beNotes" placeholder="optional">
+            </div>
+            <button class="btn btn-primary" id="beAddBtn">+ Add entry</button>
+          </div>
+          <div style="margin-top:12px;">
+            <button class="icon-btn" id="manageSourcesBtn">🎨 Manage sources</button>
+          </div>
         </div>
-        <div class="field">
-          <label>Source</label>
-          <input type="text" id="beSource" placeholder="Steam / Xbox / GOG…" list="sourceList">
-          <datalist id="sourceList"></datalist>
+
+        <div class="modal-overlay hidden" id="sourceModalOverlay">
+          <div class="modal-box" style="width:320px;">
+            <h3>Manage sources</h3>
+            <div id="sourceModalList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:260px;overflow-y:auto;"></div>
+            <div style="display:flex;gap:8px;margin-bottom:14px;">
+              <input type="text" id="newSourceName" placeholder="New source name" style="flex:1;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
+              <input type="color" id="newSourceColor" value="#5a6270" style="width:42px;height:38px;border:1px solid var(--border);border-radius:8px;background:var(--bg-raised);padding:2px;cursor:pointer;">
+            </div>
+            <div class="modal-actions" style="justify-content:space-between;">
+              <button class="btn btn-ghost" id="sourceModalClose">Close</button>
+              <button class="btn btn-primary" id="addSourceBtn">+ Add source</button>
+            </div>
+          </div>
         </div>
-        <div class="field">
-          <label>Status</label>
-          <select id="beStatus">
-            <option>Queued</option>
-            <option>Downloading</option>
-            <option>Testing</option>
-            <option>Passed</option>
-            <option>Failed</option>
+
+        <div class="form-card">
+          <h3>Paste from sheet</h3>
+          <p class="hint">Copy columns straight from your spreadsheet (tab-separated) and paste below — one row per line. Supports Game, Source, Status, Date, Notes in that order; Status/Date are optional and default to Queued / this page's day if left out.</p>
+          <div class="form-row">
+            <div class="field grow-2">
+              <textarea id="bePasteArea" rows="3" placeholder="Palworld&#9;Steam&#9;Failed&#9;July 25&#10;Palworld&#9;Xbox&#9;Passed&#9;July 25" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
+            </div>
+            <button class="btn btn-primary" id="bePasteBtn">+ Add pasted rows</button>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" id="beSearch" placeholder="Search game…">
+          <select id="beSourceFilter"><option value="">All sources</option></select>
+          <select id="beStatusFilter">
+            <option value="">All statuses</option>
+            <option>Queued</option><option>Downloading</option><option>Testing</option><option>Passed</option><option>Failed</option>
+          </select>
+          <select id="beSort">
+            <option value="custom">Custom (drag to arrange)</option>
+            <option value="date_desc">Newest first</option>
+            <option value="date_asc">Oldest first</option>
+            <option value="game_asc">Game A–Z</option>
           </select>
         </div>
-        <div class="field grow-2">
-          <label>Notes</label>
-          <input type="text" id="beNotes" placeholder="optional">
+
+        <div class="table-wrap">
+          <div class="table-scroll">
+            <table class="game-table" id="beTable">
+              <thead>
+                <tr id="beHeaderRow"></tr>
+              </thead>
+              <tbody id="beTbody"></tbody>
+            </table>
+          </div>
+          <div class="pager">
+            <span id="pagerInfo">—</span>
+            <div class="pager-btns">
+              <button class="icon-btn" id="pagePrev">‹ Prev</button>
+              <button class="icon-btn" id="pageNext">Next ›</button>
+            </div>
+          </div>
         </div>
-        <button class="btn btn-primary" id="beAddBtn">+ Add entry</button>
-      </div>
-    </div>
 
-    <div class="form-card">
-      <h3>Paste from sheet</h3>
-      <p class="hint">Copy Game + Source columns straight from your spreadsheet (tab-separated) and paste below — one row per line. New rows are added as "Queued".</p>
-      <div class="form-row">
-        <div class="field grow-2">
-          <textarea id="bePasteArea" rows="3" placeholder="Dragonsword: Awakening&#9;Steam&#10;Iron Frontier&#9;Xbox" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
+      </div>
+
+      <div class="backend-sidebar">
+        <div class="stat-card">
+          <div class="stat-label">Total Tests</div>
+          <div class="stat-value lime" id="beTotal">0</div>
+          <div class="stat-sub">logged this day</div>
         </div>
-        <button class="btn btn-primary" id="bePasteBtn">+ Add pasted rows</button>
-      </div>
-    </div>
-
-    <div class="filter-bar">
-      <input type="text" id="beSearch" placeholder="Search game…">
-      <select id="beSourceFilter"><option value="">All sources</option></select>
-      <select id="beStatusFilter">
-        <option value="">All statuses</option>
-        <option>Queued</option><option>Downloading</option><option>Testing</option><option>Passed</option><option>Failed</option>
-      </select>
-      <select id="beSort">
-        <option value="date_desc">Newest first</option>
-        <option value="date_asc">Oldest first</option>
-        <option value="game_asc">Game A–Z</option>
-      </select>
-    </div>
-
-    <div class="table-wrap">
-      <div class="table-scroll">
-        <table class="game-table" id="beTable">
-          <thead>
-            <tr><th>Game</th><th>Source</th><th>Status</th><th>Date</th><th>Notes</th><th></th></tr>
-          </thead>
-          <tbody id="beTbody"></tbody>
-        </table>
-      </div>
-      <div class="pager">
-        <span id="pagerInfo">—</span>
-        <div class="pager-btns">
-          <button class="icon-btn" id="pagePrev">‹ Prev</button>
-          <button class="icon-btn" id="pageNext">Next ›</button>
+        <div class="stat-card">
+          <div class="stat-label">Pass Rate</div>
+          <div class="stat-value green" id="bePassRate">0%</div>
+          <div class="stat-sub" id="bePassRateSub">— passed / — failed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Unique Games</div>
+          <div class="stat-value purple" id="beUniqueGames">0</div>
+          <div class="stat-sub">distinct titles this day</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">In Queue / Testing</div>
+          <div class="stat-value amber" id="beQueued">0</div>
+          <div class="stat-sub" id="beQueuedSub">waiting or in progress</div>
         </div>
       </div>
     </div>
@@ -490,6 +568,67 @@ function persistAll(){
   saveJSON(LS_REG, regularEntries);
   saveJSON(LS_BE, backendEntries);
   saveJSON(LS_SET, settings);
+  if(syncEnabled) setSyncStatus('unsaved');
+}
+
+/* ---------------- cloud sync (Google Apps Script + Sheets) ---------------- */
+// Paste your deployed Apps Script Web App URL below to enable cross-device sync.
+// Leave as-is to keep this device running in local-only (browser storage) mode.
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwB9_0XkF16hKP6E6aVAHe9eKkALIi7zqusxVshZKd4Q492VGBLqvFwtZDgHBHoS5e_4g/exec';
+const syncEnabled = !!SCRIPT_URL && !SCRIPT_URL.includes('PASTE_YOUR');
+
+function setSyncStatus(status){
+  const el = document.getElementById('syncStatus');
+  if(!el) return;
+  if(status==='syncing') el.textContent = '⏳ Syncing…';
+  else if(status==='synced') el.textContent = '☁ Synced';
+  else if(status==='unsaved') el.textContent = '● Unsynced changes — click Sync now';
+  else if(status==='error') el.textContent = '⚠ Sync failed (saved locally)';
+  else el.textContent = '💾 Local only';
+}
+
+async function loadFromCloud(){
+  if(!syncEnabled){ setSyncStatus('offline'); return false; }
+  setSyncStatus('syncing');
+  try{
+    const res = await fetch(SCRIPT_URL, { method:'GET', cache:'no-store' });
+    const data = await res.json();
+    if(data && typeof data === 'object'){
+      regularEntries = Array.isArray(data.regularEntries) ? data.regularEntries : regularEntries;
+      backendEntries = Array.isArray(data.backendEntries) ? data.backendEntries : backendEntries;
+      if(data.settings && typeof data.settings === 'object') settings = Object.assign({}, settings, data.settings);
+      if(!settings.knownMonths) settings.knownMonths = [];
+      if(!settings.beKnownDays) settings.beKnownDays = [];
+      if(!settings.sources || !settings.sources.length) settings.sources = SOURCE_PRESETS.map(s=>({...s}));
+      if(!settings.beColumnOrder) settings.beColumnOrder = ['game','platform','status','date','notes'];
+      if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
+      saveJSON(LS_REG, regularEntries);
+      saveJSON(LS_BE, backendEntries);
+      saveJSON(LS_SET, settings);
+    }
+    setSyncStatus('synced');
+    return true;
+  }catch(err){
+    console.error('Cloud load failed', err);
+    setSyncStatus('error');
+    return false;
+  }
+}
+
+async function pushToCloudNow(){
+  if(!syncEnabled) return;
+  setSyncStatus('syncing');
+  try{
+    await fetch(SCRIPT_URL, {
+      method:'POST',
+      headers: { 'Content-Type':'text/plain;charset=utf-8' }, // avoids CORS preflight against Apps Script
+      body: JSON.stringify({ regularEntries, backendEntries, settings })
+    });
+    setSyncStatus('synced');
+  }catch(err){
+    console.error('Cloud push failed', err);
+    setSyncStatus('error');
+  }
 }
 
 /* ---------------- date helpers ---------------- */
@@ -543,12 +682,13 @@ function ensureMonthKnown(ym){
 }
 
 let selectedMonth = null;
-(function initSelectedMonth(){
+function recomputeSelectedMonth(){
   if(!settings.knownMonths.length) settings.knownMonths = [ymNow()];
   const all = getAllMonths();
   selectedMonth = all.includes(ymNow()) ? ymNow() : all[all.length-1];
   persistAll();
-})();
+}
+recomputeSelectedMonth();
 
 document.getElementById('regTargetInput').value = settings.monthlyTarget;
 document.getElementById('regTargetInput').addEventListener('change', (e)=>{
@@ -779,49 +919,250 @@ document.getElementById('rgAddBtn').addEventListener('click', ()=>{
 });
 
 document.getElementById('rgDate').value = fmtISO(new Date());
-document.getElementById('beDate').value = fmtISO(new Date());
+// beDate default is set below once selectedBeDay is initialized
 
 /* =========================================================
-   BACKEND TESTING TAB — Game / Source / Status / Date
+   BACKEND TESTING TAB — Game / Source / Status / Date / Notes
    ========================================================= */
 let bePage = 0;
 const PAGE_SIZE = 25;
 
+if(!settings.beKnownDays) settings.beKnownDays = [];
+
+function getAllBeDays(){
+  const set = new Set(settings.beKnownDays||[]);
+  backendEntries.forEach(e=> e.date && set.add(e.date));
+  return [...set].sort();
+}
+function ensureBeDayKnown(iso){
+  if(!iso) return;
+  if(!settings.beKnownDays.includes(iso)){
+    settings.beKnownDays.push(iso);
+    settings.beKnownDays.sort();
+    persistAll();
+  }
+}
+function fmtDayPageLabel(iso){
+  const d = toDate(iso);
+  return d.toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' });
+}
+function fmtDayPageTitle(iso){
+  const d = toDate(iso);
+  return d.toLocaleDateString(undefined, { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+}
+
+let selectedBeDay = null;
+function recomputeSelectedBeDay(){
+  const today = fmtISO(new Date());
+  if(!settings.beKnownDays.length) settings.beKnownDays = [today];
+  const all = getAllBeDays();
+  selectedBeDay = all.includes(today) ? today : all[all.length-1];
+  persistAll();
+  document.getElementById('beDate').value = selectedBeDay;
+}
+recomputeSelectedBeDay();
+
+function populateBeDaySelect(){
+  const sel = document.getElementById('beDaySelect');
+  const days = getAllBeDays();
+  sel.innerHTML = days.map(d=>`<option value="${d}" ${d===selectedBeDay?'selected':''}>${fmtDayPageLabel(d)}</option>`).join('');
+}
+document.getElementById('beDaySelect').addEventListener('change', (e)=>{
+  selectedBeDay = e.target.value;
+  document.getElementById('beDate').value = selectedBeDay;
+  bePage = 0;
+  renderBackend();
+});
+document.getElementById('addBeDayBtn').addEventListener('click', ()=>{
+  document.getElementById('dayPicker').value = selectedBeDay;
+  document.getElementById('dayModalOverlay').classList.remove('hidden');
+});
+document.getElementById('dayModalCancel').addEventListener('click', ()=> document.getElementById('dayModalOverlay').classList.add('hidden'));
+document.getElementById('dayModalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='dayModalOverlay') e.currentTarget.classList.add('hidden'); });
+document.getElementById('dayModalAdd').addEventListener('click', ()=>{
+  const val = document.getElementById('dayPicker').value;
+  if(!val){ alert('Pick a date first.'); return; }
+  ensureBeDayKnown(val);
+  selectedBeDay = val;
+  document.getElementById('beDate').value = selectedBeDay;
+  document.getElementById('dayModalOverlay').classList.add('hidden');
+  bePage = 0;
+  renderBackend();
+});
+document.getElementById('deleteBeDayBtn').addEventListener('click', ()=>{
+  if(!confirm('Remove the ' + fmtDayPageTitle(selectedBeDay) + ' page? (only allowed while it has no entries)')) return;
+  settings.beKnownDays = settings.beKnownDays.filter(d=>d!==selectedBeDay);
+  persistAll();
+  const all = getAllBeDays();
+  selectedBeDay = all.length ? all[all.length-1] : fmtISO(new Date());
+  ensureBeDayKnown(selectedBeDay);
+  document.getElementById('beDate').value = selectedBeDay;
+  bePage = 0;
+  renderBackend();
+});
+
+const SOURCE_PRESETS = [
+  { name: 'Steam',       bg: '#171a21', text: '#66c0f4' },
+  { name: 'Xbox',        bg: '#107c10', text: '#ffffff' },
+  { name: 'GOG',         bg: '#8b3fa6', text: '#ffffff' },
+  { name: 'Epic Games',  bg: '#000000', text: '#ffffff' },
+  { name: 'Ubisoft',     bg: '#0b1a1a', text: '#2fe0c9' }
+];
+if(!settings.sources || !settings.sources.length){ settings.sources = SOURCE_PRESETS.map(s=>({...s})); persistAll(); }
+if(!settings.beColumnOrder) settings.beColumnOrder = ['game','platform','status','date','notes'];
+
+const COLUMN_DEFS = {
+  game:     { label: 'Game' },
+  platform: { label: 'Source' },
+  status:   { label: 'Status' },
+  date:     { label: 'Date' },
+  notes:    { label: 'Notes' }
+};
+
+function contrastText(hex){
+  const h = (hex||'#888888').replace('#','');
+  const r = parseInt(h.substring(0,2),16)||0, g = parseInt(h.substring(2,4),16)||0, b = parseInt(h.substring(4,6),16)||0;
+  const lum = (0.299*r + 0.587*g + 0.114*b)/255;
+  return lum > 0.6 ? '#0a0b08' : '#ffffff';
+}
+function hashColor(name){
+  let hash = 0;
+  for(let i=0;i<name.length;i++){ hash = name.charCodeAt(i) + ((hash<<5)-hash); }
+  const hue = Math.abs(hash) % 360;
+  return hslToHex(hue, 45, 32);
+}
+function hslToHex(h,s,l){
+  s/=100; l/=100;
+  const k = n => (n + h/30) % 12;
+  const a = s * Math.min(l, 1-l);
+  const f = n => l - a * Math.max(-1, Math.min(k(n)-3, Math.min(9-k(n), 1)));
+  const toHex = x => Math.round(255*x).toString(16).padStart(2,'0');
+  return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
+}
+function getSourceTheme(name){
+  if(!name) return { bg:'#2a2d1e', text:'#8d9280' };
+  const found = settings.sources.find(s=>s.name === name);
+  if(found) return found;
+  return { bg: hashColor(name), text: '#ffffff' };
+}
+function ensureSourceRegistered(name){
+  if(!name) return;
+  if(!settings.sources.find(s=>s.name===name)){
+    settings.sources.push({ name, bg: hashColor(name), text: '#ffffff' });
+  }
+}
+
+function populateSourceSelects(){
+  const opts = settings.sources.map(s=>`<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`).join('');
+  const addSel = document.getElementById('beSource');
+  const prevAdd = addSel.value;
+  addSel.innerHTML = opts;
+  if([...addSel.options].some(o=>o.value===prevAdd)) addSel.value = prevAdd;
+
+  const filtSel = document.getElementById('beSourceFilter');
+  const prevFilt = filtSel.value;
+  filtSel.innerHTML = '<option value="">All sources</option>' + opts;
+  filtSel.value = prevFilt;
+}
+
+document.getElementById('manageSourcesBtn').addEventListener('click', ()=>{
+  renderSourceModalList();
+  document.getElementById('sourceModalOverlay').classList.remove('hidden');
+});
+document.getElementById('sourceModalClose').addEventListener('click', ()=> document.getElementById('sourceModalOverlay').classList.add('hidden'));
+document.getElementById('sourceModalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='sourceModalOverlay') e.currentTarget.classList.add('hidden'); });
+document.getElementById('addSourceBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('newSourceName').value.trim();
+  const bg = document.getElementById('newSourceColor').value;
+  if(!name){ alert('Enter a source name.'); return; }
+  if(settings.sources.find(s=>s.name===name)){ alert('That source already exists.'); return; }
+  settings.sources.push({ name, bg, text: contrastText(bg) });
+  persistAll();
+  document.getElementById('newSourceName').value = '';
+  renderSourceModalList();
+  populateSourceSelects();
+  renderBackend();
+});
+function renderSourceModalList(){
+  const wrap = document.getElementById('sourceModalList');
+  wrap.innerHTML = settings.sources.map(s=>`
+    <div class="source-row">
+      <div class="source-swatch" style="background:${s.bg};"></div>
+      <div class="source-name" style="color:var(--text);">${escapeHtml(s.name)}</div>
+      <button class="mini-btn del" data-del-source="${escapeHtml(s.name)}" title="Delete">✕</button>
+    </div>`).join('') || '<div style="color:var(--text-faint);font-size:12.5px;">No sources yet.</div>';
+  wrap.querySelectorAll('[data-del-source]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const name = b.dataset.delSource;
+      if(!confirm(`Remove "${name}" from your sources list? Existing entries keep the label but won't be themed.`)) return;
+      settings.sources = settings.sources.filter(s=>s.name!==name);
+      persistAll();
+      renderSourceModalList();
+      populateSourceSelects();
+      renderBackend();
+    });
+  });
+}
+
 document.getElementById('beAddBtn').addEventListener('click', ()=>{
-  const date = document.getElementById('beDate').value;
+  const date = document.getElementById('beDate').value || selectedBeDay;
   const game = document.getElementById('beGame').value.trim();
-  const source = document.getElementById('beSource').value.trim();
+  const source = document.getElementById('beSource').value;
   const status = document.getElementById('beStatus').value;
   const notes = document.getElementById('beNotes').value.trim();
   if(!game){ alert('Please enter a game name.'); return; }
   backendEntries.push({ id: uid(), date: date || null, game, platform: source, status, notes });
   persistAll();
+  if(date){ ensureBeDayKnown(date); selectedBeDay = date; document.getElementById('beDate').value = selectedBeDay; }
   document.getElementById('beGame').value='';
-  document.getElementById('beSource').value='';
   document.getElementById('beNotes').value='';
   bePage = 0;
   renderBackend(); renderTicker();
 });
 
+function normalizeStatus(str){
+  if(!str) return null;
+  const found = STATUS_OPTIONS_FOR_PASTE.find(s=> s.toLowerCase() === str.trim().toLowerCase());
+  return found || null;
+}
+function parseFlexibleDate(str){
+  if(!str) return null;
+  str = str.trim();
+  if(!str) return null;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+  let s = str;
+  if(!/\d{4}/.test(s)) s = s + ' ' + new Date().getFullYear();
+  const d = new Date(s);
+  if(isNaN(d.getTime())) return null;
+  return fmtISO(d);
+}
+const STATUS_OPTIONS_FOR_PASTE = ['Queued','Downloading','Testing','Passed','Failed'];
+
 document.getElementById('bePasteBtn').addEventListener('click', ()=>{
   const raw = document.getElementById('bePasteArea').value;
   if(!raw.trim()){ return; }
-  const today = fmtISO(new Date());
+  const pageDefaultDate = selectedBeDay || fmtISO(new Date());
   let count = 0;
   raw.split(/\r?\n/).forEach(line=>{
     if(!line.trim()) return;
     let parts = line.split('\t');
-    if(parts.length < 2) parts = line.split(/ {2,}/); // fallback: 2+ spaces as separator
+    if(parts.length < 2) parts = line.split(/ {2,}/);
     const game = (parts[0]||'').trim();
     const source = (parts[1]||'').trim();
     if(!game) return;
-    backendEntries.push({ id: uid(), date: today, game, platform: source, status: 'Queued', notes: '' });
+    if(source) ensureSourceRegistered(source);
+    const status = normalizeStatus(parts[2]) || 'Queued';
+    const date = parseFlexibleDate(parts[3]) || pageDefaultDate;
+    const notes = (parts[4]||'').trim();
+    backendEntries.push({ id: uid(), date, game, platform: source, status, notes });
+    if(date) ensureBeDayKnown(date);
     count++;
   });
   if(count === 0){ alert('Could not find any Game rows in that paste.'); return; }
   persistAll();
   document.getElementById('bePasteArea').value = '';
   bePage = 0;
+  populateSourceSelects();
   renderBackend(); renderTicker();
   const btn = document.getElementById('bePasteBtn');
   const original = btn.textContent;
@@ -843,12 +1184,14 @@ function getFilteredBackend(){
   const sort = document.getElementById('beSort').value;
 
   let list = backendEntries.filter(e=>{
+    if(e.date !== selectedBeDay) return false;
     if(q && !(e.game||'').toLowerCase().includes(q)) return false;
     if(pf && e.platform !== pf) return false;
     if(sf && e.status !== sf) return false;
     return true;
   });
 
+  if(sort === 'custom') return list; // preserve backendEntries' natural (drag-arranged) order
   list = list.slice().sort((a,b)=>{
     if(sort === 'game_asc') return (a.game||'').localeCompare(b.game||'');
     const da = a.date || '0000-00-00', db = b.date || '0000-00-00';
@@ -857,6 +1200,7 @@ function getFilteredBackend(){
   });
   return list;
 }
+function getDayEntries(){ return backendEntries.filter(e=> e.date === selectedBeDay); }
 
 const STATUS_COLORS = {
   Passed:      '#1f8f5f',
@@ -867,14 +1211,67 @@ const STATUS_COLORS = {
 };
 const STATUS_OPTIONS = ['Queued','Downloading','Testing','Passed','Failed'];
 
+function renderBackendHeader(){
+  const tr = document.getElementById('beHeaderRow');
+  const cols = settings.beColumnOrder.map(key=>`<th draggable="true" data-col="${key}">${COLUMN_DEFS[key].label}</th>`).join('');
+  tr.innerHTML = `<th style="width:28px;"></th>${cols}<th></th>`;
+
+  tr.querySelectorAll('th[draggable="true"]').forEach(th=>{
+    th.addEventListener('dragstart', (ev)=>{
+      th.classList.add('col-dragging');
+      ev.dataTransfer.setData('text/col', th.dataset.col);
+      ev.dataTransfer.effectAllowed = 'move';
+    });
+    th.addEventListener('dragend', ()=> th.classList.remove('col-dragging'));
+    th.addEventListener('dragover', (ev)=>{ ev.preventDefault(); th.classList.add('col-drop-target'); });
+    th.addEventListener('dragleave', ()=> th.classList.remove('col-drop-target'));
+    th.addEventListener('drop', (ev)=>{
+      ev.preventDefault();
+      th.classList.remove('col-drop-target');
+      const draggedKey = ev.dataTransfer.getData('text/col');
+      const targetKey = th.dataset.col;
+      if(!draggedKey || draggedKey === targetKey) return;
+      const order = settings.beColumnOrder;
+      const from = order.indexOf(draggedKey), to = order.indexOf(targetKey);
+      order.splice(from,1);
+      order.splice(to,0,draggedKey);
+      persistAll();
+      renderBackend();
+    });
+  });
+}
+
+function buildBackendCell(col, e){
+  if(col === 'game'){
+    return `<td><input class="cell-input" data-field="game" value="${escAttr(e.game)}"></td>`;
+  }
+  if(col === 'platform'){
+    const theme = getSourceTheme(e.platform);
+    const opts = settings.sources.map(s=>`<option value="${escapeHtml(s.name)}" ${s.name===e.platform?'selected':''}>${escapeHtml(s.name)}</option>`).join('');
+    const extra = (e.platform && !settings.sources.find(s=>s.name===e.platform)) ? `<option value="${escAttr(e.platform)}" selected>${escapeHtml(e.platform)}</option>` : '';
+    return `<td><select class="source-select" data-field="platform" style="background-color:${theme.bg};color:${theme.text};">${extra}${opts}</select></td>`;
+  }
+  if(col === 'status'){
+    const statusColor = STATUS_COLORS[e.status] || STATUS_COLORS.Queued;
+    const opts = STATUS_OPTIONS.map(s=>`<option value="${s}" ${s===e.status?'selected':''}>${s}</option>`).join('');
+    return `<td><select class="status-select" data-field="status" style="background-color:${statusColor};">${opts}</select></td>`;
+  }
+  if(col === 'date'){
+    return `<td><input type="date" class="cell-input date-input" data-field="date" value="${e.date||''}"></td>`;
+  }
+  if(col === 'notes'){
+    return `<td><input class="cell-input" data-field="notes" value="${escAttr(e.notes)}" placeholder="—"></td>`;
+  }
+  return '<td></td>';
+}
+
 function renderBackend(){
-  const sources = new Set();
-  backendEntries.forEach(e=> e.platform && sources.add(e.platform));
-  const pfSel = document.getElementById('beSourceFilter');
-  const currentVal = pfSel.value;
-  pfSel.innerHTML = '<option value="">All sources</option>' + [...sources].sort().map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
-  pfSel.value = currentVal;
-  document.getElementById('sourceList').innerHTML = [...sources].sort().map(p=>`<option value="${escapeHtml(p)}">`).join('');
+  ensureBeDayKnown(selectedBeDay);
+  populateBeDaySelect();
+  document.getElementById('beDayTitleDisplay').textContent = fmtDayPageTitle(selectedBeDay);
+
+  populateSourceSelects();
+  renderBackendHeader();
 
   const filtered = getFilteredBackend();
   const total = filtered.length;
@@ -884,27 +1281,51 @@ function renderBackend(){
   const pageItems = filtered.slice(bePage*PAGE_SIZE, bePage*PAGE_SIZE + PAGE_SIZE);
 
   const tbody = document.getElementById('beTbody');
+  const colCount = settings.beColumnOrder.length + 2;
   if(pageItems.length===0){
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="6">No matching entries.</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="${colCount}">No matching entries.</td></tr>`;
   } else {
     tbody.innerHTML = pageItems.map(e=>{
-      const statusColor = STATUS_COLORS[e.status] || STATUS_COLORS.Queued;
-      const opts = STATUS_OPTIONS.map(s=>`<option value="${s}" ${s===e.status?'selected':''}>${s}</option>`).join('');
+      const cells = settings.beColumnOrder.map(col=> buildBackendCell(col, e)).join('');
       return `<tr data-row-id="${e.id}">
-        <td><input class="cell-input" data-field="game" value="${escAttr(e.game)}"></td>
-        <td><input class="cell-input" data-field="platform" value="${escAttr(e.platform)}" list="sourceList"></td>
-        <td><select class="status-select" data-field="status" style="background-color:${statusColor};">${opts}</select></td>
-        <td><input type="date" class="cell-input date-input" data-field="date" value="${e.date||''}"></td>
-        <td><input class="cell-input" data-field="notes" value="${escAttr(e.notes)}" placeholder="—"></td>
-        <td><div class="row-actions">
-          <button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button>
-        </div></td>
+        <td class="drag-handle-cell" title="Drag to reorder">⋮⋮</td>
+        ${cells}
+        <td><div class="row-actions"><button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button></div></td>
       </tr>`;
     }).join('');
+
     tbody.querySelectorAll('tr[data-row-id]').forEach(tr=>{
       const id = tr.dataset.rowId;
       tr.querySelectorAll('[data-field]').forEach(el=>{
         el.addEventListener('change', ()=> commitBackendCell(id, el.dataset.field, el.value, el));
+      });
+      tr.querySelectorAll('[data-field="platform"]').forEach(sel=>{
+        sel.addEventListener('change', ()=>{ sel.style.backgroundColor = getSourceTheme(sel.value).bg; sel.style.color = getSourceTheme(sel.value).text; });
+      });
+      const handle = tr.querySelector('.drag-handle-cell');
+      handle.addEventListener('mousedown', ()=> tr.setAttribute('draggable','true'));
+      tr.addEventListener('dragend', ()=>{ tr.removeAttribute('draggable'); tr.classList.remove('row-dragging'); });
+      tr.addEventListener('dragstart', (ev)=>{
+        tr.classList.add('row-dragging');
+        ev.dataTransfer.setData('text/row', id);
+        ev.dataTransfer.effectAllowed = 'move';
+      });
+      tr.addEventListener('dragover', (ev)=>{ ev.preventDefault(); tr.classList.add('row-drop-target'); });
+      tr.addEventListener('dragleave', ()=> tr.classList.remove('row-drop-target'));
+      tr.addEventListener('drop', (ev)=>{
+        ev.preventDefault();
+        tr.classList.remove('row-drop-target');
+        const draggedId = ev.dataTransfer.getData('text/row');
+        const targetId = id;
+        if(!draggedId || draggedId === targetId) return;
+        const from = backendEntries.findIndex(x=>x.id===draggedId);
+        const to = backendEntries.findIndex(x=>x.id===targetId);
+        if(from===-1 || to===-1) return;
+        const [moved] = backendEntries.splice(from,1);
+        backendEntries.splice(to,0,moved);
+        persistAll();
+        document.getElementById('beSort').value = 'custom';
+        renderBackend();
       });
     });
     tbody.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=> deleteBackendEntry(b.dataset.del)));
@@ -913,21 +1334,34 @@ function renderBackend(){
   document.getElementById('pagerInfo').textContent =
     total===0 ? 'No entries' : `Showing ${bePage*PAGE_SIZE+1}–${Math.min(total,(bePage+1)*PAGE_SIZE)} of ${total}`;
 
-  const passed = backendEntries.filter(e=>e.status==='Passed').length;
-  const failed = backendEntries.filter(e=>e.status==='Failed').length;
-  const queued = backendEntries.filter(e=>e.status==='Queued').length;
+  const dayEntries = getDayEntries();
+  const passed = dayEntries.filter(e=>e.status==='Passed').length;
+  const failed = dayEntries.filter(e=>e.status==='Failed').length;
+  const queuedOrTesting = dayEntries.filter(e=>e.status==='Queued' || e.status==='Testing').length;
   const rated = passed+failed;
-  document.getElementById('beTotal').textContent = backendEntries.length;
+  document.getElementById('beTotal').textContent = dayEntries.length;
   document.getElementById('bePassRate').textContent = rated ? Math.round(passed/rated*100)+'%' : '—';
   document.getElementById('bePassRateSub').textContent = `${passed} passed / ${failed} failed`;
-  document.getElementById('beUniqueGames').textContent = new Set(backendEntries.map(e=>e.game)).size;
-  document.getElementById('beQueued').textContent = queued;
+  document.getElementById('beUniqueGames').textContent = new Set(dayEntries.map(e=>e.game)).size;
+  document.getElementById('beQueued').textContent = queuedOrTesting;
+
+  const delBtn = document.getElementById('deleteBeDayBtn');
+  const allBeDays = getAllBeDays();
+  if(dayEntries.length===0 && allBeDays.length>1) delBtn.classList.remove('hidden'); else delBtn.classList.add('hidden');
+  document.getElementById('beDayInfo').textContent = dayEntries.length + ' entr' + (dayEntries.length===1?'y':'ies') + ' on this page';
 }
 
 function commitBackendCell(id, field, value, el){
   const e = backendEntries.find(x=>x.id===id);
   if(!e) return;
-  if(field === 'date'){ e.date = value || null; }
+  if(field === 'date'){
+    e.date = value || null;
+    persistAll();
+    renderTicker();
+    if(e.date) ensureBeDayKnown(e.date);
+    renderBackend(); // date change may move this row off the current day page
+    return;
+  }
   else if(field === 'status'){
     e.status = value;
     if(el) el.style.backgroundColor = STATUS_COLORS[value] || STATUS_COLORS.Queued;
@@ -939,18 +1373,17 @@ function commitBackendCell(id, field, value, el){
   refreshBackendMeta();
 }
 function refreshBackendMeta(){
-  const sources = new Set();
-  backendEntries.forEach(e=> e.platform && sources.add(e.platform));
-  document.getElementById('sourceList').innerHTML = [...sources].sort().map(p=>`<option value="${escapeHtml(p)}">`).join('');
-  const passed = backendEntries.filter(e=>e.status==='Passed').length;
-  const failed = backendEntries.filter(e=>e.status==='Failed').length;
-  const queued = backendEntries.filter(e=>e.status==='Queued').length;
+  const dayEntries = getDayEntries();
+  const passed = dayEntries.filter(e=>e.status==='Passed').length;
+  const failed = dayEntries.filter(e=>e.status==='Failed').length;
+  const queuedOrTesting = dayEntries.filter(e=>e.status==='Queued' || e.status==='Testing').length;
   const rated = passed+failed;
-  document.getElementById('beTotal').textContent = backendEntries.length;
+  document.getElementById('beTotal').textContent = dayEntries.length;
   document.getElementById('bePassRate').textContent = rated ? Math.round(passed/rated*100)+'%' : '—';
   document.getElementById('bePassRateSub').textContent = `${passed} passed / ${failed} failed`;
-  document.getElementById('beUniqueGames').textContent = new Set(backendEntries.map(e=>e.game)).size;
-  document.getElementById('beQueued').textContent = queued;
+  document.getElementById('beUniqueGames').textContent = new Set(dayEntries.map(e=>e.game)).size;
+  document.getElementById('beQueued').textContent = queuedOrTesting;
+  document.getElementById('beDayInfo').textContent = dayEntries.length + ' entr' + (dayEntries.length===1?'y':'ies') + ' on this page';
 }
 function deleteBackendEntry(id){
   if(!confirm('Delete this backend test entry?')) return;
@@ -984,6 +1417,26 @@ function escapeHtml(s){
 }
 function escAttr(s){ return escapeHtml(s); }
 
+/* ---------------- manual cloud sync ---------------- */
+document.getElementById('btnSyncNow').addEventListener('click', async ()=>{
+  if(!syncEnabled){
+    alert('No cloud URL is set up yet, so this device is running in local-only mode. Ask for the Apps Script URL to be added to enable syncing.');
+    return;
+  }
+  const btn = document.getElementById('btnSyncNow');
+  btn.disabled = true;
+  await pushToCloudNow();      // save this device's current state first
+  const ok = await loadFromCloud(); // then pull the merged/latest state back down
+  if(ok){
+    recomputeSelectedMonth();
+    recomputeSelectedBeDay();
+    renderRegular();
+    renderBackend();
+    renderTicker();
+  }
+  btn.disabled = false;
+});
+
 /* ---------------- export / import / reset ---------------- */
 document.getElementById('btnExport').addEventListener('click', ()=>{
   const payload = { regularEntries, backendEntries, settings, exportedAt: new Date().toISOString() };
@@ -1008,10 +1461,18 @@ document.getElementById('importFile').addEventListener('change', (ev)=>{
       if(data.settings) settings = data.settings;
       if(!settings.knownMonths) settings.knownMonths = [];
       if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
+      if(!settings.beKnownDays) settings.beKnownDays = [];
+      if(!settings.sources || !settings.sources.length) settings.sources = SOURCE_PRESETS.map(s=>({...s}));
+      if(!settings.beColumnOrder) settings.beColumnOrder = ['game','platform','status','date','notes'];
       persistAll();
       document.getElementById('regTargetInput').value = settings.monthlyTarget;
       const all = getAllMonths();
       selectedMonth = all.includes(ymNow()) ? ymNow() : all[all.length-1];
+      const allBeDays = getAllBeDays();
+      const today = fmtISO(new Date());
+      selectedBeDay = allBeDays.includes(today) ? today : (allBeDays[allBeDays.length-1] || today);
+      ensureBeDayKnown(selectedBeDay);
+      document.getElementById('beDate').value = selectedBeDay;
       renderRegular(); renderBackend(); renderTicker();
       alert('Import complete.');
     }catch(e){ alert('Could not read that file — is it a valid QA Log backup JSON?'); }
@@ -1029,6 +1490,19 @@ document.getElementById('btnReset').addEventListener('click', ()=>{
 renderRegular();
 renderBackend();
 renderTicker();
+setSyncStatus(syncEnabled ? 'syncing' : 'offline');
+
+if(syncEnabled){
+  loadFromCloud().then(ok=>{
+    if(ok){
+      recomputeSelectedMonth();
+      recomputeSelectedBeDay();
+      renderRegular();
+      renderBackend();
+      renderTicker();
+    }
+  });
+}
 
 })();
 </script>
