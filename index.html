@@ -212,6 +212,13 @@ table{width:100%;border-collapse:collapse;}
 .cell-input:hover{border-color:var(--border);background:var(--bg-raised);}
 .cell-input:focus{border-color:var(--lime);background:var(--bg-raised);box-shadow:0 0 0 2px rgba(215,255,62,0.12);}
 .cell-input.date-input{font-family:var(--mono);color-scheme:dark;min-width:130px;}
+.game-cell{
+  width:100%;padding:6px 7px;border-radius:6px;border:1px solid transparent;
+  font-family:var(--sans);font-size:13px;font-weight:600;color:var(--text);
+  cursor:pointer;transition:.15s;user-select:none;
+}
+.game-cell:hover{border-color:var(--border);background:var(--bg-raised);}
+.game-cell.copied-flash{color:var(--lime);border-color:rgba(215,255,62,0.4);background:var(--lime-soft);}
 .status-select{
   width:100%;appearance:none;-webkit-appearance:none;cursor:pointer;
   border:none;border-radius:7px;padding:7px 26px 7px 10px;font-family:var(--sans);font-size:13px;font-weight:700;
@@ -476,6 +483,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
           <div class="form-row">
             <div class="field grow-2">
               <textarea id="bePasteArea" rows="3" placeholder="Palworld&#9;Steam&#9;Failed&#9;July 25&#10;Palworld&#9;Xbox&#9;Passed&#9;July 25" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
+              <p class="hint" style="margin:6px 0 0;">Pasting always replaces what's in this box — it won't stack with anything left over from before.</p>
             </div>
             <button class="btn btn-primary" id="bePasteBtn">+ Add pasted rows</button>
           </div>
@@ -659,16 +667,22 @@ function fmtMonthShort(ym){ const [y,m] = ym.split('-').map(Number); return new 
 function isWeekendDay(d){ return d.getDay()===0 || d.getDay()===6; }
 
 /* =========================================================
-   TABS
+   TABS — remembers last active tab across refreshes
    ========================================================= */
+const LS_TAB = 'qa_active_tab';
+function setActiveTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.panel').forEach(p=> p.classList.toggle('active', p.id === 'panel-'+tab));
+  try{ localStorage.setItem(LS_TAB, tab); }catch(e){}
+}
 document.querySelectorAll('.tab-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
-  });
+  btn.addEventListener('click', ()=> setActiveTab(btn.dataset.tab));
 });
+(function restoreActiveTab(){
+  let saved = null;
+  try{ saved = localStorage.getItem(LS_TAB); }catch(e){}
+  setActiveTab(saved === 'backend' ? 'backend' : 'regular');
+})();
 
 /* =========================================================
    REGULAR TESTING TAB — month pages
@@ -841,7 +855,7 @@ function buildDayGroup(dateObj){
         const statusColor = STATUS_COLORS[e.result] || STATUS_COLORS.Queued;
         const opts = STATUS_OPTIONS.map(s=>`<option value="${s}" ${s===e.result?'selected':''}>${s}</option>`).join('');
         rows += `<tr>
-          <td><div style="font-weight:600;">${escapeHtml(e.game||'')}</div>${e.platform ? `<div class="platform-tag">(${escapeHtml(e.platform)})</div>` : ''}</td>
+          <td><div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game||'')}</div>${e.platform ? `<div class="platform-tag">(${escapeHtml(e.platform)})</div>` : ''}</td>
           <td><select class="status-select" data-status-id="${e.id}" style="background-color:${statusColor};">${opts}</select></td>
           <td class="pts-cell">${fmtNum(e.points)}</td>
           <td><div class="row-actions">
@@ -865,6 +879,17 @@ function buildDayGroup(dateObj){
       sel.addEventListener('change', (ev)=>{
         ev.stopPropagation();
         commitRegularStatus(sel.dataset.statusId, sel.value, sel);
+      });
+    });
+    tblWrap.querySelectorAll('[data-game-id]').forEach(div=>{
+      div.addEventListener('click', ev=> ev.stopPropagation());
+      div.addEventListener('dblclick', ev=> ev.stopPropagation());
+      div.addEventListener('contextmenu', ev=> ev.stopPropagation());
+      const id = div.dataset.gameId;
+      const entry = regularEntries.find(x=>x.id===id);
+      wireGameCell(div, entry ? entry.game : '', (newVal)=>{
+        if(newVal !== null && newVal !== '' && entry){ entry.game = newVal; persistAll(); renderTicker(); }
+        renderRegular();
       });
     });
     wireQuickAddRow(tblWrap, iso);
@@ -1186,6 +1211,14 @@ function parseFlexibleDate(str){
 }
 const STATUS_OPTIONS_FOR_PASTE = ['Queued','Downloading','Testing','Passed','Failed'];
 
+document.getElementById('bePasteArea').addEventListener('paste', (ev)=>{
+  // Always replace the whole box with exactly what was just pasted, rather
+  // than inserting at the cursor (which silently stacks with leftover text).
+  ev.preventDefault();
+  const text = (ev.clipboardData || window.clipboardData).getData('text');
+  ev.target.value = text;
+});
+
 document.getElementById('bePasteBtn').addEventListener('click', ()=>{
   const raw = document.getElementById('bePasteArea').value;
   if(!raw.trim()){ return; }
@@ -1311,7 +1344,7 @@ function renderBackendHeader(){
 
 function buildBackendCell(col, e){
   if(col === 'game'){
-    return `<td><input class="cell-input" data-field="game" value="${escAttr(e.game)}"></td>`;
+    return `<td><div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game)}</div></td>`;
   }
   if(col === 'platform'){
     const theme = getSourceTheme(e.platform);
@@ -1370,6 +1403,14 @@ function renderBackend(){
       tr.querySelectorAll('[data-field="platform"]').forEach(sel=>{
         sel.addEventListener('change', ()=>{ sel.style.backgroundColor = getSourceTheme(sel.value).bg; sel.style.color = getSourceTheme(sel.value).text; });
       });
+      const gameCell = tr.querySelector('[data-game-id]');
+      if(gameCell){
+        const entry = backendEntries.find(x=>x.id===id);
+        wireGameCell(gameCell, entry ? entry.game : '', (newVal)=>{
+          if(newVal !== null && newVal !== '') commitBackendCell(id, 'game', newVal, null);
+          renderBackend();
+        });
+      }
       const handle = tr.querySelector('.drag-handle-cell');
       handle.addEventListener('mousedown', ()=> tr.setAttribute('draggable','true'));
       tr.addEventListener('dragend', ()=>{ tr.removeAttribute('draggable'); tr.classList.remove('row-dragging'); });
@@ -1484,6 +1525,53 @@ function escapeHtml(s){
   return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 function escAttr(s){ return escapeHtml(s); }
+
+/**
+ * Turns a game-name display element into: single click = copy to clipboard,
+ * double-click or right-click = inline edit. onCommit(newValue) is called
+ * once editing is confirmed (blur or Enter); Escape cancels without saving.
+ */
+function wireGameCell(div, currentValue, onCommit){
+  div.title = 'Click to copy · double-click or right-click to edit';
+  div.addEventListener('click', ()=>{
+    const text = currentValue || '';
+    if(!text) return;
+    const flash = ()=>{
+      const original = div.textContent;
+      div.textContent = 'Copied ✓';
+      div.classList.add('copied-flash');
+      setTimeout(()=>{ if(div.isConnected){ div.textContent = original; div.classList.remove('copied-flash'); } }, 900);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(flash).catch(flash);
+    } else {
+      flash();
+    }
+  });
+  const enterEdit = (ev)=>{
+    ev.preventDefault();
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'cell-input';
+    input.value = currentValue || '';
+    div.replaceWith(input);
+    input.focus();
+    input.select();
+    let done = false;
+    const finish = ()=>{
+      if(done) return;
+      done = true;
+      onCommit(input.value.trim());
+    };
+    input.addEventListener('blur', finish);
+    input.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){ e.preventDefault(); input.blur(); }
+      else if(e.key === 'Escape'){ done = true; input.blur(); onCommit(null); }
+    });
+  };
+  div.addEventListener('dblclick', enterEdit);
+  div.addEventListener('contextmenu', enterEdit);
+}
 
 /* ---------------- manual cloud sync ---------------- */
 document.getElementById('btnSyncNow').addEventListener('click', async ()=>{
