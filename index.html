@@ -620,8 +620,11 @@ function setSyncStatus(status){
   else el.textContent = '💾 Local only';
 }
 
+let appInitializing = true; // blocks auto-push until the initial cloud pull finishes
+
 function queueAutoPush(){
   if(!syncEnabled) return;
+  if(appInitializing) return; // never push during startup — could race the initial pull and overwrite the cloud with stale/empty local data
   setSyncStatus('pending');
   clearTimeout(autoPushTimer);
   autoPushTimer = setTimeout(()=>{ pushToCloudNow(); }, 1000);
@@ -924,10 +927,10 @@ function buildDayGroup(dateObj){
     // row drag-and-drop reordering (within this day's list)
     tblWrap.querySelectorAll('tr[data-reg-row-id]').forEach(tr=>{
       const id = tr.dataset.regRowId;
-      const handle = tr.querySelector('.drag-handle-cell');
-      handle.addEventListener('mousedown', ()=> tr.setAttribute('draggable','true'));
-      tr.addEventListener('dragend', ()=>{ tr.removeAttribute('draggable'); tr.classList.remove('row-dragging'); });
+      tr.setAttribute('draggable','true');
+      tr.addEventListener('dragend', ()=>{ tr.classList.remove('row-dragging'); });
       tr.addEventListener('dragstart', (ev)=>{
+        if(!ev.target.closest('.drag-handle-cell')){ ev.preventDefault(); return; } // only drag when grabbed by the handle
         ev.stopPropagation();
         tr.classList.add('row-dragging');
         ev.dataTransfer.setData('text/reg-row', id);
@@ -1533,10 +1536,10 @@ function renderBackend(){
           renderBackend();
         });
       }
-      const handle = tr.querySelector('.drag-handle-cell');
-      handle.addEventListener('mousedown', ()=> tr.setAttribute('draggable','true'));
-      tr.addEventListener('dragend', ()=>{ tr.removeAttribute('draggable'); tr.classList.remove('row-dragging'); });
+      tr.setAttribute('draggable','true');
+      tr.addEventListener('dragend', ()=>{ tr.classList.remove('row-dragging'); });
       tr.addEventListener('dragstart', (ev)=>{
+        if(!ev.target.closest('.drag-handle-cell')){ ev.preventDefault(); return; } // only drag when grabbed by the handle
         tr.classList.add('row-dragging');
         ev.dataTransfer.setData('text/row', id);
         ev.dataTransfer.effectAllowed = 'move';
@@ -1782,7 +1785,10 @@ if(syncEnabled){
       renderBackend();
       renderTicker();
     }
+    appInitializing = false; // safe to auto-push from here on
   });
+} else {
+  appInitializing = false;
 }
 
 })();
