@@ -350,14 +350,9 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
   </div>
 
   <div class="modal-overlay hidden" id="referencesModalOverlay">
-    <div class="modal-box" style="width:420px;max-width:92vw;">
+    <div class="modal-box" style="width:420px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column;">
       <h3>References</h3>
       <div id="referencesList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;max-height:340px;overflow-y:auto;"></div>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
-        <input type="text" id="newRefTitle" placeholder="Title (e.g. Wand Master Sheet)" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
-        <input type="text" id="newRefUrl" placeholder="Link (https://…)" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
-        <input type="text" id="newRefNotes" placeholder="Notes (optional)" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
-      </div>
       <div class="modal-actions" style="justify-content:space-between;">
         <button class="btn btn-ghost" id="referencesModalClose">Close</button>
         <button class="btn btn-primary" id="addReferenceBtn">+ Add card</button>
@@ -367,17 +362,17 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
 
   <div class="modal-overlay hidden" id="refCardModalOverlay">
     <div class="modal-box" style="width:400px;max-width:92vw;">
-      <h3>Edit reference</h3>
+      <h3 id="refCardModalTitle">Edit reference</h3>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
         <label class="field-label-sm">Title</label>
-        <input type="text" id="refCardTitle" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
+        <input type="text" id="refCardTitle" placeholder="e.g. Wand Master Sheet" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
         <label class="field-label-sm">Link</label>
-        <input type="text" id="refCardUrl" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
+        <input type="text" id="refCardUrl" placeholder="https://…" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
         <label class="field-label-sm">Notes</label>
-        <textarea id="refCardNotes" rows="3" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;resize:vertical;"></textarea>
+        <textarea id="refCardNotes" rows="3" placeholder="Optional" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;resize:vertical;"></textarea>
       </div>
       <div class="modal-actions" style="justify-content:space-between;">
-        <button class="btn btn-ghost danger-text" id="refCardDelete">Delete</button>
+        <button class="btn btn-ghost danger-text hidden" id="refCardDelete">Delete</button>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-ghost" id="refCardOpenLink" title="Open link in a new tab">↗ Open link</button>
           <button class="btn btn-ghost" id="refCardCancel">Cancel</button>
@@ -1892,23 +1887,12 @@ document.getElementById('menuReferencesBtn').addEventListener('click', ()=>{
 document.getElementById('referencesModalClose').addEventListener('click', ()=> document.getElementById('referencesModalOverlay').classList.add('hidden'));
 document.getElementById('referencesModalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='referencesModalOverlay') e.currentTarget.classList.add('hidden'); });
 
-document.getElementById('addReferenceBtn').addEventListener('click', ()=>{
-  const title = document.getElementById('newRefTitle').value.trim();
-  const url = document.getElementById('newRefUrl').value.trim();
-  const notes = document.getElementById('newRefNotes').value.trim();
-  if(!title && !url){ alert('Add at least a title or a link.'); return; }
-  settings.references.push({ id: uid(), title: title || url, url, notes });
-  persistAll();
-  document.getElementById('newRefTitle').value = '';
-  document.getElementById('newRefUrl').value = '';
-  document.getElementById('newRefNotes').value = '';
-  renderReferencesList();
-});
+document.getElementById('addReferenceBtn').addEventListener('click', ()=> openReferenceCard(null));
 
 function renderReferencesList(){
   const wrap = document.getElementById('referencesList');
   if(!settings.references.length){
-    wrap.innerHTML = '<div style="color:var(--text-faint);font-size:12.5px;">No references yet — add a link to your Wand sheets below.</div>';
+    wrap.innerHTML = '<div style="color:var(--text-faint);font-size:12.5px;">No references yet — click "+ Add card" to link your Wand sheets.</div>';
     return;
   }
   wrap.innerHTML = settings.references.map(r=>`
@@ -1925,15 +1909,18 @@ function renderReferencesList(){
   });
 }
 
+// openReferenceCard(null) = add-new mode; openReferenceCard(id) = edit existing card
 let openRefCardId = null;
 function openReferenceCard(id){
-  const r = settings.references.find(x=>x.id===id);
-  if(!r) return;
   openRefCardId = id;
-  document.getElementById('refCardTitle').value = r.title || '';
-  document.getElementById('refCardUrl').value = r.url || '';
-  document.getElementById('refCardNotes').value = r.notes || '';
+  const r = id ? settings.references.find(x=>x.id===id) : null;
+  document.getElementById('refCardModalTitle').textContent = r ? 'Edit reference' : 'Add reference';
+  document.getElementById('refCardTitle').value = r ? (r.title || '') : '';
+  document.getElementById('refCardUrl').value = r ? (r.url || '') : '';
+  document.getElementById('refCardNotes').value = r ? (r.notes || '') : '';
+  document.getElementById('refCardDelete').classList.toggle('hidden', !r);
   document.getElementById('refCardModalOverlay').classList.remove('hidden');
+  document.getElementById('refCardTitle').focus();
 }
 document.getElementById('refCardCancel').addEventListener('click', ()=>{
   document.getElementById('refCardModalOverlay').classList.add('hidden');
@@ -1948,21 +1935,23 @@ document.getElementById('refCardOpenLink').addEventListener('click', ()=>{
   window.open(url, '_blank', 'noopener');
 });
 document.getElementById('refCardSave').addEventListener('click', ()=>{
-  const r = settings.references.find(x=>x.id===openRefCardId);
-  if(!r) return;
   const title = document.getElementById('refCardTitle').value.trim();
   const url = document.getElementById('refCardUrl').value.trim();
   const notes = document.getElementById('refCardNotes').value.trim();
   if(!title && !url){ alert('Add at least a title or a link.'); return; }
-  r.title = title || url;
-  r.url = url;
-  r.notes = notes;
+  if(openRefCardId){
+    const r = settings.references.find(x=>x.id===openRefCardId);
+    if(r){ r.title = title || url; r.url = url; r.notes = notes; }
+  } else {
+    settings.references.push({ id: uid(), title: title || url, url, notes });
+  }
   persistAll();
   document.getElementById('refCardModalOverlay').classList.add('hidden');
   openRefCardId = null;
   renderReferencesList();
 });
 document.getElementById('refCardDelete').addEventListener('click', ()=>{
+  if(!openRefCardId) return;
   if(!confirm('Delete this reference card?')) return;
   settings.references = settings.references.filter(r=>r.id!==openRefCardId);
   persistAll();
