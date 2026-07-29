@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QA Log — Wand</title>
+<title>Justine QA Log — Wand</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0b08'/%3E%3Ctext x='32' y='45' font-family='Arial, sans-serif' font-weight='900' font-size='36' fill='%23d7ff3e' text-anchor='middle'%3EW%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -48,7 +48,24 @@ a{color:var(--lime);}
 .shell{max-width:1360px;margin:0 auto;padding:28px 20px 80px;}
 
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
-.brand{display:flex;align-items:center;gap:12px;}
+.brand{display:flex;align-items:center;gap:12px;position:relative;}
+.hamburger-btn{
+  background:var(--card);border:1px solid var(--border);color:var(--text-dim);
+  width:36px;height:36px;border-radius:9px;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0;
+}
+.hamburger-btn:hover{color:var(--text);border-color:#3a4025;background:var(--card-2);}
+.hamburger-menu{
+  position:absolute;top:46px;left:0;z-index:120;
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:6px;min-width:180px;box-shadow:0 14px 40px rgba(0,0,0,0.5);
+  display:flex;flex-direction:column;gap:2px;
+}
+.hamburger-item{
+  background:transparent;border:none;color:var(--text);text-align:left;
+  padding:9px 12px;border-radius:7px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;
+}
+.hamburger-item:hover{background:var(--card-2);}
 .brand-mark{
   width:40px;height:40px;border-radius:10px;background:#000;border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;
@@ -58,6 +75,14 @@ a{color:var(--lime);}
 .brand-text p{margin:2px 0 0;font-size:12px;color:var(--text-dim);}
 
 .topbar-actions{display:flex;align-items:center;gap:10px;}
+.undo-toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--card);border:1px solid var(--border);color:var(--text);
+  padding:10px 20px;border-radius:10px;font-family:var(--sans);font-size:13px;font-weight:600;
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:300;
+  opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;
+}
+.undo-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .icon-btn{
   background:var(--card);border:1px solid var(--border);color:var(--text-dim);
   font-family:var(--sans);font-size:12.5px;font-weight:600;
@@ -261,6 +286,24 @@ table{width:100%;border-collapse:collapse;}
 .game-table th.col-drop-target{border-left:3px solid #0a0b08;}
 
 .source-row{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;background:var(--bg-raised);border:1px solid var(--border);}
+.ref-card{
+  background:var(--bg-raised);border:1px solid var(--border);border-radius:10px;padding:12px 14px;
+  display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:.15s;
+}
+.ref-card:hover{border-color:var(--lime);background:var(--card-2);}
+.field-label-sm{font-size:11px;color:var(--text-faint);font-weight:600;margin-top:2px;}
+.btn-ghost.danger-text{color:var(--red);}
+.btn-ghost.danger-text:hover{background:rgba(255,92,114,0.1);}
+.ref-card-title{font-weight:700;font-size:13.5px;color:var(--text);}
+.ref-card-title a{color:var(--lime);text-decoration:none;}
+.ref-card-title a:hover{text-decoration:underline;}
+.ref-card-notes{font-size:12px;color:var(--text-dim);}
+.ref-card-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.btn-neon{
+  background:var(--lime);color:#0a0b08;font-weight:800;border:none;
+  box-shadow:0 0 0 1px rgba(215,255,62,0.5), 0 0 16px rgba(215,255,62,0.45);
+}
+.btn-neon:hover{filter:brightness(1.1);box-shadow:0 0 0 1px rgba(215,255,62,0.7), 0 0 22px rgba(215,255,62,0.65);}
 .source-swatch{width:16px;height:16px;border-radius:4px;flex-shrink:0;}
 .source-row .source-name{flex:1;font-size:13px;font-weight:600;}
 .source-row .mini-btn{flex-shrink:0;}
@@ -284,19 +327,63 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
 
   <div class="topbar">
     <div class="brand">
+      <button class="hamburger-btn" id="hamburgerBtn" title="Menu" aria-label="Menu">☰</button>
+      <div class="hamburger-menu hidden" id="hamburgerMenu">
+        <button class="hamburger-item" id="menuReferencesBtn">📎 References</button>
+      </div>
       <div class="brand-mark">W</div>
       <div class="brand-text">
-        <h1>QA Log — Wand</h1>
+        <h1>Justine QA Log — Wand</h1>
         <p>Personal testing tracker · saved in this browser</p>
       </div>
     </div>
     <div class="topbar-actions">
+      <button class="icon-btn" id="btnUndo" title="Undo (Ctrl+Z)">↶ Undo</button>
+      <button class="icon-btn" id="btnRedo" title="Redo (Ctrl+Shift+Z)">↷ Redo</button>
       <span class="icon-btn" id="syncStatus" style="cursor:default;">💾 Local only</span>
       <button class="icon-btn" id="btnSyncNow" title="Pulls the latest saved data from the cloud onto this device">☁ Sync now</button>
       <button class="icon-btn" id="btnExport">⭳ Export backup</button>
       <button class="icon-btn" id="btnImport">⭱ Import</button>
       <button class="icon-btn danger" id="btnReset">Reset data</button>
       <input type="file" id="importFile" accept="application/json" class="hidden">
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="referencesModalOverlay">
+    <div class="modal-box" style="width:420px;max-width:92vw;">
+      <h3>References</h3>
+      <div id="referencesList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;max-height:340px;overflow-y:auto;"></div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+        <input type="text" id="newRefTitle" placeholder="Title (e.g. Wand Master Sheet)" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
+        <input type="text" id="newRefUrl" placeholder="Link (https://…)" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
+        <input type="text" id="newRefNotes" placeholder="Notes (optional)" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
+      </div>
+      <div class="modal-actions" style="justify-content:space-between;">
+        <button class="btn btn-ghost" id="referencesModalClose">Close</button>
+        <button class="btn btn-primary" id="addReferenceBtn">+ Add card</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="refCardModalOverlay">
+    <div class="modal-box" style="width:400px;max-width:92vw;">
+      <h3>Edit reference</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+        <label class="field-label-sm">Title</label>
+        <input type="text" id="refCardTitle" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
+        <label class="field-label-sm">Link</label>
+        <input type="text" id="refCardUrl" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
+        <label class="field-label-sm">Notes</label>
+        <textarea id="refCardNotes" rows="3" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;resize:vertical;"></textarea>
+      </div>
+      <div class="modal-actions" style="justify-content:space-between;">
+        <button class="btn btn-ghost danger-text" id="refCardDelete">Delete</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost" id="refCardOpenLink" title="Open link in a new tab">↗ Open link</button>
+          <button class="btn btn-ghost" id="refCardCancel">Cancel</button>
+          <button class="btn btn-primary" id="refCardSave">Save</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -416,7 +503,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
       </div>
       <div class="month-controls">
         <select id="beDaySelect"></select>
-        <button class="icon-btn" id="addBeDayBtn">+ New day</button>
+        <button class="icon-btn btn-neon" id="addBeDayBtn">+ New day</button>
       </div>
     </div>
 
@@ -596,10 +683,90 @@ let settings = loadJSON(LS_SET, { monthlyTarget: 150, dailyCap: 9, knownMonths: 
 if(!settings.knownMonths) settings.knownMonths = [];
 if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
 
+/* ---------------- undo / redo ---------------- */
+// Snapshots the whole app state around every persistAll() call, so Ctrl+Z can
+// step back through recent changes (edits, deletes, status flips, etc).
+// This is keyboard-triggered ONLY — clicking or blurring a field never undoes
+// anything by itself.
+const MAX_UNDO = 40;
+let undoStack = [];
+let redoStack = [];
+let lastCommittedSnapshot = null;
+let suppressSnapshot = false;
+
+function snapshotState(){
+  return JSON.stringify({ regularEntries, backendEntries, settings });
+}
+function restoreState(str){
+  const d = JSON.parse(str);
+  regularEntries = d.regularEntries;
+  backendEntries = d.backendEntries;
+  settings = d.settings;
+}
+function showToast(msg){
+  let toast = document.getElementById('undoToast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'undoToast';
+    toast.className = 'undo-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(()=> toast.classList.remove('show'), 1600);
+}
+function performUndo(){
+  if(undoStack.length === 0){ showToast('Nothing to undo'); return; }
+  const current = snapshotState();
+  const prev = undoStack.pop();
+  redoStack.push(current);
+  suppressSnapshot = true;
+  restoreState(prev);
+  persistAll();
+  recomputeSelectedMonth();
+  recomputeSelectedBeDay();
+  renderRegular(); renderBackend(); renderTicker();
+  suppressSnapshot = false;
+  showToast('↶ Undid last change');
+}
+function performRedo(){
+  if(redoStack.length === 0){ showToast('Nothing to redo'); return; }
+  const current = snapshotState();
+  const next = redoStack.pop();
+  undoStack.push(current);
+  suppressSnapshot = true;
+  restoreState(next);
+  persistAll();
+  recomputeSelectedMonth();
+  recomputeSelectedBeDay();
+  renderRegular(); renderBackend(); renderTicker();
+  suppressSnapshot = false;
+  showToast('↷ Redid change');
+}
+document.addEventListener('keydown', (ev)=>{
+  const mod = ev.ctrlKey || ev.metaKey;
+  if(!mod) return;
+  const key = ev.key.toLowerCase();
+  if(key !== 'z' && key !== 'y') return;
+  const activeTag = document.activeElement ? document.activeElement.tagName : '';
+  const inField = (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT');
+  if(inField) return; // let the browser's native in-field undo handle in-progress typing
+  ev.preventDefault();
+  if(key === 'y' || (key === 'z' && ev.shiftKey)) performRedo();
+  else performUndo();
+});
+
 function persistAll(){
+  if(!appInitializing && !suppressSnapshot && lastCommittedSnapshot !== null){
+    undoStack.push(lastCommittedSnapshot);
+    if(undoStack.length > MAX_UNDO) undoStack.shift();
+    redoStack = [];
+  }
   saveJSON(LS_REG, regularEntries);
   saveJSON(LS_BE, backendEntries);
   saveJSON(LS_SET, settings);
+  lastCommittedSnapshot = snapshotState();
   queueAutoPush();
 }
 
@@ -1698,6 +1865,112 @@ function wireGameCell(div, currentValue, onCommit){
   div.addEventListener('contextmenu', enterEdit);
 }
 
+/* ---------------- undo/redo buttons ---------------- */
+document.getElementById('btnUndo').addEventListener('click', ()=> performUndo());
+document.getElementById('btnRedo').addEventListener('click', ()=> performRedo());
+
+/* ---------------- hamburger menu ---------------- */
+document.getElementById('hamburgerBtn').addEventListener('click', (ev)=>{
+  ev.stopPropagation();
+  document.getElementById('hamburgerMenu').classList.toggle('hidden');
+});
+document.addEventListener('click', (ev)=>{
+  const menu = document.getElementById('hamburgerMenu');
+  if(!menu.classList.contains('hidden') && !menu.contains(ev.target) && ev.target.id !== 'hamburgerBtn'){
+    menu.classList.add('hidden');
+  }
+});
+
+/* ---------------- references ---------------- */
+if(!settings.references) settings.references = [];
+
+document.getElementById('menuReferencesBtn').addEventListener('click', ()=>{
+  document.getElementById('hamburgerMenu').classList.add('hidden');
+  renderReferencesList();
+  document.getElementById('referencesModalOverlay').classList.remove('hidden');
+});
+document.getElementById('referencesModalClose').addEventListener('click', ()=> document.getElementById('referencesModalOverlay').classList.add('hidden'));
+document.getElementById('referencesModalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='referencesModalOverlay') e.currentTarget.classList.add('hidden'); });
+
+document.getElementById('addReferenceBtn').addEventListener('click', ()=>{
+  const title = document.getElementById('newRefTitle').value.trim();
+  const url = document.getElementById('newRefUrl').value.trim();
+  const notes = document.getElementById('newRefNotes').value.trim();
+  if(!title && !url){ alert('Add at least a title or a link.'); return; }
+  settings.references.push({ id: uid(), title: title || url, url, notes });
+  persistAll();
+  document.getElementById('newRefTitle').value = '';
+  document.getElementById('newRefUrl').value = '';
+  document.getElementById('newRefNotes').value = '';
+  renderReferencesList();
+});
+
+function renderReferencesList(){
+  const wrap = document.getElementById('referencesList');
+  if(!settings.references.length){
+    wrap.innerHTML = '<div style="color:var(--text-faint);font-size:12.5px;">No references yet — add a link to your Wand sheets below.</div>';
+    return;
+  }
+  wrap.innerHTML = settings.references.map(r=>`
+    <div class="ref-card" data-ref-id="${r.id}">
+      <div class="ref-card-row">
+        <div class="ref-card-title">${escapeHtml(r.title)}</div>
+        ${r.url ? '<span style="color:var(--text-faint);font-size:11px;">🔗</span>' : ''}
+      </div>
+      ${r.notes ? `<div class="ref-card-notes">${escapeHtml(r.notes)}</div>` : ''}
+    </div>
+  `).join('');
+  wrap.querySelectorAll('[data-ref-id]').forEach(card=>{
+    card.addEventListener('click', ()=> openReferenceCard(card.dataset.refId));
+  });
+}
+
+let openRefCardId = null;
+function openReferenceCard(id){
+  const r = settings.references.find(x=>x.id===id);
+  if(!r) return;
+  openRefCardId = id;
+  document.getElementById('refCardTitle').value = r.title || '';
+  document.getElementById('refCardUrl').value = r.url || '';
+  document.getElementById('refCardNotes').value = r.notes || '';
+  document.getElementById('refCardModalOverlay').classList.remove('hidden');
+}
+document.getElementById('refCardCancel').addEventListener('click', ()=>{
+  document.getElementById('refCardModalOverlay').classList.add('hidden');
+  openRefCardId = null;
+});
+document.getElementById('refCardModalOverlay').addEventListener('click', (e)=>{
+  if(e.target.id==='refCardModalOverlay'){ e.currentTarget.classList.add('hidden'); openRefCardId = null; }
+});
+document.getElementById('refCardOpenLink').addEventListener('click', ()=>{
+  const url = document.getElementById('refCardUrl').value.trim();
+  if(!url){ alert('This card has no link yet.'); return; }
+  window.open(url, '_blank', 'noopener');
+});
+document.getElementById('refCardSave').addEventListener('click', ()=>{
+  const r = settings.references.find(x=>x.id===openRefCardId);
+  if(!r) return;
+  const title = document.getElementById('refCardTitle').value.trim();
+  const url = document.getElementById('refCardUrl').value.trim();
+  const notes = document.getElementById('refCardNotes').value.trim();
+  if(!title && !url){ alert('Add at least a title or a link.'); return; }
+  r.title = title || url;
+  r.url = url;
+  r.notes = notes;
+  persistAll();
+  document.getElementById('refCardModalOverlay').classList.add('hidden');
+  openRefCardId = null;
+  renderReferencesList();
+});
+document.getElementById('refCardDelete').addEventListener('click', ()=>{
+  if(!confirm('Delete this reference card?')) return;
+  settings.references = settings.references.filter(r=>r.id!==openRefCardId);
+  persistAll();
+  document.getElementById('refCardModalOverlay').classList.add('hidden');
+  openRefCardId = null;
+  renderReferencesList();
+});
+
 /* ---------------- manual cloud sync ---------------- */
 document.getElementById('btnSyncNow').addEventListener('click', async ()=>{
   if(!syncEnabled){
@@ -1748,6 +2021,7 @@ document.getElementById('importFile').addEventListener('change', (ev)=>{
       if(!settings.beDayMeta) settings.beDayMeta = {};
       if(!settings.sources || !settings.sources.length) settings.sources = SOURCE_PRESETS.map(s=>({...s}));
       if(!settings.beColumnOrder) settings.beColumnOrder = ['game','platform','status','date','notes'];
+      if(!settings.references) settings.references = [];
       persistAll();
       document.getElementById('regTargetInput').value = settings.monthlyTarget;
       const all = getAllMonths();
