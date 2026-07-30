@@ -148,14 +148,17 @@ a{color:var(--lime);}
 .month-controls select:focus{border-color:var(--lime);}
 
 .modal-overlay{position:fixed;inset:0;background:rgba(5,6,3,0.7);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:50;}
-.modal-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;width:280px;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
-.modal-box h3{margin:0 0 14px;font-size:14px;font-weight:700;}
-.modal-box input[type="month"]{
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;width:300px;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+.modal-box h3{margin:0 0 16px;font-size:14px;font-weight:700;}
+.modal-box .field-label-sm{display:block;margin-bottom:6px;}
+.modal-box input[type="month"], .modal-box input[type="date"]{
   width:100%;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);
-  border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:13px;outline:none;margin-bottom:16px;
+  border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:13px;outline:none;margin-bottom:18px;
+  color-scheme:dark;box-sizing:border-box;
 }
-.modal-box input[type="month"]:focus{border-color:var(--lime);}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px;}
+.modal-box input[type="month"]:focus, .modal-box input[type="date"]:focus{border-color:var(--lime);box-shadow:0 0 0 3px rgba(215,255,62,0.12);}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;}
+.modal-actions.fill .btn{flex:1;}
 
 .week-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;flex-wrap:wrap;}
 .week-status-badge{font-family:var(--mono);font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;letter-spacing:0.03em;}
@@ -168,6 +171,7 @@ a{color:var(--lime);}
 .form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;}
 .form-card h3{margin:0 0 14px;font-size:13px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-dim);font-weight:700;}
 .form-card p.hint{margin:-8px 0 14px;font-size:12px;color:var(--text-faint);}
+.form-card p.hint code{background:var(--bg-raised);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-family:var(--mono);color:var(--text-dim);}
 .form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
 .field{display:flex;flex-direction:column;gap:6px;flex:1;min-width:120px;}
 .field label{font-size:11px;color:var(--text-faint);font-weight:600;}
@@ -442,8 +446,9 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
     <div class="modal-overlay hidden" id="monthModalOverlay">
       <div class="modal-box">
         <h3>Add a month page</h3>
+        <label class="field-label-sm">Month</label>
         <input type="month" id="monthPicker">
-        <div class="modal-actions">
+        <div class="modal-actions fill">
           <button class="btn btn-ghost" id="monthModalCancel">Cancel</button>
           <button class="btn btn-primary" id="monthModalAdd">Add page</button>
         </div>
@@ -484,6 +489,17 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
       </div>
     </div>
 
+    <div class="form-card">
+      <h3>Paste from sheet</h3>
+      <p class="hint">Paste game lines straight from your spreadsheet — one per line, like <code>The Last Faith (Steam)</code>. Tab-separated Game / Platform / Status / Points / Date also works if your sheet has those columns. Anything left out defaults to today's date, Queued status, and 0 points.</p>
+      <div class="form-row">
+        <div class="field grow-2">
+          <textarea id="rgPasteArea" rows="3" placeholder="The Last Faith (Steam)&#10;Palworld (Xbox)" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
+        </div>
+        <button class="btn btn-primary" id="rgPasteBtn">+ Add pasted rows</button>
+      </div>
+    </div>
+
     <div id="regDayGroups"></div>
 
   </div>
@@ -513,8 +529,9 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
     <div class="modal-overlay hidden" id="dayModalOverlay">
       <div class="modal-box">
         <h3>Add a day page</h3>
+        <label class="field-label-sm">Date</label>
         <input type="date" id="dayPicker">
-        <div class="modal-actions">
+        <div class="modal-actions fill">
           <button class="btn btn-ghost" id="dayModalCancel">Cancel</button>
           <button class="btn btn-primary" id="dayModalAdd">Add page</button>
         </div>
@@ -1218,6 +1235,58 @@ document.getElementById('rgAddBtn').addEventListener('click', ()=>{
 });
 
 document.getElementById('rgDate').value = fmtISO(new Date());
+
+document.getElementById('rgPasteArea').addEventListener('paste', (ev)=>{
+  // Always replace the whole box with exactly what was just pasted, rather
+  // than inserting at the cursor (which silently stacks with leftover text).
+  ev.preventDefault();
+  const text = (ev.clipboardData || window.clipboardData).getData('text');
+  ev.target.value = text;
+});
+
+document.getElementById('rgPasteBtn').addEventListener('click', ()=>{
+  const raw = document.getElementById('rgPasteArea').value;
+  if(!raw.trim()) return;
+  const today = fmtISO(new Date());
+  let count = 0;
+  let lastDate = null;
+  raw.split(/\r?\n/).forEach(line=>{
+    if(!line.trim()) return;
+    let game, platform, status, points, date;
+    if(line.includes('\t')){
+      const parts = line.split('\t');
+      game = (parts[0]||'').trim();
+      platform = (parts[1]||'').trim();
+      status = normalizeStatus(parts[2]) || 'Queued';
+      points = parts[3] !== undefined && parts[3].trim() !== '' ? parseFloat(parts[3]) : 0;
+      date = parseFlexibleDate(parts[4]) || today;
+    } else {
+      // "Game Name (Platform)" style, matching the original spreadsheet layout
+      const m = line.trim().match(/^(.*)\s+\(([^)]+)\)\s*$/);
+      if(m){ game = m[1].trim(); platform = m[2].trim(); }
+      else { game = line.trim(); platform = ''; }
+      status = 'Queued';
+      points = 0;
+      date = today;
+    }
+    if(!game) return;
+    if(isNaN(points)) points = 0;
+    regularEntries.push({ id: uid(), date, game, platform, result: status, points });
+    ensureMonthKnown(ymOf(date));
+    lastDate = date;
+    count++;
+  });
+  if(count === 0){ alert('Could not find any game rows in that paste.'); return; }
+  persistAll();
+  if(lastDate) selectedMonth = ymOf(lastDate);
+  document.getElementById('rgPasteArea').value = '';
+  renderRegular(); renderTicker();
+  const btn = document.getElementById('rgPasteBtn');
+  const original = btn.textContent;
+  btn.textContent = `Added ${count} row${count===1?'':'s'} ✓`;
+  setTimeout(()=>{ btn.textContent = original; }, 1800);
+});
+
 // beDate default is set below once selectedBeDay is initialized
 
 /* =========================================================
