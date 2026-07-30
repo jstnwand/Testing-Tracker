@@ -207,11 +207,7 @@ table{width:100%;border-collapse:collapse;}
 .game-table td{padding:10px 16px;font-size:13.5px;border:1px solid var(--border-soft);}
 .game-table tr:hover td{background:rgba(215,255,62,0.02);}
 .platform-tag{font-size:11px;color:var(--text-dim);font-family:var(--mono);}
-.result-link-row{display:flex;align-items:center;gap:5px;margin-top:3px;}
-.result-link{font-size:11px;color:var(--lime);cursor:pointer;}
-.result-link:hover{text-decoration:underline;}
-.add-link-hint{font-size:10.5px;color:var(--text-faint);cursor:pointer;}
-.add-link-hint:hover{color:var(--text-dim);text-decoration:underline;}
+.mini-btn.has-link{color:var(--lime);border-color:rgba(215,255,62,0.4);}
 .result-tag{font-family:var(--mono);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-block;}
 .result-passed{background:rgba(61,220,138,0.1);color:var(--green);}
 .result-failed{background:rgba(255,92,114,0.1);color:var(--red);}
@@ -1065,14 +1061,11 @@ function buildDayGroup(dateObj){
           <td>
             <div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game||'')}</div>
             ${e.platform ? `<div class="platform-tag">(${escapeHtml(e.platform)})</div>` : ''}
-            ${e.resultUrl
-              ? `<div class="result-link-row"><span class="result-link" data-open-result="${e.id}" title="${escAttr(e.resultUrl)}">🔗 Result link</span><button class="mini-btn" data-edit-result="${e.id}" title="Edit link" style="width:18px;height:18px;font-size:9px;padding:0;">✎</button></div>`
-              : `<div class="result-link-row"><span class="add-link-hint" data-add-result="${e.id}">+ Add result link</span></div>`
-            }
           </td>
           <td><select class="status-select" data-status-id="${e.id}" style="background-color:${statusColor};">${opts}</select></td>
           <td><input type="number" step="0.25" class="cell-input pts-input" data-points-id="${e.id}" value="${e.points}" style="text-align:right;font-family:var(--mono);"></td>
           <td><div class="row-actions">
+            <button class="mini-btn ${e.resultUrl ? 'has-link' : ''}" data-result-btn="${e.id}" title="${e.resultUrl ? 'Click to open result link · right-click to edit' : 'Add a result link'}">🔗</button>
             <button class="mini-btn" data-edit="${e.id}" title="Edit">✎</button>
             <button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button>
           </div></td>
@@ -1114,18 +1107,15 @@ function buildDayGroup(dateObj){
         renderRegular();
       });
     });
-    tblWrap.querySelectorAll('[data-open-result]').forEach(el=>{
-      el.addEventListener('click', (ev)=>{
+    tblWrap.querySelectorAll('[data-result-btn]').forEach(btn=>{
+      const id = btn.dataset.resultBtn;
+      btn.addEventListener('click', (ev)=>{
         ev.stopPropagation();
-        const entry = regularEntries.find(x=>x.id===el.dataset.openResult);
+        const entry = regularEntries.find(x=>x.id===id);
         if(entry && entry.resultUrl) window.open(entry.resultUrl, '_blank', 'noopener');
+        else promptEditResultLink(id);
       });
-    });
-    tblWrap.querySelectorAll('[data-edit-result]').forEach(btn=>{
-      btn.addEventListener('click', (ev)=>{ ev.stopPropagation(); promptEditResultLink(btn.dataset.editResult); });
-    });
-    tblWrap.querySelectorAll('[data-add-result]').forEach(el=>{
-      el.addEventListener('click', (ev)=>{ ev.stopPropagation(); promptEditResultLink(el.dataset.addResult); });
+      btn.addEventListener('contextmenu', (ev)=>{ ev.preventDefault(); ev.stopPropagation(); promptEditResultLink(id); });
     });
 
     // row drag-and-drop reordering (within this day's list)
