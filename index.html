@@ -207,6 +207,11 @@ table{width:100%;border-collapse:collapse;}
 .game-table td{padding:10px 16px;font-size:13.5px;border:1px solid var(--border-soft);}
 .game-table tr:hover td{background:rgba(215,255,62,0.02);}
 .platform-tag{font-size:11px;color:var(--text-dim);font-family:var(--mono);}
+.result-link-row{display:flex;align-items:center;gap:5px;margin-top:3px;}
+.result-link{font-size:11px;color:var(--lime);cursor:pointer;}
+.result-link:hover{text-decoration:underline;}
+.add-link-hint{font-size:10.5px;color:var(--text-faint);cursor:pointer;}
+.add-link-hint:hover{color:var(--text-dim);text-decoration:underline;}
 .result-tag{font-family:var(--mono);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-block;}
 .result-passed{background:rgba(61,220,138,0.1);color:var(--green);}
 .result-failed{background:rgba(255,92,114,0.1);color:var(--red);}
@@ -491,7 +496,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
 
     <div class="form-card">
       <h3>Paste from sheet</h3>
-      <p class="hint">Paste game lines straight from your spreadsheet — one per line, like <code>The Last Faith (Steam)</code>. Tab-separated Game / Platform / Status / Points / Date also works if your sheet has those columns. Anything left out defaults to today's date, Queued status, and 0 points.</p>
+      <p class="hint">Paste game lines straight from your spreadsheet — one per line, like <code>The Last Faith (Steam)</code>. Tab-separated Game / Platform / Status / Points / Date also works. It also recognizes a Slack-workflow-style form dump — the game line, followed by other fields, with a <code>Test Value</code> label whose next line is read as Points. Anything left out defaults to today's date, Queued status, and 0 points.</p>
       <div class="form-row">
         <div class="field grow-2">
           <textarea id="rgPasteArea" rows="3" placeholder="The Last Faith (Steam)&#10;Palworld (Xbox)" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
@@ -1057,7 +1062,14 @@ function buildDayGroup(dateObj){
         const opts = STATUS_OPTIONS.map(s=>`<option value="${s}" ${s===e.result?'selected':''}>${s}</option>`).join('');
         rows += `<tr data-reg-row-id="${e.id}">
           <td class="drag-handle-cell" title="Drag to reorder">⋮⋮</td>
-          <td><div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game||'')}</div>${e.platform ? `<div class="platform-tag">(${escapeHtml(e.platform)})</div>` : ''}</td>
+          <td>
+            <div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game||'')}</div>
+            ${e.platform ? `<div class="platform-tag">(${escapeHtml(e.platform)})</div>` : ''}
+            ${e.resultUrl
+              ? `<div class="result-link-row"><span class="result-link" data-open-result="${e.id}" title="${escAttr(e.resultUrl)}">🔗 Result link</span><button class="mini-btn" data-edit-result="${e.id}" title="Edit link" style="width:18px;height:18px;font-size:9px;padding:0;">✎</button></div>`
+              : `<div class="result-link-row"><span class="add-link-hint" data-add-result="${e.id}">+ Add result link</span></div>`
+            }
+          </td>
           <td><select class="status-select" data-status-id="${e.id}" style="background-color:${statusColor};">${opts}</select></td>
           <td><input type="number" step="0.25" class="cell-input pts-input" data-points-id="${e.id}" value="${e.points}" style="text-align:right;font-family:var(--mono);"></td>
           <td><div class="row-actions">
@@ -1102,6 +1114,19 @@ function buildDayGroup(dateObj){
         renderRegular();
       });
     });
+    tblWrap.querySelectorAll('[data-open-result]').forEach(el=>{
+      el.addEventListener('click', (ev)=>{
+        ev.stopPropagation();
+        const entry = regularEntries.find(x=>x.id===el.dataset.openResult);
+        if(entry && entry.resultUrl) window.open(entry.resultUrl, '_blank', 'noopener');
+      });
+    });
+    tblWrap.querySelectorAll('[data-edit-result]').forEach(btn=>{
+      btn.addEventListener('click', (ev)=>{ ev.stopPropagation(); promptEditResultLink(btn.dataset.editResult); });
+    });
+    tblWrap.querySelectorAll('[data-add-result]').forEach(el=>{
+      el.addEventListener('click', (ev)=>{ ev.stopPropagation(); promptEditResultLink(el.dataset.addResult); });
+    });
 
     // row drag-and-drop reordering (within this day's list)
     tblWrap.querySelectorAll('tr[data-reg-row-id]').forEach(tr=>{
@@ -1138,6 +1163,16 @@ function buildDayGroup(dateObj){
   }
 
   return wrap;
+}
+
+function promptEditResultLink(id){
+  const e = regularEntries.find(x=>x.id===id);
+  if(!e) return;
+  const url = prompt('Paste the result link (leave blank to remove):', e.resultUrl || '');
+  if(url === null) return; // cancelled
+  e.resultUrl = url.trim();
+  persistAll();
+  renderRegular();
 }
 
 function commitRegularStatus(id, value, el){
@@ -1244,34 +1279,76 @@ document.getElementById('rgPasteArea').addEventListener('paste', (ev)=>{
   ev.target.value = text;
 });
 
+function parseRegularGameLine(line){
+  // "Game Name (Platform)" style, matching the original spreadsheet layout
+  const m = line.trim().match(/^(.*)\s+\(([^)]+)\)\s*$/);
+  if(m) return { game: m[1].trim(), platform: m[2].trim() };
+  return { game: line.trim(), platform: '' };
+}
+
+function parseRegularPasteBlob(raw, today){
+  const lines = raw.split(/\r?\n/);
+  const hasFormMarker = lines.some(l=> /^\s*test\s*value\s*$/i.test(l));
+
+  if(!hasFormMarker){
+    // Simple mode: one entry per non-blank line — either tab-separated
+    // (Game/Platform/Status/Points/Date) or "Game Name (Platform)".
+    return lines.filter(l=>l.trim()).map(line=>{
+      if(line.includes('\t')){
+        const parts = line.split('\t');
+        const status = normalizeStatus(parts[2]) || 'Queued';
+        const points = parts[3] !== undefined && parts[3].trim() !== '' ? parseFloat(parts[3]) : 0;
+        const date = parseFlexibleDate(parts[4]) || today;
+        return { game: (parts[0]||'').trim(), platform: (parts[1]||'').trim(), status, points: isNaN(points)?0:points, date };
+      }
+      const { game, platform } = parseRegularGameLine(line);
+      return { game, platform, status: 'Queued', points: 0, date: today };
+    });
+  }
+
+  // Form-dump mode (e.g. pasted from a Slack workflow submission): scan for
+  // blocks, each ending right after a "Test Value" label's answer line.
+  const records = [];
+  let block = [];
+  for(let i=0;i<lines.length;i++){
+    const line = lines[i];
+    if(!line.trim()) continue;
+    block.push(line);
+    if(/^\s*test\s*value\s*$/i.test(line)){
+      let j = i+1;
+      while(j<lines.length && !lines[j].trim()) j++;
+      if(j<lines.length){ block.push(lines[j]); i = j; }
+      records.push(block);
+      block = [];
+    }
+  }
+  if(block.length) records.push(block); // trailing incomplete block, best-effort
+
+  return records.map(blockLines=>{
+    const { game, platform } = parseRegularGameLine(blockLines[0]);
+    let points = 0;
+    for(let i=0;i<blockLines.length-1;i++){
+      if(/^\s*test\s*value\s*$/i.test(blockLines[i])){
+        const v = parseFloat(blockLines[i+1]);
+        if(!isNaN(v)) points = v;
+        break;
+      }
+    }
+    return { game, platform, status: 'Queued', points, date: today };
+  });
+}
+
 document.getElementById('rgPasteBtn').addEventListener('click', ()=>{
   const raw = document.getElementById('rgPasteArea').value;
   if(!raw.trim()) return;
   const today = fmtISO(new Date());
+  const parsed = parseRegularPasteBlob(raw, today);
   let count = 0;
   let lastDate = null;
-  raw.split(/\r?\n/).forEach(line=>{
-    if(!line.trim()) return;
-    let game, platform, status, points, date;
-    if(line.includes('\t')){
-      const parts = line.split('\t');
-      game = (parts[0]||'').trim();
-      platform = (parts[1]||'').trim();
-      status = normalizeStatus(parts[2]) || 'Queued';
-      points = parts[3] !== undefined && parts[3].trim() !== '' ? parseFloat(parts[3]) : 0;
-      date = parseFlexibleDate(parts[4]) || today;
-    } else {
-      // "Game Name (Platform)" style, matching the original spreadsheet layout
-      const m = line.trim().match(/^(.*)\s+\(([^)]+)\)\s*$/);
-      if(m){ game = m[1].trim(); platform = m[2].trim(); }
-      else { game = line.trim(); platform = ''; }
-      status = 'Queued';
-      points = 0;
-      date = today;
-    }
-    if(!game) return;
-    if(isNaN(points)) points = 0;
-    regularEntries.push({ id: uid(), date, game, platform, result: status, points });
+  parsed.forEach(rec=>{
+    if(!rec.game) return;
+    const date = rec.date || today;
+    regularEntries.push({ id: uid(), date, game: rec.game, platform: rec.platform||'', result: rec.status||'Queued', points: isNaN(rec.points)?0:rec.points });
     ensureMonthKnown(ymOf(date));
     lastDate = date;
     count++;
