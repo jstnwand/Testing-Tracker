@@ -417,7 +417,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
       <div class="stat-card">
         <div class="stat-label">Month Total</div>
         <div class="stat-value lime" id="regMonthTotal">0</div>
-        <div class="stat-sub">points logged this month</div>
+        <div class="stat-sub">from Passed/Failed tests only</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Monthly Target</div>
@@ -861,6 +861,7 @@ function fmtISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2
 function fmtDayLabel(d){ return d.toLocaleDateString(undefined, { weekday:'long' }); }
 function fmtDateShort(d){ return d.toLocaleDateString(undefined, { month:'short', day:'numeric' }); }
 function fmtNum(n){ return Number(n||0).toFixed(2).replace(/\.00$/,''); }
+function pointsCount(e){ return e.result === 'Passed' || e.result === 'Failed'; } // pending statuses (Queued/Downloading/Testing) don't count yet
 function ymOf(dateStr){ return dateStr.slice(0,7); }
 function ymNow(){ const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
 function daysInMonth(ym){ const [y,m] = ym.split('-').map(Number); return new Date(y, m, 0).getDate(); }
@@ -974,7 +975,7 @@ function renderRegular(){
     const iso = selectedMonth + '-' + String(day).padStart(2,'0');
     const list = regEntriesByDate[iso] || [];
     if(list.length) daysLogged++;
-    list.forEach(e=> monthTotal += Number(e.points||0));
+    list.forEach(e=> monthTotal += (pointsCount(e) ? Number(e.points||0) : 0));
   }
 
   const target = Number(settings.monthlyTarget||0);
@@ -1024,7 +1025,7 @@ function buildDayGroup(dateObj){
   const label = fmtDayLabel(dateObj);
   const weekend = isWeekendDay(dateObj);
   const list = (regEntriesByDate[iso] || []); // natural array order — draggable, not auto-sorted
-  const total = list.reduce((s,e)=> s + Number(e.points||0), 0);
+  const total = list.reduce((s,e)=> s + (pointsCount(e) ? Number(e.points||0) : 0), 0);
   const key = 'day_'+iso;
   const isToday = iso === fmtISO(new Date());
   const collapsed = key in collapsedDays ? collapsedDays[key] : (list.length===0 && !isToday);
@@ -1063,7 +1064,7 @@ function buildDayGroup(dateObj){
             ${e.platform ? `<div class="platform-tag">(${escapeHtml(e.platform)})</div>` : ''}
           </td>
           <td><select class="status-select" data-status-id="${e.id}" style="background-color:${statusColor};">${opts}</select></td>
-          <td><input type="number" step="0.25" class="cell-input pts-input" data-points-id="${e.id}" value="${e.points}" style="text-align:right;font-family:var(--mono);"></td>
+          <td><input type="number" step="0.25" class="cell-input pts-input" data-points-id="${e.id}" value="${e.points}" title="${pointsCount(e) ? '' : 'Not counted yet — mark Passed or Failed to add these points to the total'}" style="text-align:right;font-family:var(--mono);${pointsCount(e) ? '' : 'opacity:0.45;'}"></td>
           <td><div class="row-actions">
             <button class="mini-btn ${e.resultUrl ? 'has-link' : ''}" data-result-btn="${e.id}" title="${e.resultUrl ? 'Click to open result link · right-click to edit' : 'Add a result link'}">🔗</button>
             <button class="mini-btn" data-edit="${e.id}" title="Edit">✎</button>
@@ -1169,8 +1170,8 @@ function commitRegularStatus(id, value, el){
   const e = regularEntries.find(x=>x.id===id);
   if(!e) return;
   e.result = value;
-  if(el) el.style.backgroundColor = STATUS_COLORS[value] || STATUS_COLORS.Queued;
   persistAll();
+  renderRegular();
   renderTicker();
 }
 
