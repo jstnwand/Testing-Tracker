@@ -199,7 +199,9 @@ a{color:var(--lime);}
 .day-cap-note{font-size:10.5px;color:var(--amber);font-family:var(--mono);margin-left:8px;}
 .weekend-tag{font-size:10px;color:var(--purple);font-family:var(--mono);margin-left:8px;letter-spacing:0.05em;}
 
-table{width:100%;border-collapse:collapse;}
+table{width:100%;border-collapse:collapse;table-layout:fixed;}
+.col-resize-handle{position:absolute;top:0;right:-4px;bottom:0;width:8px;cursor:col-resize;z-index:5;}
+.col-resize-handle:hover, .col-resize-handle.active{background:rgba(215,255,62,0.35);}
 .game-table th{
   text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;color:#0a0b08;
   padding:11px 16px;border:1px solid #0a0b08;font-weight:800;background:var(--lime);
@@ -265,6 +267,7 @@ table{width:100%;border-collapse:collapse;}
 }
 .game-cell:hover{border-color:var(--border);background:var(--bg-raised);}
 .game-cell.copied-flash{color:var(--lime);border-color:rgba(215,255,62,0.4);background:var(--lime-soft);}
+.trainer-code-cell{font-family:var(--mono);font-weight:600;font-size:12.5px;}
 .status-select{
   width:100%;appearance:none;-webkit-appearance:none;cursor:pointer;
   border:none;border-radius:7px;padding:7px 26px 7px 10px;font-family:var(--sans);font-size:13px;font-weight:700;
@@ -681,6 +684,57 @@ const LS_BE  = 'qa_backend_entries_v2';
 const LS_SET = 'qa_settings_v2';
 
 function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4); }
+
+/* ---------------- resizable table columns (local display preference only) ---------------- */
+const LS_COLWIDTHS = 'qa_col_widths_v1';
+let colWidthsStore = (function(){
+  try{ const raw = localStorage.getItem(LS_COLWIDTHS); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; }
+})();
+function saveColWidths(){ try{ localStorage.setItem(LS_COLWIDTHS, JSON.stringify(colWidthsStore)); }catch(e){} }
+
+function setupResizableTable(table, storeKey, defaultWidths){
+  const ths = table.querySelectorAll('thead th');
+  if(!ths.length) return;
+  let widths = colWidthsStore[storeKey];
+  if(!widths || widths.length !== ths.length) widths = defaultWidths.slice();
+
+  let colgroup = table.querySelector('colgroup');
+  if(!colgroup){
+    colgroup = document.createElement('colgroup');
+    table.insertBefore(colgroup, table.firstChild);
+  }
+  colgroup.innerHTML = widths.map(w=>`<col style="width:${w}px;">`).join('');
+  const cols = colgroup.querySelectorAll('col');
+
+  ths.forEach((th, idx)=>{
+    if(idx >= cols.length - 1) return; // no drag handle after the last column
+    th.style.position = 'relative';
+    const handle = document.createElement('div');
+    handle.className = 'col-resize-handle';
+    th.appendChild(handle);
+    handle.addEventListener('mousedown', (ev)=>{
+      ev.preventDefault();
+      ev.stopPropagation();
+      handle.classList.add('active');
+      const startX = ev.clientX;
+      const startWidth = cols[idx].getBoundingClientRect().width;
+      function onMove(e){
+        const newWidth = Math.max(36, Math.round(startWidth + (e.clientX - startX)));
+        cols[idx].style.width = newWidth + 'px';
+      }
+      function onUp(){
+        handle.classList.remove('active');
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        colWidthsStore[storeKey] = [...cols].map(c=> parseInt(c.style.width,10) || 0);
+        saveColWidths();
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  });
+}
+
 function loadJSON(key, fallback){
   try{ const raw = localStorage.getItem(key); if(!raw) return fallback; return JSON.parse(raw); }
   catch(e){ return fallback; }
@@ -1052,7 +1106,7 @@ function buildDayGroup(dateObj){
     const tblWrap = document.createElement('div');
     let rows = '';
     if(list.length === 0){
-      rows = `<tr class="empty-row"><td colspan="5">No games logged for this day.</td></tr>`;
+      rows = `<tr class="empty-row"><td colspan="6">No games logged for this day.</td></tr>`;
     } else {
       list.forEach(e=>{
         const statusColor = STATUS_COLORS[e.result] || STATUS_COLORS.Queued;
@@ -1070,15 +1124,17 @@ function buildDayGroup(dateObj){
             <button class="mini-btn" data-edit="${e.id}" title="Edit">✎</button>
             <button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button>
           </div></td>
+          <td><div class="game-cell trainer-code-cell" data-trainer-id="${e.id}">${e.trainerCode ? escapeHtml(e.trainerCode) : '<span class="add-link-hint">+ Add code</span>'}</div></td>
         </tr>`;
       });
     }
     rows += quickAddRowHtml(iso);
     tblWrap.innerHTML = `<table class="game-table">
-      <thead><tr><th style="width:28px;"></th><th>Game (Platform)</th><th>Status</th><th>Points</th><th></th></tr></thead>
+      <thead><tr><th style="width:28px;"></th><th>Game (Platform)</th><th>Status</th><th>Points</th><th></th><th>Trainer Code</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
     wrap.appendChild(tblWrap);
+    setupResizableTable(tblWrap.querySelector('table'), 'regular', [28,260,120,90,110,150]);
 
     tblWrap.querySelectorAll('[data-edit]').forEach(b=> b.addEventListener('click', (ev)=>{ ev.stopPropagation(); editRegularEntry(b.dataset.edit); }));
     tblWrap.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', (ev)=>{ ev.stopPropagation(); deleteRegularEntry(b.dataset.del); }));
@@ -1117,6 +1173,17 @@ function buildDayGroup(dateObj){
         else promptEditResultLink(id);
       });
       btn.addEventListener('contextmenu', (ev)=>{ ev.preventDefault(); ev.stopPropagation(); promptEditResultLink(id); });
+    });
+    tblWrap.querySelectorAll('[data-trainer-id]').forEach(div=>{
+      div.addEventListener('click', ev=> ev.stopPropagation());
+      div.addEventListener('dblclick', ev=> ev.stopPropagation());
+      div.addEventListener('contextmenu', ev=> ev.stopPropagation());
+      const id = div.dataset.trainerId;
+      const entry = regularEntries.find(x=>x.id===id);
+      wireCopyEditCell(div, entry ? (entry.trainerCode||'') : '', (newVal)=>{
+        if(newVal !== null && entry){ entry.trainerCode = newVal; persistAll(); }
+        renderRegular();
+      });
     });
 
     // row drag-and-drop reordering (within this day's list)
@@ -1198,6 +1265,7 @@ function quickAddRowHtml(dateIso){
         <button class="mini-btn qa-add-btn" title="Add row" style="color:var(--lime);border-color:rgba(215,255,62,0.35);flex-shrink:0;">+</button>
       </div>
     </td>
+    <td></td>
   </tr>`;
 }
 
@@ -1706,6 +1774,7 @@ function renderBackendHeader(){
 
   tr.querySelectorAll('th[draggable="true"]').forEach(th=>{
     th.addEventListener('dragstart', (ev)=>{
+      if(ev.target.closest('.col-resize-handle')){ ev.preventDefault(); return; } // resize handle shouldn't also trigger reorder
       th.classList.add('col-dragging');
       ev.dataTransfer.setData('text/col', th.dataset.col);
       ev.dataTransfer.effectAllowed = 'move';
@@ -1797,6 +1866,7 @@ function renderBackend(){
 
   populateSourceSelects();
   renderBackendHeader();
+  setupResizableTable(document.getElementById('beTable'), 'backend', [28, ...settings.beColumnOrder.map(()=>150), 90]);
 
   const filtered = getFilteredBackend();
   const total = filtered.length;
@@ -1995,6 +2065,52 @@ function wireGameCell(div, currentValue, onCommit){
   };
   div.addEventListener('dblclick', enterEdit);
   div.addEventListener('contextmenu', enterEdit);
+}
+
+/**
+ * Like wireGameCell, but for cells that may start empty (e.g. a code that
+ * hasn't been filled in yet): clicking an empty cell edits it directly
+ * instead of copying nothing; a filled cell still copies on click and
+ * edits on double-click/right-click.
+ */
+function wireCopyEditCell(div, currentValue, onCommit){
+  div.title = currentValue ? 'Click to copy · double-click or right-click to edit' : 'Click to add';
+  const enterEdit = ()=>{
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'cell-input';
+    input.value = currentValue || '';
+    div.replaceWith(input);
+    input.focus();
+    input.select();
+    let done = false;
+    const finish = ()=>{
+      if(done) return;
+      done = true;
+      onCommit(input.value.trim());
+    };
+    input.addEventListener('blur', finish);
+    input.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){ e.preventDefault(); input.blur(); }
+      else if(e.key === 'Escape'){ done = true; input.blur(); onCommit(null); }
+    });
+  };
+  div.addEventListener('click', ()=>{
+    if(!currentValue){ enterEdit(); return; }
+    const flash = ()=>{
+      const original = div.textContent;
+      div.textContent = 'Copied ✓';
+      div.classList.add('copied-flash');
+      setTimeout(()=>{ if(div.isConnected){ div.textContent = original; div.classList.remove('copied-flash'); } }, 900);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(currentValue).then(flash).catch(flash);
+    } else {
+      flash();
+    }
+  });
+  div.addEventListener('dblclick', (ev)=>{ ev.preventDefault(); enterEdit(); });
+  div.addEventListener('contextmenu', (ev)=>{ ev.preventDefault(); enterEdit(); });
 }
 
 /* ---------------- undo/redo buttons ---------------- */
