@@ -245,7 +245,8 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
   text-align:inherit;
 }
 .be-banner + .table-wrap{border-top-left-radius:0;border-top-right-radius:0;border-top:none;}
-.table-scroll{overflow-x:auto;}
+.table-scroll{overflow-x:auto;overflow-y:auto;max-height:70vh;}
+.table-scroll thead th{position:sticky;top:0;z-index:10;}
 .status-pill{font-family:var(--mono);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;display:inline-block;white-space:nowrap;}
 .status-Passed{background:rgba(61,220,138,0.12);color:var(--green);border:1px solid rgba(61,220,138,0.3);}
 .status-Failed{background:rgba(255,92,114,0.1);color:var(--red);border:1px solid rgba(255,92,114,0.28);}
@@ -636,10 +637,6 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
           </div>
           <div class="pager">
             <span id="pagerInfo">—</span>
-            <div class="pager-btns">
-              <button class="icon-btn" id="pagePrev">‹ Prev</button>
-              <button class="icon-btn" id="pageNext">Next ›</button>
-            </div>
           </div>
         </div>
 
@@ -1761,8 +1758,6 @@ document.getElementById('bePasteBtn').addEventListener('click', ()=>{
   document.getElementById(id).addEventListener('input', ()=>{ bePage = 0; renderBackend(); });
   document.getElementById(id).addEventListener('change', ()=>{ bePage = 0; renderBackend(); });
 });
-document.getElementById('pagePrev').addEventListener('click', ()=>{ if(bePage>0){ bePage--; renderBackend(); } });
-document.getElementById('pageNext').addEventListener('click', ()=>{ bePage++; renderBackend(); });
 
 function getFilteredBackend(){
   const q = document.getElementById('beSearch').value.trim().toLowerCase();
@@ -1901,10 +1896,7 @@ function renderBackend(){
 
   const filtered = getFilteredBackend();
   const total = filtered.length;
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  if(bePage >= totalPages) bePage = totalPages - 1;
-  if(bePage < 0) bePage = 0;
-  const pageItems = filtered.slice(bePage*PAGE_SIZE, bePage*PAGE_SIZE + PAGE_SIZE);
+  const pageItems = filtered; // no pagination — one continuous, scrollable list so rows are draggable across the whole day
 
   const tbody = document.getElementById('beTbody');
   const colCount = settings.beColumnOrder.length + 2;
@@ -1953,7 +1945,7 @@ function renderBackend(){
   }
 
   document.getElementById('pagerInfo').textContent =
-    total===0 ? 'No entries' : `Showing ${bePage*PAGE_SIZE+1}–${Math.min(total,(bePage+1)*PAGE_SIZE)} of ${total}`;
+    total===0 ? 'No entries' : `${total} entr${total===1?'y':'ies'} — scroll to see more`;
 
   const dayEntries = getDayEntries();
   const passed = dayEntries.filter(e=>e.status==='Passed').length;
