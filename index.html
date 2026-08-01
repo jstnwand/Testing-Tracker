@@ -3,1717 +3,2327 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WTM Cross-Check &mdash; activate staff</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxNCIgZmlsbD0iIzBiMGIwYyIvPgogIDxyZWN0IHg9IjE1IiB5PSIxMSIgd2lkdGg9IjI3IiBoZWlnaHQ9IjM1IiByeD0iMyIgZmlsbD0iI2ZmZmZmZiIvPgogIDxyZWN0IHg9IjIwIiB5PSIxOCIgd2lkdGg9IjE3IiBoZWlnaHQ9IjMiIHJ4PSIxLjUiIGZpbGw9IiNjN2M5Y2MiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjUiIHdpZHRoPSIxNyIgaGVpZ2h0PSIzIiByeD0iMS41IiBmaWxsPSIjYzdjOWNjIi8+CiAgPHJlY3QgeD0iMjAiIHk9IjMyIiB3aWR0aD0iMTciIGhlaWdodD0iMyIgcng9IjEuNSIgZmlsbD0iI2M3YzljYyIvPgogIDxyZWN0IHg9IjIwIiB5PSIzOSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjMiIHJ4PSIxLjUiIGZpbGw9IiNjN2M5Y2MiLz4KICA8Y2lyY2xlIGN4PSI0NSIgY3k9IjQzIiByPSIxNSIgZmlsbD0iI2VjMTg5MyIgc3Ryb2tlPSIjMGIwYjBjIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDxwYXRoIGQ9Ik0zOC41IDQzLjVsNCA0IDktOSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIi8+Cjwvc3ZnPgo=">
+<title>Justine QA Log — Wand</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0b08'/%3E%3Ctext x='32' y='45' font-family='Arial, sans-serif' font-weight='900' font-size='36' fill='%23d7ff3e' text-anchor='middle'%3EW%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #eef0f1;
-    --card: #ffffff;
-    --ink: #131316;
-    --ink-soft: #6c7076;
-    --rule: #e7e8ea;
-    --pink: #ec1893;
-    --pink-bg: #fdeaf5;
-    --cyan: #23c7ec;
-    --cyan-bg: #e5f9fd;
-    --black-pill: #0b0b0c;
-    --navy: #1a3a63;
-    --navy-dark: #12294a;
-    --match: #16a34a;
-    --match-bg: #e9f8ef;
-    --agency: #2563eb;
-    --agency-bg: #eaf1fe;
-    --mismatch: #ec1893;
-    --mismatch-bg: #fdeaf5;
-    --missing: #e2342b;
-    --missing-bg: #fde9e8;
-    --unmapped: #0891b2;
-    --unmapped-bg: #e5f9fd;
-    --extra: #7c3aed;
-    --extra-bg: #f2eafe;
-    --sans: -apple-system, "Segoe UI", "Helvetica Neue", Roboto, Arial, sans-serif;
-    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  }
+:root{
+  --bg:#0a0b08;
+  --bg-raised:#141509;
+  --card:#15160f;
+  --card-2:#1a1c12;
+  --border:#282c1a;
+  --border-soft:#1c1e14;
+  --text:#eef0e6;
+  --text-dim:#8d9280;
+  --text-faint:#5c6154;
+  --lime:#d7ff3e;
+  --lime-soft:rgba(215,255,62,0.12);
+  --amber:#f2b84b;
+  --green:#3ddc8a;
+  --red:#ff5c72;
+  --purple:#b490ff;
+  --slate:#7d8399;
+  --mono:'JetBrains Mono', monospace;
+  --sans:'Inter', sans-serif;
+  --radius:14px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(1200px 500px at 15% -10%, rgba(215,255,62,0.05), transparent),
+    radial-gradient(1000px 500px at 100% 0%, rgba(215,255,62,0.03), transparent),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(215,255,62,0.25);}
+a{color:var(--lime);}
 
-  * { box-sizing: border-box; }
+/* ---------- layout shell ---------- */
+.shell{max-width:1360px;margin:0 auto;padding:28px 20px 80px;}
 
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--sans);
-    line-height: 1.5;
-    padding: 2.5rem 1.25rem 4rem;
-  }
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:12px;position:relative;}
+.hamburger-btn{
+  background:var(--card);border:1px solid var(--border);color:var(--text-dim);
+  width:36px;height:36px;border-radius:9px;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0;
+}
+.hamburger-btn:hover{color:var(--text);border-color:#3a4025;background:var(--card-2);}
+.hamburger-menu{
+  position:absolute;top:46px;left:0;z-index:120;
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:6px;min-width:180px;box-shadow:0 14px 40px rgba(0,0,0,0.5);
+  display:flex;flex-direction:column;gap:2px;
+}
+.hamburger-item{
+  background:transparent;border:none;color:var(--text);text-align:left;
+  padding:9px 12px;border-radius:7px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;
+}
+.hamburger-item:hover{background:var(--card-2);}
+.brand-mark{
+  width:40px;height:40px;border-radius:10px;background:#000;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:Arial, sans-serif;font-weight:900;color:var(--lime);font-size:20px;flex-shrink:0;
+}
+.brand-text h1{font-size:16px;margin:0;font-weight:700;letter-spacing:0.2px;}
+.brand-text p{margin:2px 0 0;font-size:12px;color:var(--text-dim);}
 
-  .wrap {
-    max-width: 1180px;
-    margin: 0 auto;
-    background: var(--card);
-    border-radius: 20px;
-    box-shadow: 0 1px 3px rgba(20,20,25,0.04), 0 12px 32px rgba(20,20,25,0.06);
-    padding: 2.75rem 3rem 3rem;
-  }
-  @media (max-width: 720px) { .wrap { padding: 2rem 1.25rem 2.5rem; } }
+.topbar-actions{display:flex;align-items:center;gap:10px;}
+.undo-toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--card);border:1px solid var(--border);color:var(--text);
+  padding:10px 20px;border-radius:10px;font-family:var(--sans);font-size:13px;font-weight:600;
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:300;
+  opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;
+}
+.undo-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.icon-btn{
+  background:var(--card);border:1px solid var(--border);color:var(--text-dim);
+  font-family:var(--sans);font-size:12.5px;font-weight:600;
+  padding:8px 12px;border-radius:9px;cursor:pointer;transition:.15s;
+  display:flex;align-items:center;gap:6px;
+}
+.icon-btn:hover{border-color:#3a4025;color:var(--text);background:var(--card-2);}
+.icon-btn.danger:hover{border-color:rgba(255,92,114,0.5);color:var(--red);}
 
-  /* ---------- Header ---------- */
-  header.top { padding-bottom: 1.6rem; border-bottom: 1px solid var(--rule); margin-bottom: 2rem; }
-  .brandmark { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.4rem; }
-  .brandmark .dots { position: relative; width: 30px; height: 26px; flex: none; }
-  .brandmark .dots span { position: absolute; width: 16px; height: 16px; border-radius: 50%; }
-  .brandmark .dots span.c { background: var(--cyan); top: 0; left: 0; }
-  .brandmark .dots span.p { background: var(--pink); bottom: 0; left: 9px; }
-  .brandmark .word { font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em; }
-  .brandmark .word .light { font-weight: 400; color: var(--ink-soft); }
+/* build-log ticker */
+.ticker-wrap{
+  border:1px solid var(--border-soft);background:linear-gradient(180deg, rgba(215,255,62,0.02), transparent);
+  border-radius:10px;padding:9px 14px;margin-bottom:22px;display:flex;align-items:center;gap:10px;overflow:hidden;
+  font-family:var(--mono);font-size:12px;color:var(--text-faint);
+}
+.ticker-dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 8px rgba(215,255,62,0.6);flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+.ticker-track{white-space:nowrap;overflow:hidden;position:relative;flex:1;}
+.ticker-inner{display:inline-block;animation:scroll-left 32s linear infinite;}
+.ticker-inner span{margin-right:36px;}
+.ticker-track:hover .ticker-inner{animation-play-state:paused;}
+@keyframes scroll-left{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.pass-tok{color:var(--green);}
+.fail-tok{color:var(--red);}
+.other-tok{color:var(--amber);}
 
-  h1 {
-    font-weight: 800;
-    font-size: 2.15rem;
-    margin: 0 0 0.55rem;
-    letter-spacing: -0.02em;
-  }
-  .underline-bar { width: 56px; height: 5px; background: var(--pink); border-radius: 3px; margin-bottom: 1.1rem; }
-  .sub { font-size: 0.98rem; color: var(--ink-soft); max-width: 620px; margin: 0 0 1rem; }
-  .privacy-note {
-    display: inline-flex; align-items: center; gap: 0.45em;
-    font-family: var(--mono); font-size: 0.72rem; color: var(--match);
-    background: var(--match-bg); padding: 0.35em 0.75em; border-radius: 999px;
-  }
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:6px;margin-bottom:22px;background:var(--card);border:1px solid var(--border);padding:4px;border-radius:11px;width:fit-content;}
+.tab-btn{border:none;background:transparent;color:var(--text-dim);font-family:var(--sans);font-size:13.5px;font-weight:600;padding:9px 18px;border-radius:8px;cursor:pointer;transition:.15s;}
+.tab-btn.active{background:var(--lime);color:#0a0b08;}
+.tab-btn:not(.active):hover{color:var(--text);}
 
-  /* ---------- Session bar / Clear all ---------- */
-  .session-bar { display: flex; align-items: center; justify-content: flex-end; gap: 0.7rem; margin-bottom: 0.9rem; }
-  .session-label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); margin-right: auto; }
-  .btn-outline {
-    font-family: var(--sans); font-size: 0.78rem; font-weight: 600;
-    border: 1.5px solid var(--rule); background: #fff; color: var(--ink-soft);
-    padding: 0.5em 1.05em; border-radius: 999px; cursor: pointer;
-  }
-  .btn-outline:hover { border-color: var(--ink); color: var(--ink); }
-  .btn-danger {
-    font-family: var(--sans); font-size: 0.82rem; font-weight: 600;
-    border: none; background: var(--missing); color: #fff;
-    padding: 0.6em 1.3em; border-radius: 999px; cursor: pointer;
-  }
-  .btn-danger:hover { background: #c22921; }
+.panel{display:none;}
+.panel.active{display:block;animation:fadein .2s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 
-  /* ---------- Modal ---------- */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(15,15,18,0.45);
-    align-items: center; justify-content: center; z-index: 50; padding: 1rem;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal-card {
-    background: #fff; border-radius: 18px; padding: 1.8rem 1.9rem; max-width: 420px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-  }
-  .modal-card h3 { margin: 0 0 0.6rem; font-size: 1.15rem; font-weight: 800; }
-  .modal-card p { margin: 0 0 1.4rem; font-size: 0.9rem; color: var(--ink-soft); line-height: 1.55; }
-  .modal-actions { display: flex; justify-content: flex-end; gap: 0.7rem; }
+/* ---------- cards / stats ---------- */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+@media(max-width:860px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+.backend-layout{display:flex;gap:20px;align-items:flex-start;}
+.backend-main{flex:1;min-width:0;}
+.backend-sidebar{width:250px;flex-shrink:0;position:sticky;top:20px;display:flex;flex-direction:column;gap:14px;}
+@media(max-width:900px){.backend-layout{flex-direction:column;} .backend-sidebar{width:100%;position:static;flex-direction:row;flex-wrap:wrap;} .backend-sidebar .stat-card{flex:1;min-width:140px;}}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;}
+.stat-label{font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:var(--text-faint);font-weight:700;margin-bottom:8px;}
+.stat-value{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1;}
+.stat-sub{font-size:11.5px;color:var(--text-dim);margin-top:6px;}
+.stat-value.lime{color:var(--lime);}
+.stat-value.amber{color:var(--amber);}
+.stat-value.green{color:var(--green);}
+.stat-value.red{color:var(--red);}
+.stat-value.purple{color:var(--purple);}
 
-  /* ---------- Run check ---------- */
-  .run-row { display: flex; align-items: center; gap: 1rem; margin: 0 0 1.6rem; flex-wrap: wrap; }
-  .btn-run {
-    font-family: var(--sans); font-size: 0.9rem; font-weight: 700;
-    border: none; background: var(--pink); color: #fff;
-    padding: 0.75em 1.6em; border-radius: 999px; cursor: pointer;
-  }
-  .btn-run:hover { background: #d10f7d; }
-  .run-hint { font-size: 0.83rem; color: var(--ink-soft); }
+/* ---------- month header (page-per-month) ---------- */
+.month-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
+.month-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);font-weight:700;margin-bottom:4px;}
+.month-title{font-size:28px;font-weight:800;margin:0;letter-spacing:-0.01em;}
+.month-controls{display:flex;align-items:center;gap:10px;}
+.month-controls select{
+  background:var(--card);border:1px solid var(--border);color:var(--text);
+  border-radius:9px;padding:9px 14px;font-family:var(--sans);font-size:13px;font-weight:600;outline:none;cursor:pointer;
+}
+.month-controls select:focus{border-color:var(--lime);}
 
-  /* ---------- Success banner ---------- */
-  .success-banner {
-    background: var(--match-bg); color: var(--match); border: 1.5px solid var(--match);
-    border-radius: 14px; padding: 0.9em 1.2em; font-weight: 700; font-size: 0.95rem;
-    margin: 0 0 1.4rem;
-  }
+.modal-overlay{position:fixed;inset:0;background:rgba(5,6,3,0.7);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:50;}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;width:300px;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+.modal-box h3{margin:0 0 16px;font-size:14px;font-weight:700;}
+.modal-box .field-label-sm{display:block;margin-bottom:6px;}
+.modal-box input[type="month"], .modal-box input[type="date"]{
+  width:100%;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:13px;outline:none;margin-bottom:18px;
+  color-scheme:dark;box-sizing:border-box;
+}
+.modal-box input[type="month"]:focus, .modal-box input[type="date"]:focus{border-color:var(--lime);box-shadow:0 0 0 3px rgba(215,255,62,0.12);}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;}
+.modal-actions.fill .btn{flex:1;}
 
-  /* ---------- Results title ---------- */
-  .results-title { font-size: 1.05rem; font-weight: 800; margin: 0 0 0.8rem; display: flex; align-items: baseline; gap: 0.5em; }
-  .results-title .count { font-family: var(--mono); font-size: 0.78rem; font-weight: 600; color: var(--ink-soft); }
+.week-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;flex-wrap:wrap;}
+.week-status-badge{font-family:var(--mono);font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;letter-spacing:0.03em;}
+.badge-reached{background:rgba(61,220,138,0.12);color:var(--green);border:1px solid rgba(61,220,138,0.3);}
+.badge-missed{background:rgba(255,92,114,0.1);color:var(--red);border:1px solid rgba(255,92,114,0.28);}
+.badge-progress{background:rgba(242,184,75,0.1);color:var(--amber);border:1px solid rgba(242,184,75,0.28);}
+.badge-empty{background:rgba(125,131,153,0.1);color:var(--slate);border:1px solid rgba(125,131,153,0.28);}
 
-  /* ---------- Intake ---------- */
-  section.intake { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.6rem; }
-  @media (max-width: 780px) { section.intake { grid-template-columns: 1fr; } }
+/* ---------- forms ---------- */
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;}
+.form-card h3{margin:0 0 14px;font-size:13px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-dim);font-weight:700;}
+.form-card p.hint{margin:-8px 0 14px;font-size:12px;color:var(--text-faint);}
+.form-card p.hint code{background:var(--bg-raised);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-family:var(--mono);color:var(--text-dim);}
+.form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+.field{display:flex;flex-direction:column;gap:6px;flex:1;min-width:120px;}
+.field label{font-size:11px;color:var(--text-faint);font-weight:600;}
+.field input, .field select, .field textarea{
+  background:var(--bg-raised);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:9px 11px;font-family:var(--sans);font-size:13px;outline:none;transition:.15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus{border-color:var(--lime);box-shadow:0 0 0 3px rgba(215,255,62,0.12);}
+.field.grow-2{flex:2;}
+.btn{border:none;border-radius:9px;padding:10px 18px;font-family:var(--sans);font-weight:700;font-size:13px;cursor:pointer;transition:.15s;white-space:nowrap;}
+.btn-primary{background:var(--lime);color:#0a0b08;}
+.btn-primary:hover{filter:brightness(1.08);}
+.btn-ghost{background:var(--card-2);border:1px solid var(--border);color:var(--text-dim);}
+.btn-ghost:hover{color:var(--text);}
 
-  .slot {
-    border: 1.5px dashed #d7dade;
-    border-radius: 16px;
-    background: #fbfbfc;
-    padding: 1.4rem 1.4rem 1.2rem;
-    position: relative;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .slot.drag { border-color: var(--cyan); background: var(--cyan-bg); }
-  .slot.filled { border-style: solid; border-color: var(--match); background: var(--match-bg); }
-  .slot .tag {
-    font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--pink); font-weight: 700; display: block; margin-bottom: 0.5rem;
-  }
-  .slot .name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.2rem; }
-  .slot .hint { font-size: 0.85rem; color: var(--ink-soft); }
-  .slot .status { font-family: var(--mono); font-size: 0.78rem; margin-top: 0.7rem; }
-  .slot .status .ok { color: var(--match); }
-  .slot input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; clip: rect(0,0,0,0); }
-  .slot button.browse {
-    font-size: 0.82rem; font-weight: 600;
-    border: none; background: var(--black-pill); color: #fff;
-    padding: 0.55em 1.1em; border-radius: 999px;
-    margin-top: 0.8rem; cursor: pointer;
-  }
-  .slot button.browse:hover { background: #2a2a2d; }
+/* ---------- day groups / spreadsheet-style tables ---------- */
+.day-group{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;}
+.day-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--card-2);cursor:pointer;user-select:none;}
+.day-head-left{display:flex;align-items:center;gap:10px;}
+.day-head .chev{color:var(--text-faint);font-size:11px;transition:transform .15s;}
+.day-head.collapsed .chev{transform:rotate(-90deg);}
+.day-name{font-weight:700;font-size:13.5px;}
+.day-date{font-size:11.5px;color:var(--text-dim);font-family:var(--mono);}
+.day-total{font-family:var(--mono);font-weight:700;color:var(--lime);font-size:14px;}
+.day-cap-note{font-size:10.5px;color:var(--amber);font-family:var(--mono);margin-left:8px;}
+.weekend-tag{font-size:10px;color:var(--purple);font-family:var(--mono);margin-left:8px;letter-spacing:0.05em;}
 
-  /* ---------- Week picker ---------- */
-  .week-picker {
-    display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;
-    background: var(--cyan-bg); border: 1.5px solid var(--cyan); border-radius: 14px;
-    padding: 0.9rem 1.1rem; margin: 0 0 1.6rem;
-  }
-  .week-picker .wp-label { font-size: 0.85rem; font-weight: 700; color: var(--ink); }
-  .week-picker select {
-    font-family: var(--sans); font-size: 0.88rem; padding: 0.45em 0.7em;
-    border: 1.5px solid var(--rule); border-radius: 8px; background: #fff;
-  }
-  .week-picker .wp-note { font-size: 0.8rem; color: var(--ink-soft); }
+table{width:100%;border-collapse:collapse;table-layout:fixed;}
+.col-resize-handle{position:absolute;top:0;right:-4px;bottom:0;width:8px;cursor:col-resize;z-index:5;}
+.col-resize-handle:hover, .col-resize-handle.active{background:rgba(215,255,62,0.35);}
+.game-table th{
+  text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;color:#0a0b08;
+  padding:11px 16px;border:1px solid #0a0b08;font-weight:800;background:var(--lime);
+}
+.game-table td{padding:10px 16px;font-size:13.5px;border:1px solid var(--border-soft);}
+.game-table tr:hover td{background:rgba(215,255,62,0.02);}
+.platform-tag{font-size:11px;color:var(--text-dim);font-family:var(--mono);}
+.mini-btn.has-link{color:var(--lime);border-color:rgba(215,255,62,0.4);}
+.result-tag{font-family:var(--mono);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-block;}
+.result-passed{background:rgba(61,220,138,0.1);color:var(--green);}
+.result-failed{background:rgba(255,92,114,0.1);color:var(--red);}
+.pts-cell{font-family:var(--mono);font-weight:600;color:var(--text);}
+.row-actions{display:flex;gap:6px;justify-content:flex-end;}
+.mini-btn{background:transparent;border:1px solid var(--border);color:var(--text-faint);width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;justify-content:center;}
+.mini-btn:hover{color:var(--text);border-color:#3a4025;}
+.mini-btn.del:hover{color:var(--red);border-color:rgba(255,92,114,0.4);}
+.empty-row td{text-align:center;color:var(--text-faint);font-size:12.5px;padding:18px;font-style:italic;}
+.quick-add-row td{background:rgba(215,255,62,0.02);padding:8px 16px;}
+.quick-add-row .qa-game:focus, .quick-add-row .qa-platform:focus, .quick-add-row .qa-points:focus{border-color:var(--lime);}
 
-  /* ---------- Mapping panel ---------- */
-  details.mapping { margin: 0 0 1.6rem; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 1rem 0; }
-  details.mapping > summary {
-    cursor: pointer; font-size: 0.86rem; font-weight: 700; color: var(--ink); list-style: none;
-  }
-  details.mapping > summary::-webkit-details-marker { display: none; }
-  details.mapping > summary::before { content: "▸ "; color: var(--pink); }
-  details.mapping[open] > summary::before { content: "▾ "; }
-  .map-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.88rem; }
-  .map-table th {
-    text-align: left; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--ink-soft); border-bottom: 1px solid var(--rule); padding: 0.5em 0.6em;
-  }
-  .map-table td { padding: 0.45em 0.6em; border-bottom: 1px solid var(--rule); }
-  .map-table select {
-    font-family: var(--sans); font-size: 0.85rem; padding: 0.35em 0.5em;
-    border: none; border-bottom: 2px solid var(--rule); background: transparent; width: 100%;
-  }
-  .map-table select:focus { outline: none; border-bottom-color: var(--cyan); }
-  .map-note { font-size: 0.8rem; color: var(--ink-soft); margin-top: 0.7rem; }
+/* ---------- backend filters/table ---------- */
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.filter-bar input, .filter-bar select{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;outline:none;}
+.filter-bar input{flex:1;min-width:180px;}
+.filter-bar input:focus, .filter-bar select:focus{border-color:var(--lime);}
 
-  /* ---------- Summary stat cards ---------- */
-  .summary { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 0 0 1.4rem; }
-  .stamp {
-    font-family: var(--sans); border: 1.5px solid var(--rule); border-radius: 14px;
-    padding: 0.75em 1.1em; font-size: 0.82rem; cursor: pointer; background: #fff;
-    text-align: left; min-width: 118px; transition: transform 0.1s, box-shadow 0.1s;
-  }
-  .stamp .n { font-size: 1.6rem; font-weight: 800; display: block; line-height: 1.1; }
-  .stamp .l { color: var(--ink-soft); font-size: 0.72rem; font-weight: 600; }
-  .stamp.match { color: var(--match); }
-  .stamp.mismatch { color: var(--mismatch); }
-  .stamp.missing { color: var(--missing); }
-  .stamp.unmapped { color: var(--unmapped); }
-  .stamp.extra { color: var(--extra); }
-  .stamp.all { color: var(--ink); }
-  .stamp.active { border-color: currentColor; box-shadow: 0 4px 14px rgba(20,20,25,0.08); transform: translateY(-1px); }
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.be-banner{
+  display:flex;background:var(--lime);border-radius:var(--radius) var(--radius) 0 0;
+  overflow:hidden;border:1px solid #0a0b08;border-bottom:none;
+}
+.be-banner-col{
+  flex:1;padding:16px 20px;font-weight:800;font-size:19px;letter-spacing:0.01em;
+  color:#0a0b08;cursor:text;transition:.15s;
+}
+.be-banner-col:first-child{border-right:1px solid rgba(10,11,8,0.18);}
+.be-banner-col:last-child{text-align:right;}
+.be-banner-col:hover{background:rgba(10,11,8,0.07);}
+.be-banner-col input{
+  width:100%;background:transparent;border:none;outline:none;font:inherit;color:inherit;
+  text-align:inherit;
+}
+.be-banner + .table-wrap{border-top-left-radius:0;border-top-right-radius:0;border-top:none;}
+.table-scroll{overflow-x:auto;}
+.status-pill{font-family:var(--mono);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;display:inline-block;white-space:nowrap;}
+.status-Passed{background:rgba(61,220,138,0.12);color:var(--green);border:1px solid rgba(61,220,138,0.3);}
+.status-Failed{background:rgba(255,92,114,0.1);color:var(--red);border:1px solid rgba(255,92,114,0.28);}
+.status-Testing{background:rgba(242,184,75,0.1);color:var(--amber);border:1px solid rgba(242,184,75,0.28);}
+.status-Downloading{background:rgba(180,144,255,0.1);color:var(--purple);border:1px solid rgba(180,144,255,0.28);}
+.status-Queued{background:rgba(125,131,153,0.1);color:var(--slate);border:1px solid rgba(125,131,153,0.25);}
 
-  /* ---------- Toolbar ---------- */
-  .toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1rem; }
-  .toolbar label { font-size: 0.85rem; display: flex; align-items: center; gap: 0.4em; color: var(--ink-soft); }
-  .toolbar input[type=text] {
-    font-family: var(--sans); font-size: 0.88rem; padding: 0.5em 0.1em;
-    border: none; border-bottom: 2px solid var(--rule); background: transparent; min-width: 240px;
-  }
-  .toolbar input[type=text]:focus { outline: none; border-bottom-color: var(--cyan); }
-  .btn {
-    font-family: var(--sans); font-size: 0.8rem; font-weight: 600;
-    border: none; background: var(--black-pill); color: #fff;
-    padding: 0.6em 1.2em; border-radius: 999px; cursor: pointer;
-  }
-  .btn:hover { background: #2a2a2d; }
-  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.cell-input{
+  width:100%;background:transparent;border:1px solid transparent;color:var(--text);
+  border-radius:6px;padding:6px 7px;font-family:var(--sans);font-size:13px;outline:none;transition:.15s;
+}
+.cell-input:hover{border-color:var(--border);background:var(--bg-raised);}
+.cell-input:focus{border-color:var(--lime);background:var(--bg-raised);box-shadow:0 0 0 2px rgba(215,255,62,0.12);}
+.cell-input.date-input{font-family:var(--mono);color-scheme:dark;min-width:130px;}
+.game-cell{
+  width:100%;padding:6px 7px;border-radius:6px;border:1px solid transparent;
+  font-family:var(--sans);font-size:13px;font-weight:600;color:var(--text);
+  cursor:pointer;transition:.15s;user-select:none;
+}
+.game-cell:hover{border-color:var(--border);background:var(--bg-raised);}
+.game-cell.copied-flash{color:var(--lime);border-color:rgba(215,255,62,0.4);background:var(--lime-soft);}
+.trainer-code-cell{font-family:var(--mono);font-weight:600;font-size:12.5px;}
+.status-select{
+  width:100%;appearance:none;-webkit-appearance:none;cursor:pointer;
+  border:none;border-radius:7px;padding:7px 26px 7px 10px;font-family:var(--sans);font-size:13px;font-weight:700;
+  color:#fff;outline:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath d='M5.5 7.5l4.5 4.5 4.5-4.5' stroke='white' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;background-size:14px;
+}
+.status-select option{color:#000;background:#fff;font-weight:600;}
+.source-select{
+  width:100%;appearance:none;-webkit-appearance:none;cursor:pointer;
+  border:none;border-radius:7px;padding:7px 26px 7px 10px;font-family:var(--sans);font-size:12.5px;font-weight:700;
+  outline:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath d='M5.5 7.5l4.5 4.5 4.5-4.5' stroke='white' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;background-size:14px;
+}
+.source-select option{font-weight:600;}
 
-  /* ---------- Facet filter bar ---------- */
-  .facet-bar { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-bottom: 1.1rem; position: relative; z-index: 5; }
-  .legend { display: flex; flex-wrap: wrap; gap: 1.2rem; margin: -0.4rem 0 1.1rem; }
-  .legend-item { font-size: 0.8rem; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 0.5em; }
-  .legend-swatch { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
-  .legend-swatch.legend-wtm { background: var(--missing-bg); border: 1.5px solid var(--missing); }
-  .legend-swatch.legend-agency { background: var(--agency-bg); border: 1.5px solid var(--agency); }
-  .facet-pill {
-    font-family: var(--sans); font-size: 0.8rem; font-weight: 600;
-    border: 1.5px solid var(--rule); background: #fff; color: var(--ink-soft);
-    padding: 0.45em 0.85em; border-radius: 999px; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 0.4em;
-  }
-  .facet-pill:hover { border-color: var(--ink); color: var(--ink); }
-  .facet-pill.active { border-color: var(--pink); color: var(--pink); background: var(--pink-bg); }
-  .facet-pill .chev { font-size: 0.65em; }
-  .facet-reset {
-    font-family: var(--sans); font-size: 0.8rem; font-weight: 600;
-    border: none; background: transparent; color: var(--ink-soft);
-    padding: 0.45em 0.6em; cursor: pointer; text-decoration: underline;
-  }
-  .facet-reset:hover { color: var(--pink); }
-  .facet-wrap { position: relative; }
-  .facet-panel {
-    position: absolute; top: calc(100% + 6px); left: 0; z-index: 20;
-    background: #fff; border: 1px solid var(--rule); border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.12); padding: 0.6rem;
-    min-width: 220px; max-height: 260px; overflow-y: auto;
-  }
-  .facet-panel label {
-    display: flex; align-items: center; gap: 0.5em; font-size: 0.85rem;
-    padding: 0.35em 0.4em; border-radius: 6px; cursor: pointer;
-  }
-  .facet-panel label:hover { background: var(--bg); }
+.drag-handle-cell{width:28px;text-align:center;cursor:grab;color:var(--text-faint);user-select:none;}
+.drag-handle-cell:hover{color:var(--text);}
+.game-table th[draggable="true"]{cursor:grab;}
+.game-table th.col-dragging{opacity:0.4;}
+.game-table tr.row-dragging{opacity:0.35;}
+.game-table tr.row-drop-target td{border-top:2px solid var(--lime);}
+.game-table th.col-drop-target{border-left:3px solid #0a0b08;}
 
-  /* ---------- Results table ---------- */
-  /* ---------- Expand/collapse row detail ---------- */
-  th.expand-col, td.expand-col { width: 90px; text-align: center; cursor: default; }
-  .expand-btn {
-    font-family: var(--sans); font-size: 0.74rem; font-weight: 600;
-    border: 1.5px solid var(--rule); background: #fff; color: var(--ink-soft);
-    padding: 0.35em 0.7em; border-radius: 999px; cursor: pointer; white-space: nowrap;
-    transition: border-color 0.15s, color 0.15s;
-  }
-  .expand-btn:hover { border-color: var(--pink); color: var(--pink); }
-  tr.row-expanded td { background: var(--cyan-bg); animation: expandRowIn 0.18s ease-out; }
-  tr.row-completed td { background: var(--match-bg); }
-  tr.row-completed .employee-copy { text-decoration: line-through; opacity: 0.75; }
-  .done-check { display: inline-flex; align-items: center; margin-right: 0.5em; cursor: pointer; vertical-align: middle; }
-  .done-check input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--match); cursor: pointer; }
-  .employee-copy { cursor: pointer; border-bottom: 1px dashed transparent; }
-  .employee-copy:hover { border-bottom-color: var(--pink); color: var(--pink); }
-  .employee-copy.copied-flash { color: var(--match); font-weight: 700; border-bottom-color: transparent; }
-  .copy-value-plain { cursor: pointer; font-family: var(--mono); border-bottom: 1px dashed transparent; padding: 0.05em 0.3em; border-radius: 4px; }
-  .copy-value-plain:hover { border-bottom-color: var(--agency); background: var(--agency-bg); }
-  .copy-value.copied-flash { color: var(--match) !important; background: var(--match-bg) !important; font-weight: 700; }
-  tr.expand-detail-row td { background: #fbfdfe; padding: 0; border-bottom: 2px solid var(--cyan); animation: expandRowIn 0.18s ease-out; }
-  @keyframes expandRowIn {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .expand-panel { padding: 1rem 1.4rem 1.2rem; animation: expandRowIn 0.18s ease-out; }
-  .expand-note { font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 0.7rem; font-style: italic; }
-  .expand-context {
-    position: sticky; top: 40px; z-index: 2;
-    background: var(--cyan-bg); border: 1.5px solid var(--cyan); border-radius: 8px;
-    padding: 0.5em 0.8em; margin-bottom: 0.9rem; font-size: 0.85rem; color: var(--ink);
-  }
-  .expand-context-name { font-weight: 700; }
-  .expand-context-sep { color: var(--ink-soft); margin: 0 0.5em; }
-  .expand-context-paycode {
-    font-family: var(--mono); font-weight: 700; background: var(--navy); color: #fff;
-    padding: 0.15em 0.55em; border-radius: 4px;
-  }
-  .paycode-subsection { margin-bottom: 1.1rem; }
-  .paycode-subsection:last-of-type { margin-bottom: 0; }
-  .paycode-subheading {
-    display: flex; align-items: center; gap: 0.6em; margin-bottom: 0.5rem;
-  }
-  .paycode-subheading-name {
-    font-family: var(--mono); font-weight: 700; font-size: 0.85rem; color: var(--ink);
-    background: var(--rule); padding: 0.15em 0.6em; border-radius: 4px;
-  }
-  table.expand-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: #fff; border-radius: 10px; overflow: hidden; }
-  table.expand-table th {
-    text-align: left; font-family: var(--sans); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
-    color: var(--ink-soft); background: #fff; border-bottom: 2px solid var(--rule); padding: 0.5em 0.7em;
-    position: static; cursor: default;
-  }
-  table.expand-table td { padding: 0.5em 0.7em; border-bottom: 1px solid var(--rule); }
-  table.expand-table tr:last-child td { border-bottom: none; }
-  table.grand-total-table { margin-top: 0.9rem; border: 2px solid var(--navy); }
-  table.grand-total-table th { background: var(--navy); color: #fff; }
-  tr.grand-total-row td { font-weight: 700; }
-  tr.grand-total-row .field-name { color: var(--ink); font-family: var(--sans); }
+.source-row{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;background:var(--bg-raised);border:1px solid var(--border);}
+.ref-card{
+  background:var(--bg-raised);border:1px solid var(--border);border-radius:10px;padding:12px 14px;
+  display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:.15s;
+}
+.ref-card:hover{border-color:var(--lime);background:var(--card-2);}
+.field-label-sm{font-size:11px;color:var(--text-faint);font-weight:600;margin-top:2px;}
+.btn-ghost.danger-text{color:var(--red);}
+.btn-ghost.danger-text:hover{background:rgba(255,92,114,0.1);}
+.ref-card-title{font-weight:700;font-size:13.5px;color:var(--text);}
+.ref-card-title a{color:var(--lime);text-decoration:none;}
+.ref-card-title a:hover{text-decoration:underline;}
+.ref-card-notes{font-size:12px;color:var(--text-dim);}
+.ref-card-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.btn-neon{
+  background:var(--lime);color:#0a0b08;font-weight:800;border:none;
+  box-shadow:0 0 0 1px rgba(215,255,62,0.5), 0 0 16px rgba(215,255,62,0.45);
+}
+.btn-neon:hover{filter:brightness(1.1);box-shadow:0 0 0 1px rgba(215,255,62,0.7), 0 0 22px rgba(215,255,62,0.65);}
+.source-swatch{width:16px;height:16px;border-radius:4px;flex-shrink:0;}
+.source-row .source-name{flex:1;font-size:13px;font-weight:600;}
+.source-row .mini-btn{flex-shrink:0;}
 
-  .table-scroll {
-    max-height: 560px; overflow-y: auto; overflow-x: auto;
-    border: 1px solid var(--rule); border-radius: 14px;
-  }
-  table.results { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  table.results th {
-    text-align: left; font-family: var(--sans); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
-    color: #ffffff; background: var(--navy); border-bottom: none; padding: 0.75em 0.7em;
-    position: sticky; top: 0; z-index: 1;
-    cursor: grab; user-select: none; white-space: nowrap;
-  }
-  table.results th:first-child { border-top-left-radius: 10px; }
-  table.results th:last-child { border-top-right-radius: 10px; }
-  table.results th.sortable:hover { background: var(--navy-dark); }
-  table.results th.sorted { background: var(--navy-dark); }
-  table.results th.dragging { opacity: 0.5; }
-  table.results th.drag-over { box-shadow: inset 3px 0 0 var(--cyan); }
-  table.results tbody tr:nth-child(even) td { background: #fafbfc; }
-  table.results td { padding: 0.5em 0.6em; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  table.results tr:hover td { background: #fafafb; }
-  .badge {
-    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.01em;
-    padding: 0.3em 0.65em 0.3em 0.5em; border-radius: 6px; white-space: nowrap;
-    display: inline-flex; align-items: center; gap: 0.4em;
-  }
-  .badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
-  .reason-tag {
-    display: block; font-size: 0.68rem; color: var(--ink-soft); margin-top: 0.3em; font-style: italic;
-  }
-  .reason-tag.reason-company { color: var(--missing); font-weight: 600; }
-  .badge.match { color: var(--match); background: var(--match-bg); }
-  .badge.mismatch { color: var(--mismatch); background: var(--mismatch-bg); }
-  .badge.missing { color: var(--missing); background: var(--missing-bg); }
-  .badge.unmapped { color: var(--unmapped); background: var(--unmapped-bg); }
-  .badge.wtm_only { color: var(--extra); background: var(--extra-bg); }
-  .diff-wtm { color: var(--missing); text-decoration: line-through; opacity: 0.7; font-family: var(--mono); }
-  .diff-arrow { color: var(--ink-soft); margin: 0 0.4em; font-family: var(--mono); }
-  .diff-agency { color: var(--agency); font-weight: 700; font-family: var(--mono); background: var(--agency-bg); padding: 0.05em 0.4em; border-radius: 4px; }
-  .diff-wtm-flag { color: var(--extra); font-weight: 700; font-family: var(--mono); background: var(--extra-bg); padding: 0.05em 0.4em; border-radius: 4px; }
-  .field-name { font-family: var(--mono); font-size: 0.76rem; color: var(--ink-soft); }
-  .job-name { color: var(--ink-soft); }
-  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--ink-soft); font-size: 1.05rem; }
-  .note-cell { font-size: 0.78rem; color: var(--ink-soft); max-width: 220px; }
+.pager{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;font-size:12px;color:var(--text-dim);}
+.pager-btns{display:flex;gap:8px;}
+.notes-cell{color:var(--text-dim);font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-  footer.foot { margin-top: 2.5rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 0.7rem; color: var(--ink-soft); }
+footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:11.5px;font-family:var(--mono);}
+.hidden{display:none !important;}
+
+@media(max-width:640px){
+  .form-row{flex-direction:column;align-items:stretch;}
+  .field{width:100%;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="shell">
 
-  <header class="top">
-    <div class="brandmark">
-      <span class="dots"><span class="c"></span><span class="p"></span></span>
-      <span class="word">activate<span class="light">staff</span></span>
+  <div class="topbar">
+    <div class="brand">
+      <button class="hamburger-btn" id="hamburgerBtn" title="Menu" aria-label="Menu">☰</button>
+      <div class="hamburger-menu hidden" id="hamburgerMenu">
+        <button class="hamburger-item" id="menuReferencesBtn">📎 References</button>
+      </div>
+      <div class="brand-mark">W</div>
+      <div class="brand-text">
+        <h1>Justine QA Log — Wand</h1>
+        <p>Personal testing tracker · saved in this browser</p>
+      </div>
     </div>
-    <h1>WTM Cross-Check</h1>
-    <div class="underline-bar"></div>
-    <p class="sub">Drop this week's source sheet and the matching WTM export. Anything that doesn't line up gets flagged here &mdash; you still do every keystroke inside WTM.</p>
-    <span class="privacy-note">&#128274; Files are read entirely in your browser. Nothing is uploaded anywhere.</span>
-  </header>
-
-  <div class="session-bar">
-    <span class="session-label">Session</span>
-    <button class="btn-outline" id="clearAllBtn" type="button">Clear all</button>
-  </div>
-
-  <section class="intake">
-    <div class="slot" id="slotSheet">
-      <span class="tag">Side A</span>
-      <div class="name">Source Sheet</div>
-      <div class="hint">Export from agency &mdash; .csv or .xlsx</div>
-      <button class="browse" type="button">Choose file</button>
-      <input type="file" id="fileSheet" accept=".csv,.xlsx,.xls">
-      <div class="status" id="statusSheet"></div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="btnUndo" title="Undo (Ctrl+Z)">↶ Undo</button>
+      <button class="icon-btn" id="btnRedo" title="Redo (Ctrl+Shift+Z)">↷ Redo</button>
+      <span class="icon-btn" id="syncStatus" style="cursor:default;">💾 Local only</span>
+      <button class="icon-btn" id="btnSyncNow" title="Pulls the latest saved data from the cloud onto this device">☁ Sync now</button>
+      <button class="icon-btn" id="btnExport">⭳ Export backup</button>
+      <button class="icon-btn" id="btnImport">⭱ Import</button>
+      <button class="icon-btn danger" id="btnReset">Reset data</button>
+      <input type="file" id="importFile" accept="application/json" class="hidden">
     </div>
-    <div class="slot" id="slotWtm">
-      <span class="tag">Side B</span>
-      <div class="name">WTM Export</div>
-      <div class="hint">"Export" from AWA</div>
-      <button class="browse" type="button">Choose file</button>
-      <input type="file" id="fileWtm" accept=".csv,.xlsx,.xls">
-      <div class="status" id="statusWtm"></div>
+  </div>
+
+  <div class="modal-overlay hidden" id="referencesModalOverlay">
+    <div class="modal-box" style="width:420px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column;">
+      <h3>References</h3>
+      <div id="referencesList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;max-height:340px;overflow-y:auto;"></div>
+      <div class="modal-actions" style="justify-content:space-between;">
+        <button class="btn btn-ghost" id="referencesModalClose">Close</button>
+        <button class="btn btn-primary" id="addReferenceBtn">+ Add card</button>
+      </div>
     </div>
-  </section>
-
-  <div class="week-picker" id="weekPicker" style="display:none;"></div>
-
-  <details class="mapping" id="mappingPanel">
-    <summary>PayCode &rarr; WTM column mapping (edit as needed)</summary>
-    <table class="map-table">
-      <thead><tr><th>Sheet PayCode</th><th>Maps to WTM column</th></tr></thead>
-      <tbody id="mapTableBody"></tbody>
-    </table>
-    <p class="map-note">Anything left as <strong>&mdash; no mapping &mdash;</strong> will be flagged as <em>Unrecognized PayCode</em> instead of compared. This list refreshes from whatever PayCodes are actually in the uploaded sheet.</p>
-  </details>
-
-  <div class="run-row" id="runRow" style="display:none;">
-    <button class="btn-run" id="runCheckBtn" type="button">Run Sheet Check</button>
-    <span class="run-hint">Both files are loaded &mdash; review the PayCode mapping above, then run the check.</span>
   </div>
 
-  <div class="success-banner" id="successBanner" style="display:none;">
-    &#9989; All rows matched &mdash; nothing to enter, nothing to save.
+  <div class="modal-overlay hidden" id="refCardModalOverlay">
+    <div class="modal-box" style="width:400px;max-width:92vw;">
+      <h3 id="refCardModalTitle">Edit reference</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+        <label class="field-label-sm">Title</label>
+        <input type="text" id="refCardTitle" placeholder="e.g. Wand Master Sheet" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
+        <label class="field-label-sm">Link</label>
+        <input type="text" id="refCardUrl" placeholder="https://…" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
+        <label class="field-label-sm">Notes</label>
+        <textarea id="refCardNotes" rows="3" placeholder="Optional" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;resize:vertical;"></textarea>
+      </div>
+      <div class="modal-actions" style="justify-content:space-between;">
+        <button class="btn btn-ghost danger-text hidden" id="refCardDelete">Delete</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost" id="refCardOpenLink" title="Open link in a new tab">↗ Open link</button>
+          <button class="btn btn-ghost" id="refCardCancel">Cancel</button>
+          <button class="btn btn-primary" id="refCardSave">Save</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <h2 class="results-title" id="resultsTitle" style="display:none;"></h2>
-  <div class="summary" id="summary" style="display:none;"></div>
-
-  <div class="toolbar" id="toolbar" style="display:none;">
-    <label><input type="checkbox" id="hideMatched" checked> Hide matched rows</label>
-    <label><input type="checkbox" id="showOnlyMatched"> Show only matched rows</label>
-    <input type="text" id="searchBox" placeholder="Filter by employee, company, job&hellip;">
-    <button class="btn" id="downloadBtn">Download flagged rows (CSV)</button>
-    <button class="btn-outline" id="downloadAllBtn">Download all rows (CSV)</button>
+  <div class="ticker-wrap">
+    <div class="ticker-dot"></div>
+    <div class="ticker-track">
+      <div class="ticker-inner" id="tickerInner"><span>loading log…</span></div>
+    </div>
   </div>
 
-  <div class="facet-bar" id="facetBar" style="display:none;"></div>
-
-  <div class="legend" id="legend" style="display:none;">
-    <span class="legend-item"><span class="legend-swatch legend-wtm"></span> Currently in WTM (will be replaced)</span>
-    <span class="legend-item"><span class="legend-swatch legend-agency"></span> From Agency Export &mdash; enter this into WTM</span>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="regular">Regular Testing</button>
+    <button class="tab-btn" data-tab="backend">Backend Testing</button>
   </div>
 
-  <div id="resultsHost">
-    <div class="empty-state">Waiting on both files to run the check.</div>
+  <!-- ============ REGULAR TESTING ============ -->
+  <div class="panel active" id="panel-regular">
+
+    <div class="month-header">
+      <div>
+        <div class="month-eyebrow">Regular Testing</div>
+        <h2 class="month-title" id="monthTitleDisplay">—</h2>
+      </div>
+      <div class="month-controls">
+        <select id="monthSelect"></select>
+        <button class="icon-btn" id="addMonthBtn">+ Month</button>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Month Total</div>
+        <div class="stat-value lime" id="regMonthTotal">0</div>
+        <div class="stat-sub">from Passed/Failed tests only</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Monthly Target</div>
+        <div class="stat-value amber" id="regMonthTargetDisplay">0</div>
+        <div class="stat-sub">
+          <input type="number" id="regTargetInput" step="0.25" style="width:70px;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:3px 6px;font-family:var(--mono);font-size:11px;">
+          edit target
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Remaining / Excess</div>
+        <div class="stat-value" id="regRemaining">0</div>
+        <div class="stat-sub" id="regRemainingSub">to hit target</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Days Logged</div>
+        <div class="stat-value purple" id="regDaysLogged">0</div>
+        <div class="stat-sub" id="regDaysLoggedSub">out of — days</div>
+      </div>
+    </div>
+
+    <div class="week-nav">
+      <div class="week-status-badge badge-empty" id="monthStatusBadge">NO DATA</div>
+      <button class="icon-btn danger hidden" id="deleteMonthBtn">Delete this month page</button>
+    </div>
+
+    <div class="modal-overlay hidden" id="monthModalOverlay">
+      <div class="modal-box">
+        <h3>Add a month page</h3>
+        <label class="field-label-sm">Month</label>
+        <input type="month" id="monthPicker">
+        <div class="modal-actions fill">
+          <button class="btn btn-ghost" id="monthModalCancel">Cancel</button>
+          <button class="btn btn-primary" id="monthModalAdd">Add page</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3>Log a test</h3>
+      <div class="form-row">
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="rgDate">
+        </div>
+        <div class="field grow-2">
+          <label>Game</label>
+          <input type="text" id="rgGame" placeholder="e.g. Hollow Knight: Silksong">
+        </div>
+        <div class="field">
+          <label>Platform</label>
+          <input type="text" id="rgPlatform" placeholder="Steam / Xbox / GOG…" list="platformList">
+          <datalist id="platformList"></datalist>
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select id="rgResult">
+            <option value="Queued">Queued</option>
+            <option value="Downloading">Downloading</option>
+            <option value="Testing">Testing</option>
+            <option value="Passed">Passed</option>
+            <option value="Failed">Failed</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Points</label>
+          <input type="number" id="rgPoints" step="0.25" placeholder="0.5">
+        </div>
+        <button class="btn btn-primary" id="rgAddBtn">+ Add entry</button>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3>Paste from sheet</h3>
+      <p class="hint">Paste game lines straight from your spreadsheet — one per line, like <code>The Last Faith (Steam)</code>. Tab-separated Game / Platform / Status / Points / Date also works. It also recognizes a Slack-workflow-style form dump — the game line, followed by other fields, with a <code>Test Value</code> label whose next line is read as Points. Anything left out defaults to today's date, Queued status, and 0 points.</p>
+      <div class="form-row">
+        <div class="field grow-2">
+          <textarea id="rgPasteArea" rows="3" placeholder="The Last Faith (Steam)&#10;Palworld (Xbox)" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
+        </div>
+        <button class="btn btn-primary" id="rgPasteBtn">+ Add pasted rows</button>
+      </div>
+    </div>
+
+    <div id="regDayGroups"></div>
+
   </div>
 
-  <footer class="foot">Cross-check runs client-side only &middot; matching key: Company + Job Name + Worker &middot; build once, reuse weekly</footer>
+  <!-- ============ BACKEND TESTING ============ -->
+  <div class="panel" id="panel-backend">
+
+    <div class="month-header">
+      <div>
+        <div class="month-eyebrow">Backend Testing</div>
+        <h2 class="month-title" id="beDayTitleDisplay">—</h2>
+      </div>
+      <div class="month-controls">
+        <select id="beDaySelect"></select>
+        <button class="icon-btn btn-neon" id="addBeDayBtn">+ New day</button>
+      </div>
+    </div>
+
+    <div class="week-nav">
+      <span class="stat-sub" id="beDayInfo">—</span>
+      <div style="display:flex;gap:8px;">
+        <button class="icon-btn danger" id="clearBeDayBtn">🗑 Clear this day</button>
+        <button class="icon-btn danger hidden" id="deleteBeDayBtn">Delete this day page</button>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="dayModalOverlay">
+      <div class="modal-box">
+        <h3>Add a day page</h3>
+        <label class="field-label-sm">Date</label>
+        <input type="date" id="dayPicker">
+        <div class="modal-actions fill">
+          <button class="btn btn-ghost" id="dayModalCancel">Cancel</button>
+          <button class="btn btn-primary" id="dayModalAdd">Add page</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="backend-layout">
+      <div class="backend-main">
+
+        <div class="form-card">
+          <h3>Log a backend test</h3>
+          <div class="form-row">
+            <div class="field">
+              <label>Date</label>
+              <input type="date" id="beDate">
+            </div>
+            <div class="field grow-2">
+              <label>Game</label>
+              <input type="text" id="beGame" placeholder="e.g. Resident Evil 4">
+            </div>
+            <div class="field">
+              <label>Source</label>
+              <select id="beSource"></select>
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <select id="beStatus">
+                <option>Queued</option>
+                <option>Downloading</option>
+                <option>Testing</option>
+                <option>Passed</option>
+                <option>Failed</option>
+              </select>
+            </div>
+            <div class="field grow-2">
+              <label>Notes</label>
+              <input type="text" id="beNotes" placeholder="optional">
+            </div>
+            <button class="btn btn-primary" id="beAddBtn">+ Add entry</button>
+          </div>
+          <div style="margin-top:12px;">
+            <button class="icon-btn" id="manageSourcesBtn">🎨 Manage sources</button>
+          </div>
+        </div>
+
+        <div class="modal-overlay hidden" id="sourceModalOverlay">
+          <div class="modal-box" style="width:320px;">
+            <h3>Manage sources</h3>
+            <div id="sourceModalList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:260px;overflow-y:auto;"></div>
+            <div style="display:flex;gap:8px;margin-bottom:14px;">
+              <input type="text" id="newSourceName" placeholder="New source name" style="flex:1;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px;">
+              <input type="color" id="newSourceColor" value="#5a6270" style="width:42px;height:38px;border:1px solid var(--border);border-radius:8px;background:var(--bg-raised);padding:2px;cursor:pointer;">
+            </div>
+            <div class="modal-actions" style="justify-content:space-between;">
+              <button class="btn btn-ghost" id="sourceModalClose">Close</button>
+              <button class="btn btn-primary" id="addSourceBtn">+ Add source</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h3>Paste from sheet</h3>
+          <p class="hint">Copy columns straight from your spreadsheet (tab-separated) and paste below — one row per line. Supports Game, Source, Status, Date, Notes in that order; Status/Date are optional and default to Queued / this page's day if left out. Re-pasting a Game + Source that already exists on this day updates that row instead of duplicating it.</p>
+          <div class="form-row">
+            <div class="field grow-2">
+              <textarea id="bePasteArea" rows="3" placeholder="Palworld&#9;Steam&#9;Failed&#9;July 25&#10;Palworld&#9;Xbox&#9;Passed&#9;July 25" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
+              <p class="hint" style="margin:6px 0 0;">Pasting always replaces what's in this box — it won't stack with anything left over from before.</p>
+            </div>
+            <button class="btn btn-primary" id="bePasteBtn">+ Add pasted rows</button>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" id="beSearch" placeholder="Search game…">
+          <select id="beSourceFilter"><option value="">All sources</option></select>
+          <select id="beStatusFilter">
+            <option value="">All statuses</option>
+            <option>Queued</option><option>Downloading</option><option>Testing</option><option>Passed</option><option>Failed</option>
+          </select>
+          <select id="beSort">
+            <option value="custom">Custom (drag to arrange)</option>
+            <option value="date_desc">Newest first</option>
+            <option value="date_asc">Oldest first</option>
+            <option value="game_asc">Game A–Z</option>
+          </select>
+        </div>
+
+        <div class="be-banner" id="beBanner"></div>
+
+        <div class="table-wrap">
+          <div class="table-scroll">
+            <table class="game-table" id="beTable">
+              <thead>
+                <tr id="beHeaderRow"></tr>
+              </thead>
+              <tbody id="beTbody"></tbody>
+            </table>
+          </div>
+          <div class="pager">
+            <span id="pagerInfo">—</span>
+            <div class="pager-btns">
+              <button class="icon-btn" id="pagePrev">‹ Prev</button>
+              <button class="icon-btn" id="pageNext">Next ›</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="backend-sidebar">
+        <div class="stat-card">
+          <div class="stat-label">Total Tests</div>
+          <div class="stat-value lime" id="beTotal">0</div>
+          <div class="stat-sub">logged this day</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pass Rate</div>
+          <div class="stat-value green" id="bePassRate">0%</div>
+          <div class="stat-sub" id="bePassRateSub">— passed / — failed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Unique Games</div>
+          <div class="stat-value purple" id="beUniqueGames">0</div>
+          <div class="stat-sub">distinct titles this day</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">In Queue / Testing</div>
+          <div class="stat-value amber" id="beQueued">0</div>
+          <div class="stat-sub" id="beQueuedSub">waiting or in progress</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="foot">QA Log · data lives only in this browser (localStorage) · export a backup before switching devices</footer>
 </div>
 
-<div class="modal-overlay" id="clearModal">
-  <div class="modal-card">
-    <h3>Clear everything?</h3>
-    <p>This removes both uploaded files, the PayCode mapping, and every result below. This can't be undone &mdash; you'll need to re-upload both files to start again.</p>
-    <div class="modal-actions">
-      <button class="btn-outline" id="clearCancelBtn" type="button">Cancel</button>
-      <button class="btn-danger" id="clearConfirmBtn" type="button">Yes, clear all</button>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 (function(){
+"use strict";
 
-  // ---------------------------------------------------------------
-  // State
-  // ---------------------------------------------------------------
-  let sheetRowsRaw = null;    // exactly what was parsed from the file, untouched
-  let sheetRows = null;       // normalized to long-format (one row per Employee+PayCode) regardless of source shape
-  let sheetRowsFiltered = null; // sheetRows scoped to the selected week, if the sheet spans multiple weeks
-  let selectedWeek = null;    // which WeekWorked value is currently being checked, or null if not applicable
-  let wtmRows = null;     // parsed rows from Side B
-  let wtmBlocks = [];     // detected pay-type block names from WTM headers, e.g. "Regular", "Overtime"
-  let payMap = {};        // sheet PayCode (lowercased) -> wtm block name (or "" for unmapped)
-  let results = [];       // computed comparison results
-  let hasRunOnce = false; // whether the user has clicked "Run Sheet Check" at least once
+/* ---------------- storage ---------------- */
+const LS_REG = 'qa_regular_entries_v2';
+const LS_BE  = 'qa_backend_entries_v2';
+const LS_SET = 'qa_settings_v2';
 
-  const DEFAULT_ALIASES = {
-    'reg': 'Regular', 'regular': 'Regular',
-    'ot': 'Overtime', 'overtime': 'Overtime',
-    'dt': 'Double Time', 'doubletime': 'Double Time', 'double time': 'Double Time',
-    'holiday': 'Holiday',
-    'pto': 'PTO',
-    'acaadminfee': 'ACAAdminFee', 'aca': 'ACAAdminFee', 'acafee': 'ACAAdminFee'
-  };
+function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4); }
 
-  // ---------------------------------------------------------------
-  // File parsing helpers
-  // ---------------------------------------------------------------
-  function parseFile(file, cb) {
-    const ext = file.name.split('.').pop().toLowerCase();
-    if (ext === 'csv') {
-      Papa.parse(file, {
-        header: true, skipEmptyLines: true,
-        complete: (res) => cb(res.data)
-      });
-    } else {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const wb = XLSX.read(e.target.result, { type: 'array' });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(ws, { defval: '' });
-        cb(json);
-      };
-      reader.readAsArrayBuffer(file);
-    }
-  }
+/* ---------------- resizable table columns (local display preference only) ---------------- */
+const LS_COLWIDTHS = 'qa_col_widths_v1';
+let colWidthsStore = (function(){
+  try{ const raw = localStorage.getItem(LS_COLWIDTHS); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; }
+})();
+function saveColWidths(){ try{ localStorage.setItem(LS_COLWIDTHS, JSON.stringify(colWidthsStore)); }catch(e){} }
 
-  function norm(s) {
-    return String(s || '').trim().toLowerCase().replace(/[.,]/g, '').replace(/\s+/g, ' ');
-  }
+/**
+ * Manual mouse-based row reordering (deliberately not native HTML5 drag/drop,
+ * which can misbehave inside table-layout:fixed tables with colgroups).
+ * Call once per rendered table; onReorder(draggedId, targetId) is called on drop.
+ */
+function makeRowsDraggable(tbody, rowSelector, idAttr, onReorder){
+  tbody.querySelectorAll(rowSelector).forEach(tr=>{
+    const handle = tr.querySelector('.drag-handle-cell');
+    if(!handle) return;
+    handle.addEventListener('mousedown', (ev)=>{
+      ev.preventDefault();
+      ev.stopPropagation();
+      const draggingTr = tr;
+      const draggedId = tr.getAttribute(idAttr);
+      draggingTr.classList.add('row-dragging');
+      const prevUserSelect = document.body.style.userSelect;
+      document.body.style.userSelect = 'none';
 
-  function toNum(v) {
-    if (v === null || v === undefined) return null;
-    const s = String(v).trim();
-    if (s === '') return null;
-    const cleaned = s.replace(/[$,]/g, '');
-    const n = parseFloat(cleaned);
-    return isNaN(n) ? null : n;
-  }
-
-  function fmt(n) {
-    if (n === null || n === undefined) return '&mdash;';
-    return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
-
-  // Wraps an Agency Export value (already-formatted, HTML-safe string from fmt() or escapeHtml())
-  // so it's click-to-copy, same as the employee name. Skips the empty-value placeholder.
-  function agencyValue(displayValue, highlight) {
-    if (displayValue === '&mdash;') return displayValue;
-    const cls = 'copy-value' + (highlight ? ' diff-agency' : ' copy-value-plain');
-    return '<span class="' + cls + '" data-copy="' + displayValue + '" title="Click to copy">' + displayValue + '</span>';
-  }
-
-  // ---------------------------------------------------------------
-  // Sheet shape detection: some agencies (GLST) export one row per
-  // Employee+PayCode with a "PayCode" column. Others (Workbox) export one
-  // row per Employee with separate Pay/Bill Hours+Amount columns per pay
-  // type (RT/OT/DT). This normalizes either shape into the same long-format
-  // rows the rest of the tool already expects.
-  // ---------------------------------------------------------------
-  const WIDE_PAYTYPES = [
-    { code: 'Reg', hoursKey: 'PayRTHours', billHoursKey: 'BillRTHours', payKey: 'RTPay', billKey: 'RTBill' },
-    { code: 'OT',  hoursKey: 'PayOTHours', billHoursKey: 'BillOTHours', payKey: 'OTPay', billKey: 'OTBill' },
-    { code: 'DT',  hoursKey: 'PayDTHours', billHoursKey: 'BillDTHours', payKey: 'DTPay', billKey: 'DTBill' }
-  ];
-
-  function finalizeTotals(row) {
-    if (row.PayTotal === undefined || row.PayTotal === null) {
-      const u = toNum(row.PayUnit), rt = toNum(row.PayRate);
-      row.PayTotal = (u !== null && rt !== null) ? u * rt : null;
-    }
-    if (row.BillTotal === undefined || row.BillTotal === null) {
-      const u = toNum(row.BillUnit), rt = toNum(row.BillRate);
-      row.BillTotal = (u !== null && rt !== null) ? u * rt : null;
-    }
-    return row;
-  }
-
-  function detectSheetShape(rows) {
-    if (!rows || !rows.length) return 'long';
-    const headers = Object.keys(rows[0]);
-    if (headers.includes('PayCode')) return 'long';
-    if (WIDE_PAYTYPES.every(pt => headers.includes(pt.hoursKey) && headers.includes(pt.payKey))) return 'wide';
-    return 'long'; // fall back to treating it as long-format; distinctPayCodes() will just come up empty if that's wrong
-  }
-
-  function normalizeSheetRows(rawRows) {
-    const shape = detectSheetShape(rawRows);
-
-    if (shape === 'long') {
-      // Use the sheet's own per-line total columns (e.g. GLST's ItemPay/ItemBill) directly when
-      // present, rather than only ever deriving Unit*Rate — the direct total is more trustworthy.
-      const rows = rawRows.map(row => {
-        const r = Object.assign({}, row);
-        if (r.ItemPay !== undefined && r.ItemPay !== '') r.PayTotal = toNum(r.ItemPay);
-        if (r.ItemBill !== undefined && r.ItemBill !== '') r.BillTotal = toNum(r.ItemBill);
-        return finalizeTotals(r);
-      });
-      return { rows, shape };
-    }
-
-    const out = [];
-    rawRows.forEach(row => {
-      WIDE_PAYTYPES.forEach(pt => {
-        const hours = toNum(row[pt.hoursKey]);
-        const billHours = toNum(row[pt.billHoursKey]);
-        const pay = toNum(row[pt.payKey]);
-        const bill = toNum(row[pt.billKey]);
-        // Skip pay types that have no activity at all for this row, mirroring how GLST's sheet
-        // only has a row for a pay type when it actually applies.
-        if (!hours && !pay) return;
-        out.push({
-          EmployeeName: row['EmployeeName'],
-          BillToName: row['BillToName'],
-          JobPosition: row['JobPosition'],
-          PayCode: pt.code,
-          PayUnit: hours,
-          BillUnit: billHours,
-          // Rate is only meaningful when hours were actually worked — leave it null rather than 0
-          // when hours are 0, so a zero-hours line doesn't get flagged as a rate mismatch later.
-          PayRate: (hours ? pay / hours : null),
-          BillRate: (billHours ? bill / billHours : null),
-          PayTotal: pay,   // use the agency's own total directly, not a derived Unit*Rate figure
-          BillTotal: bill,
-          PONumber: row['PONumber'],
-          WeekWorked: row['WeekWorked']
-        });
-      });
-
-      // Flat per-employee fees that aren't hours-based (e.g. ACA Admin Fee) — bill-only, fixed unit of 1.
-      const acaFee = toNum(row['ACAFee']);
-      if (acaFee) {
-        out.push({
-          EmployeeName: row['EmployeeName'],
-          BillToName: row['BillToName'],
-          JobPosition: row['JobPosition'],
-          PayCode: 'ACAAdminFee',
-          PayUnit: 0,
-          BillUnit: 1,
-          PayRate: 0,
-          BillRate: acaFee,
-          PayTotal: 0,
-          BillTotal: acaFee,
-          PONumber: row['PONumber'],
-          WeekWorked: row['WeekWorked']
-        });
+      function rowsExceptDragging(){
+        return [...tbody.querySelectorAll(rowSelector)].filter(r=>r!==draggingTr);
       }
-    });
-    return { rows: out, shape };
-  }
-
-  // "Adams, Jake" -> {first:"jake", last:"adams"}. "Jimmy Halpert" -> {first:"jimmy", last:"halpert"}.
-  function nameParts(raw) {
-    const original = String(raw || '').trim();
-    if (!original) return { first: '', last: '' };
-    // Check for the comma on the RAW string first — norm() strips commas,
-    // so checking after normalizing would never see "Last, First" format.
-    if (original.includes(',')) {
-      const [lastRaw, restRaw] = original.split(',');
-      const last = norm(lastRaw);
-      const first = norm(restRaw).split(' ').filter(Boolean)[0] || '';
-      return { first, last };
-    }
-    const s = norm(original);
-    const tokens = s.split(' ').filter(Boolean);
-    if (tokens.length === 1) return { first: tokens[0], last: '' };
-    return { first: tokens[0], last: tokens[tokens.length - 1] };
-  }
-
-  function namesMatch(a, b) {
-    const pa = nameParts(a), pb = nameParts(b);
-    if (!pa.first || !pa.last || !pb.first || !pb.last) {
-      // fall back to loose containment if we couldn't split cleanly
-      const na = norm(a), nb = norm(b);
-      return na && nb && (na.includes(nb) || nb.includes(na));
-    }
-    return pa.first === pb.first && pa.last === pb.last;
-  }
-
-  // ---------------------------------------------------------------
-  // Detect WTM pay-type blocks dynamically from headers
-  // any header ending in " Pay Unit" defines a block
-  // ---------------------------------------------------------------
-  function detectWtmBlocks(rows) {
-    if (!rows || !rows.length) return [];
-    const headers = Object.keys(rows[0]);
-    const blocks = [];
-    headers.forEach(h => {
-      if (h.endsWith(' Pay Unit')) blocks.push(h.slice(0, -(' Pay Unit'.length)));
-    });
-    return blocks;
-  }
-
-  function wtmField(row, block, suffix) {
-    return row[block + ' ' + suffix];
-  }
-
-  // ---------------------------------------------------------------
-  // Build lookup index: normalized "company|job|first|last" -> wtm row
-  // ---------------------------------------------------------------
-  function buildWtmIndex(rows) {
-    const idx = {};
-    const companySet = new Set();
-    const companyJobSet = new Set();
-    rows.forEach(r => {
-      const company = norm(r['Company']);
-      const job = norm(r['Job Name']);
-      const np = nameParts(r['Worker Name']);
-      const key = company + '|' + job + '|' + np.first + '|' + np.last;
-      if (!idx[key]) idx[key] = [];
-      idx[key].push(r);
-      companySet.add(company);
-      companyJobSet.add(company + '|' + job);
-    });
-    return { full: idx, companySet, companyJobSet };
-  }
-
-  function findWtmRow(sheetRow, idx) {
-    const company = norm(sheetRow['BillToName']);
-    const job = norm(sheetRow['JobPosition']);
-    const np = nameParts(sheetRow['EmployeeName']);
-    const key = company + '|' + job + '|' + np.first + '|' + np.last;
-    const hit = idx.full[key];
-    return hit && hit.length ? hit[0] : null;
-  }
-
-  // When a row can't be matched, figure out exactly which part broke —
-  // this is the difference between "company was never migrated," "this job/placement
-  // doesn't exist or is archived," and "the job exists but this worker isn't on it."
-  function classifyMissingReason(sheetRow, idx) {
-    const company = norm(sheetRow['BillToName']);
-    const job = norm(sheetRow['JobPosition']);
-    if (!idx.companySet.has(company)) return 'company';
-    if (!idx.companyJobSet.has(company + '|' + job)) return 'job';
-    return 'worker';
-  }
-
-  // ---------------------------------------------------------------
-  // Mapping panel
-  // ---------------------------------------------------------------
-  function distinctPayCodes(rows) {
-    const set = new Set();
-    rows.forEach(r => {
-      const pc = (r['PayCode'] || '').trim();
-      if (pc) set.add(pc);
-    });
-    return Array.from(set).sort((a,b)=>a.localeCompare(b));
-  }
-
-  function renderMappingTable() {
-    const body = document.getElementById('mapTableBody');
-    body.innerHTML = '';
-    if (!sheetRowsFiltered) return;
-    const codes = distinctPayCodes(sheetRowsFiltered);
-    codes.forEach(code => {
-      const key = code.toLowerCase();
-      if (!(key in payMap)) {
-        payMap[key] = DEFAULT_ALIASES[key] || (wtmBlocks.includes(code) ? code : '');
-      }
-      const tr = document.createElement('tr');
-      const tdCode = document.createElement('td');
-      tdCode.innerHTML = '<span class="field-name">' + escapeHtml(code) + '</span>';
-      const tdSel = document.createElement('td');
-      const sel = document.createElement('select');
-      sel.dataset.code = key;
-      const optNone = document.createElement('option');
-      optNone.value = ''; optNone.textContent = '— no mapping —';
-      sel.appendChild(optNone);
-      wtmBlocks.forEach(b => {
-        const opt = document.createElement('option');
-        opt.value = b; opt.textContent = b;
-        if (payMap[key] === b) opt.selected = true;
-        sel.appendChild(opt);
-      });
-      sel.addEventListener('change', () => { payMap[key] = sel.value; if (hasRunOnce) runCompare(); });
-      tdSel.appendChild(sel);
-      tr.appendChild(tdCode); tr.appendChild(tdSel);
-      body.appendChild(tr);
-    });
-  }
-
-  function escapeHtml(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  }
-
-  // ---------------------------------------------------------------
-  // Core comparison
-  // ---------------------------------------------------------------
-  const COMPARE_FIELDS = [
-    { label: 'Pay Unit',   sheetKey: 'PayUnit',  wtmSuffix: 'Pay Unit' },
-    { label: 'Pay Rate',   sheetKey: 'PayRate',  wtmSuffix: 'Pay Rate', linkedUnit: 'Pay Unit' },
-    { label: 'Bill Unit',  sheetKey: 'BillUnit', wtmSuffix: 'Bill Unit' },
-    { label: 'Bill Rate',  sheetKey: 'BillRate', wtmSuffix: 'Bill Rate', linkedUnit: 'Bill Unit' },
-    { label: 'Pay Total',  sheetKey: 'PayTotal',  computed: 'pay' },
-    { label: 'Bill Total', sheetKey: 'BillTotal', computed: 'bill' }
-  ];
-  const TOLERANCE = 0.01;
-
-  function getWtmFieldValue(wtmRow, mappedBlock, f) {
-    if (f.computed === 'pay') {
-      const u = toNum(wtmField(wtmRow, mappedBlock, 'Pay Unit')), rt = toNum(wtmField(wtmRow, mappedBlock, 'Pay Rate'));
-      return (u !== null && rt !== null) ? u * rt : null;
-    }
-    if (f.computed === 'bill') {
-      const u = toNum(wtmField(wtmRow, mappedBlock, 'Bill Unit')), rt = toNum(wtmField(wtmRow, mappedBlock, 'Bill Rate'));
-      return (u !== null && rt !== null) ? u * rt : null;
-    }
-    return toNum(wtmField(wtmRow, mappedBlock, f.wtmSuffix));
-  }
-
-  function runCompare() {
-    if (!sheetRowsFiltered || !wtmRows) return;
-    const idx = buildWtmIndex(wtmRows);
-    results = [];
-    let nextId = 0;
-
-    sheetRowsFiltered.forEach(row => {
-      const sheetEmployee = row['EmployeeName'] || '';
-      const company = row['BillToName'] || '';
-      const job = row['JobPosition'] || '';
-      const payCode = (row['PayCode'] || '').trim();
-      if (!sheetEmployee && !company && !job) return; // skip blank rows
-
-      // Captured regardless of status, so a "Not found" or "Unmapped" row can still show
-      // what the sheet itself said, even with no WTM counterpart to compare against.
-      const sheetOnly = {
-        payUnit: toNum(row['PayUnit']), payRate: toNum(row['PayRate']),
-        billUnit: toNum(row['BillUnit']), billRate: toNum(row['BillRate']),
-        payTotal: toNum(row['PayTotal']), billTotal: toNum(row['BillTotal']),
-        weekWorked: row['WeekWorked'] || '', poNumber: row['PONumber'] || ''
-      };
-
-      const wtmRow = findWtmRow(row, idx);
-
-      if (!wtmRow) {
-        const reason = classifyMissingReason(row, idx);
-        const notes = {
-          company: 'Company not found anywhere in this WTM export \u2014 likely a genuine migration/setup gap.',
-          job: 'Company exists in WTM, but no matching Job/Placement was found \u2014 it may be archived, renamed, or not yet created for this period.',
-          worker: 'Company and Job/Placement both exist in WTM, but this worker isn\u2019t listed under it \u2014 may need to be added/placed.'
-        };
-        results.push({ id: nextId++, employee: sheetEmployee, company, job, payCode, status: 'missing',
-          missingReason: reason, note: notes[reason], fields: [], sheetOnly });
-        return;
-      }
-
-      // Use WTM's own "Worker Name" spelling/format from here on, so this is copy-pasteable
-      // straight into WTM's search box.
-      const employee = wtmRow['Worker Name'] || sheetEmployee;
-
-      const mappedBlock = payMap[payCode.toLowerCase()];
-      if (!mappedBlock) {
-        results.push({ id: nextId++, employee, company, job, payCode, status: 'unmapped',
-          note: 'PayCode "' + payCode + '" has no WTM column mapping yet.', fields: [], sheetOnly });
-        return;
-      }
-
-      const fieldDiffs = [];
-      let anyMismatch = false;
-      const computedVals = {};
-      COMPARE_FIELDS.forEach(f => {
-        const sheetVal = toNum(row[f.sheetKey]);
-        const wtmVal = getWtmFieldValue(wtmRow, mappedBlock, f);
-        computedVals[f.label] = { sheetVal, wtmVal };
-      });
-      COMPARE_FIELDS.forEach(f => {
-        const { sheetVal, wtmVal } = computedVals[f.label];
-        // A rate is meaningless when no units were actually worked/billed on the agency side —
-        // skip flagging it as a mismatch rather than comparing a null/unknown rate to WTM's.
-        const linkedUnitVal = f.linkedUnit ? computedVals[f.linkedUnit].sheetVal : null;
-        const skipAsMoot = !!f.linkedUnit && !linkedUnitVal;
-
-        const bothNull = sheetVal === null && wtmVal === null;
-        const differs = !skipAsMoot && !bothNull && (sheetVal === null || wtmVal === null || Math.abs(sheetVal - wtmVal) > TOLERANCE);
-        if (differs) anyMismatch = true;
-        fieldDiffs.push({ label: f.label, sheetVal, wtmVal, differs });
-      });
-
-      results.push({
-        id: nextId++, employee, company, job, payCode,
-        status: anyMismatch ? 'mismatch' : 'match',
-        note: anyMismatch ? ('Compared against WTM column "' + mappedBlock + '"') : '',
-        fields: fieldDiffs, sheetOnly
-      });
-    });
-
-    // ---------------------------------------------------------------
-    // Reverse check: does WTM have real data in a PayCode block that the
-    // Agency Export never mentions at all for this exact placement?
-    // (Scoped to placements the sheet DOES reference — a placement the sheet
-    // never mentions at all is a different, bigger question than this check.)
-    // ---------------------------------------------------------------
-    const sheetPlacements = new Set();
-    const sheetBlockCoverage = new Set();
-    sheetRowsFiltered.forEach(row => {
-      const np = nameParts(row['EmployeeName']);
-      const pKey = norm(row['BillToName']) + '|' + norm(row['JobPosition']) + '|' + np.first + '|' + np.last;
-      sheetPlacements.add(pKey);
-      const mapped = payMap[(row['PayCode'] || '').trim().toLowerCase()];
-      if (mapped) sheetBlockCoverage.add(pKey + '|' + mapped);
-    });
-
-    wtmRows.forEach(wrow => {
-      const np = nameParts(wrow['Worker Name']);
-      const pKey = norm(wrow['Company']) + '|' + norm(wrow['Job Name']) + '|' + np.first + '|' + np.last;
-      if (!sheetPlacements.has(pKey)) return; // out of scope — sheet never references this placement at all
-
-      wtmBlocks.forEach(block => {
-        if (sheetBlockCoverage.has(pKey + '|' + block)) return; // already accounted for by the forward pass
-
-        const pu = toNum(wtmField(wrow, block, 'Pay Unit'));
-        const pr = toNum(wtmField(wrow, block, 'Pay Rate'));
-        const bu = toNum(wtmField(wrow, block, 'Bill Unit'));
-        const br = toNum(wtmField(wrow, block, 'Bill Rate'));
-        const payTotal = (pu && pr) ? pu * pr : 0;
-        const billTotal = (bu && br) ? bu * br : 0;
-        if (!payTotal && !billTotal && !pu && !bu) return; // nothing real here, nothing to flag
-
-        results.push({
-          id: nextId++, employee: wrow['Worker Name'], company: wrow['Company'], job: wrow['Job Name'],
-          payCode: block, status: 'wtm_only',
-          note: 'WTM has a "' + block + '" entry with real data, but the Agency Export has no matching PayCode for this placement.',
-          fields: [], wtmOnly: { payUnit: pu, payRate: pr, billUnit: bu, billRate: br, payTotal, billTotal }
-        });
-      });
-    });
-
-    expandedRowId = null;
-    renderSummary();
-    renderResults();
-  }
-
-  // ---------------------------------------------------------------
-  // Rendering: summary stamps
-  // ---------------------------------------------------------------
-  let activeFilter = 'attention'; // 'all' | 'attention' | 'match' | 'mismatch' | 'missing' | 'unmapped'
-
-  const FACET_DEFS = [
-    { key: 'status',   label: 'Status' },
-    { key: 'payCode',  label: 'PayCode' },
-    { key: 'job',      label: 'Job / Placement' },
-    { key: 'company',  label: 'Company' },
-    { key: 'employee', label: 'Employee' }
-  ];
-  let facetFilters = { status: new Set(), payCode: new Set(), job: new Set(), company: new Set(), employee: new Set() };
-  let openFacet = null;
-
-  function facetStatusLabel(v) {
-    const labels = { match: 'Matched', mismatch: 'Mismatch', missing: 'Not found', unmapped: 'Unmapped code', wtm_only: 'Extra in WTM' };
-    return labels[v] || v;
-  }
-
-  function distinctFacetValues(key) {
-    const set = new Set();
-    results.forEach(r => { const v = r[key]; if (v) set.add(v); });
-    return Array.from(set).sort((a, b) => String(a).localeCompare(String(b)));
-  }
-
-  function renderFacetBar() {
-    const bar = document.getElementById('facetBar');
-    let html = '';
-    FACET_DEFS.forEach(def => {
-      const activeCount = facetFilters[def.key].size;
-      const isOpen = openFacet === def.key;
-      html += '<div class="facet-wrap">' +
-        '<button class="facet-pill' + (activeCount ? ' active' : '') + '" data-facet="' + def.key + '" type="button">' +
-        escapeHtml(def.label) + (activeCount ? ' (' + activeCount + ')' : '') + ' <span class="chev">&#9662;</span>' +
-        '</button>';
-      if (isOpen) {
-        const values = distinctFacetValues(def.key);
-        html += '<div class="facet-panel" data-facet-panel="' + def.key + '">';
-        if (!values.length) {
-          html += '<div style="font-size:0.82rem;color:var(--ink-soft);padding:0.4em;">No values yet</div>';
+      function findRowAt(clientY){
+        for(const r of rowsExceptDragging()){
+          const rect = r.getBoundingClientRect();
+          if(clientY >= rect.top && clientY <= rect.bottom) return r;
         }
-        values.forEach(v => {
-          const checked = facetFilters[def.key].has(v) ? 'checked' : '';
-          const shownLabel = def.key === 'status' ? facetStatusLabel(v) : v;
-          html += '<label><input type="checkbox" data-facet="' + def.key + '" value="' + escapeHtml(v) + '" ' + checked + '> ' + escapeHtml(shownLabel) + '</label>';
-        });
-        html += '</div>';
+        return null;
       }
-      html += '</div>';
+      function onMove(e){
+        rowsExceptDragging().forEach(r=> r.classList.remove('row-drop-target'));
+        const target = findRowAt(e.clientY);
+        if(target) target.classList.add('row-drop-target');
+      }
+      function onUp(e){
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        document.body.style.userSelect = prevUserSelect;
+        draggingTr.classList.remove('row-dragging');
+        const target = findRowAt(e.clientY);
+        rowsExceptDragging().forEach(r=> r.classList.remove('row-drop-target'));
+        if(target){
+          const targetId = target.getAttribute(idAttr);
+          if(targetId && targetId !== draggedId) onReorder(draggedId, targetId);
+        }
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
     });
-    html += '<button class="facet-reset" id="resetFiltersBtn" type="button">Reset filters</button>';
-    bar.innerHTML = html;
-
-    document.getElementById('resetFiltersBtn').addEventListener('click', (e) => { e.stopPropagation(); resetFilters(); });
-
-    bar.querySelectorAll('.facet-pill').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const key = btn.dataset.facet;
-        openFacet = openFacet === key ? null : key;
-        renderFacetBar();
-      });
-    });
-    bar.querySelectorAll('input[type=checkbox][data-facet]').forEach(cb => {
-      cb.addEventListener('change', () => {
-        const key = cb.dataset.facet;
-        if (cb.checked) facetFilters[key].add(cb.value);
-        else facetFilters[key].delete(cb.value);
-        renderFacetBar();
-        renderResults();
-      });
-    });
-  }
-
-  document.addEventListener('click', (e) => {
-    if (openFacet && !e.target.closest('.facet-wrap')) { openFacet = null; renderFacetBar(); }
   });
+}
 
-  function resetFilters() {
-    Object.keys(facetFilters).forEach(k => facetFilters[k].clear());
-    openFacet = null;
-    document.getElementById('searchBox').value = '';
-    document.getElementById('hideMatched').checked = true;
-    activeFilter = 'attention';
-    syncMatchToggle();
-    renderFacetBar();
-    renderSummary();
-    renderResults();
+function setupResizableTable(table, storeKey, defaultWidths){
+  const ths = table.querySelectorAll('thead th');
+  if(!ths.length) return;
+  let widths = colWidthsStore[storeKey];
+  if(!widths || widths.length !== ths.length) widths = defaultWidths.slice();
+
+  let colgroup = table.querySelector('colgroup');
+  if(!colgroup){
+    colgroup = document.createElement('colgroup');
+    table.insertBefore(colgroup, table.firstChild);
   }
+  colgroup.innerHTML = widths.map(w=>`<col style="width:${w}px;">`).join('');
+  const cols = colgroup.querySelectorAll('col');
 
-  function counts() {
-    const groups = groupByPlacement(results);
-    const c = { match: 0, mismatch: 0, missing: 0, unmapped: 0, wtm_only: 0 };
-    groups.forEach(g => {
-      if (g.status === 'match') c.match++;
-      ['mismatch', 'missing', 'unmapped', 'wtm_only'].forEach(s => { if (g.statusSet.has(s)) c[s]++; });
-    });
-    return c;
-  }
-
-  const FILTER_TITLES = {
-    all: 'All Compared Rows',
-    attention: 'Rows Needing Attention',
-    match: 'Matched Rows',
-    mismatch: 'Mismatched Entries',
-    missing: 'Not Found in WTM',
-    unmapped: 'Unrecognized PayCodes',
-    wtm_only: 'Extra Entries in WTM'
-  };
-
-  function updateResultsTitle(visibleCount) {
-    const el = document.getElementById('resultsTitle');
-    el.style.display = 'flex';
-    el.innerHTML = escapeHtml(FILTER_TITLES[activeFilter] || 'Results') +
-      '<span class="count">' + visibleCount + ' row' + (visibleCount === 1 ? '' : 's') + '</span>';
-  }
-
-  function renderSummary() {
-    const el = document.getElementById('summary');
-    const c = counts();
-    const total = groupByPlacement(results).length;
-    el.style.display = 'flex';
-    document.getElementById('toolbar').style.display = 'flex';
-    document.getElementById('facetBar').style.display = 'flex';
-    document.getElementById('legend').style.display = 'flex';
-    renderFacetBar();
-
-    const allClean = total > 0 && c.mismatch === 0 && c.missing === 0 && c.unmapped === 0;
-    document.getElementById('successBanner').style.display = allClean ? 'block' : 'none';
-
-    el.innerHTML = `
-      <button class="stamp all ${activeFilter==='all'?'active':''}" data-f="all"><span class="n">${total}</span><span class="l">All rows</span></button>
-      <button class="stamp match ${activeFilter==='match'?'active':''}" data-f="match"><span class="n">${c.match}</span><span class="l">Matched</span></button>
-      <button class="stamp mismatch ${activeFilter==='mismatch'?'active':''}" data-f="mismatch"><span class="n">${c.mismatch}</span><span class="l">Mismatch</span></button>
-      <button class="stamp missing ${activeFilter==='missing'?'active':''}" data-f="missing"><span class="n">${c.missing}</span><span class="l">Not found</span></button>
-      <button class="stamp unmapped ${activeFilter==='unmapped'?'active':''}" data-f="unmapped"><span class="n">${c.unmapped}</span><span class="l">Unmapped code</span></button>
-      <button class="stamp extra ${activeFilter==='wtm_only'?'active':''}" data-f="wtm_only"><span class="n">${c.wtm_only}</span><span class="l">Extra in WTM</span></button>
-    `;
-    el.querySelectorAll('.stamp').forEach(btn => {
-      btn.addEventListener('click', () => { activeFilter = btn.dataset.f; syncMatchToggle(); renderResults(); renderSummary(); });
-    });
-  }
-
-  function syncMatchToggle() {
-    document.getElementById('showOnlyMatched').checked = (activeFilter === 'match');
-    document.getElementById('hideMatched').disabled = (activeFilter === 'match');
-  }
-
-  // ---------------------------------------------------------------
-  // Rendering: results table
-  // ---------------------------------------------------------------
-
-  // ---------------------------------------------------------------
-  // Column config: order is user-adjustable via drag; sort is user-adjustable via click
-  // ---------------------------------------------------------------
-  const COLUMN_DEFS = {
-    employee: { label: 'Employee', sortable: true },
-    company:  { label: 'Company', sortable: true },
-    job:      { label: 'Job / Placement', sortable: true },
-    payCode:  { label: 'PayCode', sortable: true },
-    status:   { label: 'Status', sortable: true },
-    detail:   { label: 'Detail', sortable: false }
-  };
-  let columnOrder = ['employee', 'company', 'job', 'payCode', 'status', 'detail'];
-  let expandedRowId = null; // only one row's detail can be open at a time (holds a group key string)
-  let completedKeys = new Set(); // group keys the user has manually marked as "already updated in WTM"
-  let sortKey = null;   // one of the keys above, or null for natural order
-  let sortDir = 'asc';  // 'asc' | 'desc'
-
-  // Every PayCode line for the same Employee+Company+Job gets grouped into a single
-  // displayed row — so instead of scanning separate Reg/OT/ACAAdminFee rows for the
-  // same person, you see one row labeled "Reg + OT" with a combined status.
-  const PAYCODE_ORDER = ['Reg', 'OT', 'DT', 'Holiday', 'PTO', 'ACAAdminFee'];
-  const STATUS_PRIORITY = { mismatch: 0, missing: 1, wtm_only: 2, unmapped: 3, match: 4 }; // worst wins
-
-  function sortPayCodes(codes) {
-    return codes.slice().sort((a, b) => {
-      const ia = PAYCODE_ORDER.indexOf(a), ib = PAYCODE_ORDER.indexOf(b);
-      if (ia === -1 && ib === -1) return a.localeCompare(b);
-      if (ia === -1) return 1;
-      if (ib === -1) return -1;
-      return ia - ib;
-    });
-  }
-
-  function groupByPlacement(allResults) {
-    const groups = {};
-    const order = [];
-    allResults.forEach(r => {
-      const key = placementKey(r);
-      if (!groups[key]) {
-        groups[key] = { key, employee: r.employee, company: r.company, job: r.job, members: [] };
-        order.push(key);
+  ths.forEach((th, idx)=>{
+    if(idx >= cols.length - 1) return; // no drag handle after the last column
+    th.style.position = 'relative';
+    const handle = document.createElement('div');
+    handle.className = 'col-resize-handle';
+    th.appendChild(handle);
+    handle.addEventListener('mousedown', (ev)=>{
+      ev.preventDefault();
+      ev.stopPropagation();
+      handle.classList.add('active');
+      const startX = ev.clientX;
+      const startWidth = cols[idx].getBoundingClientRect().width;
+      function onMove(e){
+        const newWidth = Math.max(36, Math.round(startWidth + (e.clientX - startX)));
+        cols[idx].style.width = newWidth + 'px';
       }
-      groups[key].members.push(r);
-    });
-    return order.map(key => {
-      const g = groups[key];
-      const codes = sortPayCodes(Array.from(new Set(g.members.map(m => m.payCode))));
-      const statusSet = new Set(g.members.map(m => m.status));
-      let status = 'match';
-      g.members.forEach(m => { if (STATUS_PRIORITY[m.status] < STATUS_PRIORITY[status]) status = m.status; });
-      return Object.assign(g, { payCodes: codes, payCodeLabel: codes.join(' + '), statusSet, status });
-    });
-  }
-
-  function statusBadge(statusOrRow) {
-    // Accepts either a plain status string (used for per-field "Matches"/"Differs" badges)
-    // or a row/group object (used for the main Status column, which also shows a missing-reason tag).
-    const isObj = typeof statusOrRow === 'object';
-    const status = isObj ? statusOrRow.status : statusOrRow;
-    const labels = { match: 'Matched', mismatch: 'Mismatch', missing: 'Not found', unmapped: 'Unmapped code', wtm_only: 'Extra in WTM' };
-    let html = '<span class="badge ' + status + '">' + labels[status] + '</span>';
-    if (isObj && status === 'missing') {
-      const members = statusOrRow.members || [statusOrRow];
-      const reasons = Array.from(new Set(members.filter(m => m.status === 'missing').map(m => m.missingReason).filter(Boolean)));
-      if (reasons.length === 1) {
-        const reasonLabels = { company: 'Company not in WTM', job: 'Job not in WTM', worker: 'Worker not on job' };
-        html += '<span class="reason-tag reason-' + reasons[0] + '">' + reasonLabels[reasons[0]] + '</span>';
-      } else if (reasons.length > 1) {
-        html += '<span class="reason-tag">Mixed reasons \u2014 see detail</span>';
+      function onUp(){
+        handle.classList.remove('active');
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        colWidthsStore[storeKey] = [...cols].map(c=> parseInt(c.style.width,10) || 0);
+        saveColWidths();
       }
-    }
-    return html;
-  }
-
-  function cellHtml(g, key) {
-    switch (key) {
-      case 'employee':
-        return '<label class="done-check" title="Mark as already updated in WTM">' +
-          '<input type="checkbox" data-done="' + escapeHtml(g.key) + '"' + (completedKeys.has(g.key) ? ' checked' : '') + '>' +
-          '</label>' +
-          '<span class="employee-copy copy-value" data-copy="' + escapeHtml(g.employee) + '" title="Click to copy name">' + escapeHtml(g.employee) + '</span>';
-      case 'company':  return escapeHtml(g.company);
-      case 'job':       return '<span class="job-name">' + escapeHtml(g.job) + '</span>';
-      case 'payCode':  return '<span class="field-name">' + escapeHtml(g.payCodeLabel) + '</span>';
-      case 'status':   return statusBadge(g);
-      case 'detail': {
-        const bad = g.members.filter(m => m.status !== 'match');
-        if (!bad.length) return '<span class="note-cell">All PayCodes match.</span>';
-        const labels = { mismatch: 'Mismatch', missing: 'Not found', unmapped: 'Unmapped', wtm_only: 'Extra in WTM' };
-        return '<span class="note-cell">' + bad.map(m => '<strong>' + escapeHtml(m.payCode) + '</strong> (' + labels[m.status] + ')').join(', ') + '</span>';
-      }
-      default: return '';
-    }
-  }
-
-  function sortValue(g, key) {
-    if (key === 'status') return g.status || '';
-    if (key === 'payCode') return norm(g.payCodeLabel || '');
-    return norm(g[key] || '');
-  }
-
-  function renderResults() {
-    const host = document.getElementById('resultsHost');
-    const prevScrollEl = host.querySelector('.table-scroll');
-    const prevScrollTop = prevScrollEl ? prevScrollEl.scrollTop : 0;
-    const hideMatched = document.getElementById('hideMatched').checked;
-    const search = norm(document.getElementById('searchBox').value);
-
-    let groups = groupByPlacement(results);
-    const hasSearch = !!search;
-
-    if (activeFilter === 'attention') {
-      // Default "just show me problems" view — hide placements where every PayCode matched.
-      if (!hasSearch) groups = groups.filter(g => g.status !== 'match');
-    } else if (activeFilter === 'match') {
-      // "Matched" should mean fully clean — every PayCode for this placement matched.
-      groups = groups.filter(g => g.status === 'match');
-    } else if (activeFilter !== 'all') {
-      // A specific stat-card was clicked — show any placement that has AT LEAST one PayCode
-      // with that status, even if its overall (worst-wins) status rolled up to something else.
-      groups = groups.filter(g => g.statusSet.has(activeFilter));
-    }
-    if (hideMatched && activeFilter !== 'match' && !hasSearch) {
-      groups = groups.filter(g => g.status !== 'match');
-    }
-    if (search) {
-      groups = groups.filter(g => norm(g.employee).includes(search) || norm(g.company).includes(search) || norm(g.job).includes(search));
-    }
-
-    FACET_DEFS.forEach(def => {
-      const set = facetFilters[def.key];
-      if (!set.size) return;
-      if (def.key === 'status') {
-        groups = groups.filter(g => Array.from(set).some(v => g.statusSet.has(v)));
-      } else if (def.key === 'payCode') {
-        groups = groups.filter(g => Array.from(set).some(v => g.payCodes.includes(v)));
-      } else {
-        groups = groups.filter(g => set.has(g[def.key]));
-      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
     });
+  });
+}
 
-    if (sortKey) {
-      groups.sort((a, b) => {
-        const va = sortValue(a, sortKey), vb = sortValue(b, sortKey);
-        const cmp = va < vb ? -1 : va > vb ? 1 : 0;
-        return sortDir === 'asc' ? cmp : -cmp;
-      });
+function loadJSON(key, fallback){
+  try{ const raw = localStorage.getItem(key); if(!raw) return fallback; return JSON.parse(raw); }
+  catch(e){ return fallback; }
+}
+function saveJSON(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }
+  catch(e){ console.error('Storage save failed', e); alert('Could not save — your browser storage may be full or blocked.'); }
+}
+
+let regularEntries = loadJSON(LS_REG, []);
+let backendEntries = loadJSON(LS_BE, []);
+let settings = loadJSON(LS_SET, { monthlyTarget: 150, dailyCap: 9, knownMonths: [] });
+if(!settings.knownMonths) settings.knownMonths = [];
+if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
+
+/* ---------------- undo / redo ---------------- */
+// Snapshots the whole app state around every persistAll() call, so Ctrl+Z can
+// step back through recent changes (edits, deletes, status flips, etc).
+// This is keyboard-triggered ONLY — clicking or blurring a field never undoes
+// anything by itself.
+const MAX_UNDO = 40;
+let undoStack = [];
+let redoStack = [];
+let lastCommittedSnapshot = null;
+let suppressSnapshot = false;
+
+function snapshotState(){
+  return JSON.stringify({ regularEntries, backendEntries, settings });
+}
+function restoreState(str){
+  const d = JSON.parse(str);
+  regularEntries = d.regularEntries;
+  backendEntries = d.backendEntries;
+  settings = d.settings;
+}
+function showToast(msg){
+  let toast = document.getElementById('undoToast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'undoToast';
+    toast.className = 'undo-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(()=> toast.classList.remove('show'), 1600);
+}
+function performUndo(){
+  if(undoStack.length === 0){ showToast('Nothing to undo'); return; }
+  const current = snapshotState();
+  const prev = undoStack.pop();
+  redoStack.push(current);
+  suppressSnapshot = true;
+  restoreState(prev);
+  persistAll();
+  recomputeSelectedMonth();
+  recomputeSelectedBeDay();
+  renderRegular(); renderBackend(); renderTicker();
+  suppressSnapshot = false;
+  showToast('↶ Undid last change');
+}
+function performRedo(){
+  if(redoStack.length === 0){ showToast('Nothing to redo'); return; }
+  const current = snapshotState();
+  const next = redoStack.pop();
+  undoStack.push(current);
+  suppressSnapshot = true;
+  restoreState(next);
+  persistAll();
+  recomputeSelectedMonth();
+  recomputeSelectedBeDay();
+  renderRegular(); renderBackend(); renderTicker();
+  suppressSnapshot = false;
+  showToast('↷ Redid change');
+}
+document.addEventListener('keydown', (ev)=>{
+  const mod = ev.ctrlKey || ev.metaKey;
+  if(!mod) return;
+  const key = ev.key.toLowerCase();
+  if(key !== 'z' && key !== 'y') return;
+  const activeTag = document.activeElement ? document.activeElement.tagName : '';
+  const inField = (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT');
+  if(inField) return; // let the browser's native in-field undo handle in-progress typing
+  ev.preventDefault();
+  if(key === 'y' || (key === 'z' && ev.shiftKey)) performRedo();
+  else performUndo();
+});
+
+function persistAll(){
+  if(!appInitializing && !suppressSnapshot && lastCommittedSnapshot !== null){
+    undoStack.push(lastCommittedSnapshot);
+    if(undoStack.length > MAX_UNDO) undoStack.shift();
+    redoStack = [];
+  }
+  saveJSON(LS_REG, regularEntries);
+  saveJSON(LS_BE, backendEntries);
+  saveJSON(LS_SET, settings);
+  lastCommittedSnapshot = snapshotState();
+  queueAutoPush();
+}
+
+/* ---------------- cloud sync (Google Apps Script + Sheets) ---------------- */
+// Paste your deployed Apps Script Web App URL below to enable cross-device sync.
+// Leave as-is to keep this device running in local-only (browser storage) mode.
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwB9_0XkF16hKP6E6aVAHe9eKkALIi7zqusxVshZKd4Q492VGBLqvFwtZDgHBHoS5e_4g/exec';
+const syncEnabled = !!SCRIPT_URL && !SCRIPT_URL.includes('PASTE_YOUR');
+let autoPushTimer = null;
+
+function setSyncStatus(status){
+  const el = document.getElementById('syncStatus');
+  if(!el) return;
+  if(status==='syncing') el.textContent = '⏳ Syncing…';
+  else if(status==='synced') el.textContent = '☁ Synced';
+  else if(status==='pending') el.textContent = '● Saving…';
+  else if(status==='error') el.textContent = '⚠ Sync failed (saved locally)';
+  else el.textContent = '💾 Local only';
+}
+
+let appInitializing = true; // blocks auto-push until the initial cloud pull finishes
+
+function queueAutoPush(){
+  if(!syncEnabled) return;
+  if(appInitializing) return; // never push during startup — could race the initial pull and overwrite the cloud with stale/empty local data
+  setSyncStatus('pending');
+  clearTimeout(autoPushTimer);
+  autoPushTimer = setTimeout(()=>{ pushToCloudNow(); }, 1000);
+}
+
+async function loadFromCloud(){
+  if(!syncEnabled){ setSyncStatus('offline'); return false; }
+  setSyncStatus('syncing');
+  try{
+    const res = await fetch(SCRIPT_URL, { method:'GET', cache:'no-store' });
+    const data = await res.json();
+    if(data && typeof data === 'object'){
+      regularEntries = Array.isArray(data.regularEntries) ? data.regularEntries : regularEntries;
+      backendEntries = Array.isArray(data.backendEntries) ? data.backendEntries : backendEntries;
+      if(data.settings && typeof data.settings === 'object') settings = Object.assign({}, settings, data.settings);
+      if(!settings.knownMonths) settings.knownMonths = [];
+      if(!settings.beKnownDays) settings.beKnownDays = [];
+      if(!settings.sources || !settings.sources.length) settings.sources = SOURCE_PRESETS.map(s=>({...s}));
+      if(!settings.beColumnOrder) settings.beColumnOrder = ['game','platform','status','date','notes'];
+      if(!settings.beDayMeta) settings.beDayMeta = {};
+      if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
+      saveJSON(LS_REG, regularEntries);
+      saveJSON(LS_BE, backendEntries);
+      saveJSON(LS_SET, settings);
     }
+    setSyncStatus('synced');
+    return true;
+  }catch(err){
+    console.error('Cloud load failed', err);
+    setSyncStatus('error');
+    return false;
+  }
+}
 
-    if (results.length) updateResultsTitle(groups.length);
-
-    if (!groups.length) {
-      host.innerHTML = '<div class="empty-state">Nothing here &mdash; ' + (results.length ? 'no rows match this view.' : 'run the check above.') + '</div>';
-      return;
-    }
-
-    let html = '<div class="table-scroll"><table class="results"><thead><tr>';
-    columnOrder.forEach(key => {
-      const def = COLUMN_DEFS[key];
-      const arrow = sortKey === key ? (sortDir === 'asc' ? ' &#9650;' : ' &#9660;') : '';
-      html += '<th draggable="true" data-col="' + key + '" class="' + (def.sortable ? 'sortable' : '') + (sortKey === key ? ' sorted' : '') + '">' +
-        escapeHtml(def.label) + arrow + '</th>';
+async function pushToCloudNow(){
+  if(!syncEnabled) return;
+  setSyncStatus('syncing');
+  try{
+    await fetch(SCRIPT_URL, {
+      method:'POST',
+      headers: { 'Content-Type':'text/plain;charset=utf-8' }, // avoids CORS preflight against Apps Script
+      body: JSON.stringify({ regularEntries, backendEntries, settings })
     });
-    html += '<th class="expand-col"></th>';
-    html += '</tr></thead><tbody>';
+    setSyncStatus('synced');
+  }catch(err){
+    console.error('Cloud push failed', err);
+    setSyncStatus('error');
+  }
+}
 
-    groups.forEach(g => {
-      const isOpen = expandedRowId === g.key;
-      const isDone = completedKeys.has(g.key);
-      html += '<tr class="' + (isOpen ? 'row-expanded ' : '') + (isDone ? 'row-completed' : '') + '">';
-      columnOrder.forEach(key => { html += '<td>' + cellHtml(g, key) + '</td>'; });
-      html += '<td class="expand-col"><button class="expand-btn" data-expand="' + escapeHtml(g.key) + '" type="button">' +
-        (isOpen ? '&#9650; Hide' : '&#9660; View') + '</button></td>';
-      html += '</tr>';
-      if (isOpen) {
-        html += '<tr class="expand-detail-row"><td colspan="' + (columnOrder.length + 1) + '">' + expandedGroupHtml(g) + '</td></tr>';
-      }
-    });
-    html += '</tbody></table></div>';
-    host.innerHTML = html;
+/* ---------------- date helpers ---------------- */
+function toDate(s){ if(!s) return null; const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
+function fmtISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fmtDayLabel(d){ return d.toLocaleDateString(undefined, { weekday:'long' }); }
+function fmtDateShort(d){ return d.toLocaleDateString(undefined, { month:'short', day:'numeric' }); }
+function fmtNum(n){ return Number(n||0).toFixed(2).replace(/\.00$/,''); }
+function pointsCount(e){ return e.result === 'Passed' || e.result === 'Failed'; } // pending statuses (Queued/Downloading/Testing) don't count yet
+function ymOf(dateStr){ return dateStr.slice(0,7); }
+function ymNow(){ const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function daysInMonth(ym){ const [y,m] = ym.split('-').map(Number); return new Date(y, m, 0).getDate(); }
+function fmtMonthLabel(ym){ const [y,m] = ym.split('-').map(Number); return new Date(y,m-1,1).toLocaleDateString(undefined,{month:'long',year:'numeric'}); }
+function fmtMonthShort(ym){ const [y,m] = ym.split('-').map(Number); return new Date(y,m-1,1).toLocaleDateString(undefined,{month:'short',year:'numeric'}); }
+function isWeekendDay(d){ return d.getDay()===0 || d.getDay()===6; }
 
-    const newScrollEl = host.querySelector('.table-scroll');
-    if (newScrollEl && prevScrollTop) newScrollEl.scrollTop = prevScrollTop;
+/* =========================================================
+   TABS — remembers last active tab across refreshes
+   ========================================================= */
+const LS_TAB = 'qa_active_tab';
+function setActiveTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.panel').forEach(p=> p.classList.toggle('active', p.id === 'panel-'+tab));
+  try{ localStorage.setItem(LS_TAB, tab); }catch(e){}
+}
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=> setActiveTab(btn.dataset.tab));
+});
+(function restoreActiveTab(){
+  let saved = null;
+  try{ saved = localStorage.getItem(LS_TAB); }catch(e){}
+  setActiveTab(saved === 'backend' ? 'backend' : 'regular');
+})();
 
-    wireTableHeaderInteractions();
-    wireExpandButtons();
-    wireDoneCheckboxes();
-    wireCopyNames();
+/* =========================================================
+   REGULAR TESTING TAB — month pages
+   ========================================================= */
+let regEntriesByDate = {};
+function reindexRegular(){
+  regEntriesByDate = {};
+  regularEntries.forEach(e=>{
+    if(!regEntriesByDate[e.date]) regEntriesByDate[e.date] = [];
+    regEntriesByDate[e.date].push(e);
+  });
+}
+
+function getAllMonths(){
+  const set = new Set(settings.knownMonths||[]);
+  regularEntries.forEach(e=> e.date && set.add(ymOf(e.date)));
+  return [...set].sort();
+}
+function ensureMonthKnown(ym){
+  if(!settings.knownMonths.includes(ym)){
+    settings.knownMonths.push(ym);
+    settings.knownMonths.sort();
+    persistAll();
+  }
+}
+
+let selectedMonth = null;
+function recomputeSelectedMonth(){
+  if(!settings.knownMonths.length) settings.knownMonths = [ymNow()];
+  const all = getAllMonths();
+  selectedMonth = all.includes(ymNow()) ? ymNow() : all[all.length-1];
+  persistAll();
+}
+recomputeSelectedMonth();
+
+document.getElementById('regTargetInput').value = settings.monthlyTarget;
+document.getElementById('regTargetInput').addEventListener('change', (e)=>{
+  const v = parseFloat(e.target.value);
+  settings.monthlyTarget = isNaN(v) ? 0 : v;
+  persistAll();
+  renderRegular();
+});
+
+function populateMonthSelect(){
+  const sel = document.getElementById('monthSelect');
+  const months = getAllMonths();
+  sel.innerHTML = months.map(m=>`<option value="${m}" ${m===selectedMonth?'selected':''}>${fmtMonthShort(m)}</option>`).join('');
+}
+document.getElementById('monthSelect').addEventListener('change', (e)=>{ selectedMonth = e.target.value; renderRegular(); });
+
+document.getElementById('addMonthBtn').addEventListener('click', ()=>{
+  document.getElementById('monthPicker').value = selectedMonth;
+  document.getElementById('monthModalOverlay').classList.remove('hidden');
+});
+document.getElementById('monthModalCancel').addEventListener('click', ()=> document.getElementById('monthModalOverlay').classList.add('hidden'));
+document.getElementById('monthModalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='monthModalOverlay') e.currentTarget.classList.add('hidden'); });
+document.getElementById('monthModalAdd').addEventListener('click', ()=>{
+  const val = document.getElementById('monthPicker').value;
+  if(!val){ alert('Pick a month first.'); return; }
+  ensureMonthKnown(val);
+  selectedMonth = val;
+  document.getElementById('monthModalOverlay').classList.add('hidden');
+  renderRegular();
+});
+document.getElementById('deleteMonthBtn').addEventListener('click', ()=>{
+  if(!confirm('Remove the ' + fmtMonthLabel(selectedMonth) + ' page? (only allowed while it has no entries)')) return;
+  settings.knownMonths = settings.knownMonths.filter(m=>m!==selectedMonth);
+  persistAll();
+  const all = getAllMonths();
+  selectedMonth = all.length ? all[all.length-1] : ymNow();
+  ensureMonthKnown(selectedMonth);
+  renderRegular();
+});
+
+const collapsedDays = {};
+
+function renderRegular(){
+  reindexRegular();
+  ensureMonthKnown(selectedMonth);
+  populateMonthSelect();
+
+  document.getElementById('monthTitleDisplay').textContent = fmtMonthLabel(selectedMonth);
+
+  const nDays = daysInMonth(selectedMonth);
+  let monthTotal = 0, daysLogged = 0;
+  for(let day=1; day<=nDays; day++){
+    const iso = selectedMonth + '-' + String(day).padStart(2,'0');
+    const list = regEntriesByDate[iso] || [];
+    if(list.length) daysLogged++;
+    list.forEach(e=> monthTotal += (pointsCount(e) ? Number(e.points||0) : 0));
   }
 
-  function wireDoneCheckboxes() {
-    document.querySelectorAll('input[data-done]').forEach(cb => {
-      cb.addEventListener('click', (e) => e.stopPropagation()); // don't let it bubble into row/expand clicks
-      cb.addEventListener('change', () => {
-        const key = cb.dataset.done;
-        if (cb.checked) completedKeys.add(key); else completedKeys.delete(key);
-        renderResults();
-      });
-    });
+  const target = Number(settings.monthlyTarget||0);
+  const remaining = target - monthTotal;
+
+  document.getElementById('regMonthTotal').textContent = fmtNum(monthTotal);
+  document.getElementById('regMonthTargetDisplay').textContent = fmtNum(target);
+  document.getElementById('regDaysLogged').textContent = daysLogged + ' / ' + nDays;
+  document.getElementById('regDaysLoggedSub').textContent = 'out of ' + nDays + ' days';
+
+  const remEl = document.getElementById('regRemaining');
+  const remSub = document.getElementById('regRemainingSub');
+  if(target <= 0){ remEl.textContent='—'; remEl.className='stat-value'; remSub.textContent='no target set'; }
+  else if(remaining <= 0){ remEl.textContent='+'+fmtNum(Math.abs(remaining)); remEl.className='stat-value green'; remSub.textContent='over target'; }
+  else{ remEl.textContent=fmtNum(remaining); remEl.className='stat-value amber'; remSub.textContent='to hit target'; }
+
+  const badge = document.getElementById('monthStatusBadge');
+  const [my,mm] = selectedMonth.split('-').map(Number);
+  const monthEnd = new Date(my, mm-1, nDays);
+  const isPast = monthEnd < new Date(new Date().setHours(0,0,0,0));
+  badge.className = 'week-status-badge';
+  if(target<=0 && monthTotal===0){ badge.classList.add('badge-empty'); badge.textContent='NO DATA'; }
+  else if(monthTotal>=target && target>0){ badge.classList.add('badge-reached'); badge.textContent='QUOTA REACHED'; }
+  else if(isPast){ badge.classList.add('badge-missed'); badge.textContent='QUOTA MISSED'; }
+  else{ badge.classList.add('badge-progress'); badge.textContent='IN PROGRESS'; }
+
+  const delBtn = document.getElementById('deleteMonthBtn');
+  const allMonths = getAllMonths();
+  if(monthTotal===0 && allMonths.length>1) delBtn.classList.remove('hidden'); else delBtn.classList.add('hidden');
+
+  const container = document.getElementById('regDayGroups');
+  container.innerHTML = '';
+  for(let day=1; day<=nDays; day++){
+    const dObj = new Date(my, mm-1, day);
+    container.appendChild(buildDayGroup(dObj));
   }
 
-  function copyToClipboard(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).catch(() => legacyCopy(text));
+  const platforms = new Set();
+  regularEntries.forEach(e=> e.platform && platforms.add(e.platform));
+  backendEntries.forEach(e=> e.platform && platforms.add(e.platform));
+  const dl1 = document.getElementById('platformList');
+  dl1.innerHTML = [...platforms].sort().map(p=>`<option value="${escapeHtml(p)}">`).join('');
+}
+
+function buildDayGroup(dateObj){
+  const iso = fmtISO(dateObj);
+  const label = fmtDayLabel(dateObj);
+  const weekend = isWeekendDay(dateObj);
+  const list = (regEntriesByDate[iso] || []); // natural array order — draggable, not auto-sorted
+  const total = list.reduce((s,e)=> s + (pointsCount(e) ? Number(e.points||0) : 0), 0);
+  const key = 'day_'+iso;
+  const isToday = iso === fmtISO(new Date());
+  const collapsed = key in collapsedDays ? collapsedDays[key] : (list.length===0 && !isToday);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'day-group';
+
+  const head = document.createElement('div');
+  head.className = 'day-head' + (collapsed?' collapsed':'');
+  head.innerHTML = `
+    <div class="day-head-left">
+      <span class="chev">▾</span>
+      <span class="day-name">${label}</span>
+      <span class="day-date">${fmtDateShort(dateObj)}</span>
+      ${weekend ? '<span class="weekend-tag">WEEKEND</span>' : ''}
+      ${total >= settings.dailyCap && settings.dailyCap>0 ? '<span class="day-cap-note">LIMIT REACHED</span>' : ''}
+    </div>
+    <div class="day-total">${fmtNum(total)} pts</div>
+  `;
+  head.addEventListener('click', ()=>{ collapsedDays[key] = !collapsed; renderRegular(); });
+  wrap.appendChild(head);
+
+  if(!collapsed){
+    const tblWrap = document.createElement('div');
+    let rows = '';
+    if(list.length === 0){
+      rows = `<tr class="empty-row"><td colspan="6">No games logged for this day.</td></tr>`;
     } else {
-      legacyCopy(text);
+      list.forEach(e=>{
+        const statusColor = STATUS_COLORS[e.result] || STATUS_COLORS.Queued;
+        const opts = STATUS_OPTIONS.map(s=>`<option value="${s}" ${s===e.result?'selected':''}>${s}</option>`).join('');
+        rows += `<tr data-reg-row-id="${e.id}">
+          <td class="drag-handle-cell" title="Drag to reorder">⋮⋮</td>
+          <td>
+            <div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game||'')}</div>
+            ${e.platform ? `<div class="platform-tag">(${escapeHtml(e.platform)})</div>` : ''}
+          </td>
+          <td><select class="status-select" data-status-id="${e.id}" style="background-color:${statusColor};">${opts}</select></td>
+          <td><input type="number" step="0.25" class="cell-input pts-input" data-points-id="${e.id}" value="${e.points}" title="${pointsCount(e) ? '' : 'Not counted yet — mark Passed or Failed to add these points to the total'}" style="text-align:right;font-family:var(--mono);${pointsCount(e) ? '' : 'opacity:0.45;'}"></td>
+          <td><div class="row-actions">
+            <button class="mini-btn ${e.resultUrl ? 'has-link' : ''}" data-result-btn="${e.id}" title="${e.resultUrl ? 'Click to open result link · right-click to edit' : 'Add a result link'}">🔗</button>
+            <button class="mini-btn" data-edit="${e.id}" title="Edit">✎</button>
+            <button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button>
+          </div></td>
+          <td><div class="game-cell trainer-code-cell" data-trainer-id="${e.id}">${e.trainerCode ? escapeHtml(e.trainerCode) : '<span class="add-link-hint">+ Add code</span>'}</div></td>
+        </tr>`;
+      });
     }
-  }
+    rows += quickAddRowHtml(iso);
+    tblWrap.innerHTML = `<table class="game-table">
+      <thead><tr><th style="width:28px;"></th><th>Game (Platform)</th><th>Status</th><th>Points</th><th></th><th>Trainer Code</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+    wrap.appendChild(tblWrap);
+    setupResizableTable(tblWrap.querySelector('table'), 'regular', [28,260,120,90,110,150]);
 
-  function legacyCopy(text) {
-    // Fallback for contexts (e.g. a plain file:// page) where the async Clipboard API
-    // may be blocked as an insecure context — this older approach works everywhere.
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); } catch (e) { /* nothing more we can do */ }
-    document.body.removeChild(ta);
-  }
-
-  function wireCopyNames() {
-    document.querySelectorAll('.copy-value').forEach(el => {
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        copyToClipboard(el.dataset.copy);
-        const original = el.textContent;
-        el.classList.add('copied-flash');
-        el.textContent = '\u2713 Copied';
-        setTimeout(() => { el.textContent = original; el.classList.remove('copied-flash'); }, 900);
+    tblWrap.querySelectorAll('[data-edit]').forEach(b=> b.addEventListener('click', (ev)=>{ ev.stopPropagation(); editRegularEntry(b.dataset.edit); }));
+    tblWrap.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', (ev)=>{ ev.stopPropagation(); deleteRegularEntry(b.dataset.del); }));
+    tblWrap.querySelectorAll('[data-status-id]').forEach(sel=>{
+      sel.addEventListener('click', ev=> ev.stopPropagation());
+      sel.addEventListener('change', (ev)=>{
+        ev.stopPropagation();
+        commitRegularStatus(sel.dataset.statusId, sel.value, sel);
       });
     });
+    tblWrap.querySelectorAll('[data-points-id]').forEach(inp=>{
+      inp.addEventListener('click', ev=> ev.stopPropagation());
+      inp.addEventListener('keydown', ev=> ev.stopPropagation());
+      inp.addEventListener('change', (ev)=>{
+        ev.stopPropagation();
+        commitRegularPoints(inp.dataset.pointsId, inp.value);
+      });
+    });
+    tblWrap.querySelectorAll('[data-game-id]').forEach(div=>{
+      div.addEventListener('click', ev=> ev.stopPropagation());
+      div.addEventListener('dblclick', ev=> ev.stopPropagation());
+      div.addEventListener('contextmenu', ev=> ev.stopPropagation());
+      const id = div.dataset.gameId;
+      const entry = regularEntries.find(x=>x.id===id);
+      wireGameCell(div, entry ? entry.game : '', (newVal)=>{
+        if(newVal !== null && newVal !== '' && entry){ entry.game = newVal; persistAll(); renderTicker(); }
+        renderRegular();
+      });
+    });
+    tblWrap.querySelectorAll('[data-result-btn]').forEach(btn=>{
+      const id = btn.dataset.resultBtn;
+      btn.addEventListener('click', (ev)=>{
+        ev.stopPropagation();
+        const entry = regularEntries.find(x=>x.id===id);
+        if(entry && entry.resultUrl) window.open(entry.resultUrl, '_blank', 'noopener');
+        else promptEditResultLink(id);
+      });
+      btn.addEventListener('contextmenu', (ev)=>{ ev.preventDefault(); ev.stopPropagation(); promptEditResultLink(id); });
+    });
+    tblWrap.querySelectorAll('[data-trainer-id]').forEach(div=>{
+      div.addEventListener('click', ev=> ev.stopPropagation());
+      div.addEventListener('dblclick', ev=> ev.stopPropagation());
+      div.addEventListener('contextmenu', ev=> ev.stopPropagation());
+      const id = div.dataset.trainerId;
+      const entry = regularEntries.find(x=>x.id===id);
+      wireCopyEditCell(div, entry ? (entry.trainerCode||'') : '', (newVal)=>{
+        if(newVal !== null && entry){ entry.trainerCode = newVal; persistAll(); }
+        renderRegular();
+      });
+    });
+
+    // row drag-and-drop reordering (within this day's list)
+    makeRowsDraggable(tblWrap, 'tr[data-reg-row-id]', 'data-reg-row-id', (draggedId, targetId)=>{
+      const from = regularEntries.findIndex(x=>x.id===draggedId);
+      const to = regularEntries.findIndex(x=>x.id===targetId);
+      if(from===-1 || to===-1) return;
+      const [moved] = regularEntries.splice(from,1);
+      regularEntries.splice(to,0,moved);
+      persistAll();
+      renderRegular();
+    });
+
+    wireQuickAddRow(tblWrap, iso);
   }
 
-  // Groups all PayCode rows belonging to the same worker+company+job "placement" —
-  // used to compute a Grand Total across every PayCode, mirroring WTM's own totals row.
-  function placementKey(r) { return r.company + '|' + r.job + '|' + r.employee; }
+  return wrap;
+}
 
-  function computeGrandTotal(r) {
-    const key = placementKey(r);
-    const group = results.filter(x => placementKey(x) === key);
-    let agencyPay = 0, agencyBill = 0, wtmPay = 0, wtmBill = 0, wtmKnownRows = 0;
-    group.forEach(x => {
-      if (x.fields && x.fields.length) {
-        const payField = x.fields.find(f => f.label === 'Pay Total');
-        const billField = x.fields.find(f => f.label === 'Bill Total');
-        if (payField) { agencyPay += (payField.sheetVal || 0); wtmPay += (payField.wtmVal || 0); }
-        if (billField) { agencyBill += (billField.sheetVal || 0); wtmBill += (billField.wtmVal || 0); }
-        wtmKnownRows++;
-      } else if (x.sheetOnly) {
-        agencyPay += (x.sheetOnly.payTotal || 0);
-        agencyBill += (x.sheetOnly.billTotal || 0);
+function promptEditResultLink(id){
+  const e = regularEntries.find(x=>x.id===id);
+  if(!e) return;
+  const url = prompt('Paste the result link (leave blank to remove):', e.resultUrl || '');
+  if(url === null) return; // cancelled
+  e.resultUrl = url.trim();
+  persistAll();
+  renderRegular();
+}
+
+function commitRegularStatus(id, value, el){
+  const e = regularEntries.find(x=>x.id===id);
+  if(!e) return;
+  e.result = value;
+  persistAll();
+  renderRegular();
+  renderTicker();
+}
+
+function commitRegularPoints(id, value){
+  const e = regularEntries.find(x=>x.id===id);
+  if(!e) return;
+  const v = parseFloat(value);
+  e.points = isNaN(v) ? 0 : v;
+  persistAll();
+  renderRegular();
+  renderTicker();
+}
+
+function quickAddRowHtml(dateIso){
+  const opts = STATUS_OPTIONS.map(s=>`<option value="${s}">${s}</option>`).join('');
+  return `<tr class="quick-add-row" data-quick-date="${dateIso}">
+    <td></td>
+    <td><input type="text" class="qa-game" placeholder="+ Add a game…" style="width:100%;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 8px;font-family:var(--sans);font-size:12.5px;"></td>
+    <td><select class="qa-result" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px;font-family:var(--sans);font-size:12.5px;">${opts}</select></td>
+    <td><input type="number" step="0.25" class="qa-points" placeholder="pts" style="width:100%;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 8px;font-family:var(--mono);font-size:12.5px;"></td>
+    <td>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <input type="text" class="qa-platform" placeholder="Platform" style="flex:1;min-width:0;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 8px;font-family:var(--sans);font-size:11.5px;" list="platformList">
+        <button class="mini-btn qa-add-btn" title="Add row" style="color:var(--lime);border-color:rgba(215,255,62,0.35);flex-shrink:0;">+</button>
+      </div>
+    </td>
+    <td></td>
+  </tr>`;
+}
+
+function wireQuickAddRow(scopeEl, iso){
+  const row = scopeEl.querySelector('.quick-add-row');
+  if(!row) return;
+  const gameInp = row.querySelector('.qa-game');
+  const platInp = row.querySelector('.qa-platform');
+  const resSel = row.querySelector('.qa-result');
+  const ptsInp = row.querySelector('.qa-points');
+  const submit = ()=>{
+    const game = gameInp.value.trim();
+    const points = parseFloat(ptsInp.value);
+    if(!game || isNaN(points)){ gameInp.focus(); return; }
+    regularEntries.push({ id: uid(), date: iso, game, platform: platInp.value.trim(), result: resSel.value, points });
+    persistAll();
+    renderRegular();
+    renderTicker();
+  };
+  row.querySelector('.qa-add-btn').addEventListener('click', (ev)=>{ ev.stopPropagation(); submit(); });
+  [gameInp, platInp, ptsInp].forEach(inp=>{
+    inp.addEventListener('click', ev=> ev.stopPropagation());
+    inp.addEventListener('keydown', (ev)=>{ if(ev.key==='Enter'){ ev.stopPropagation(); submit(); } });
+  });
+  resSel.addEventListener('click', ev=> ev.stopPropagation());
+}
+
+function editRegularEntry(id){
+  const e = regularEntries.find(x=>x.id===id);
+  if(!e) return;
+  const game = prompt('Game name:', e.game); if(game===null) return;
+  const platform = prompt('Platform:', e.platform||''); if(platform===null) return;
+  const result = prompt('Result (Passed/Failed):', e.result); if(result===null) return;
+  const points = prompt('Points:', e.points); if(points===null) return;
+  e.game = game.trim(); e.platform = platform.trim();
+  e.result = /^f/i.test(result.trim()) ? 'Failed' : 'Passed';
+  e.points = parseFloat(points) || 0;
+  persistAll(); renderRegular(); renderTicker();
+}
+function deleteRegularEntry(id){
+  if(!confirm('Delete this test entry?')) return;
+  regularEntries = regularEntries.filter(x=>x.id!==id);
+  persistAll(); renderRegular(); renderTicker();
+}
+
+document.getElementById('rgAddBtn').addEventListener('click', ()=>{
+  const date = document.getElementById('rgDate').value;
+  const game = document.getElementById('rgGame').value.trim();
+  const platform = document.getElementById('rgPlatform').value.trim();
+  const result = document.getElementById('rgResult').value;
+  const points = parseFloat(document.getElementById('rgPoints').value);
+  if(!date || !game || isNaN(points)){ alert('Please fill in date, game name, and points.'); return; }
+  regularEntries.push({ id: uid(), date, game, platform, result, points });
+  persistAll();
+  selectedMonth = ymOf(date);
+  ensureMonthKnown(selectedMonth);
+  document.getElementById('rgGame').value='';
+  document.getElementById('rgPlatform').value='';
+  document.getElementById('rgPoints').value='';
+  renderRegular(); renderTicker();
+});
+
+document.getElementById('rgDate').value = fmtISO(new Date());
+
+document.getElementById('rgPasteArea').addEventListener('paste', (ev)=>{
+  // Always replace the whole box with exactly what was just pasted, rather
+  // than inserting at the cursor (which silently stacks with leftover text).
+  ev.preventDefault();
+  const text = (ev.clipboardData || window.clipboardData).getData('text');
+  ev.target.value = text;
+});
+
+function parseRegularGameLine(line){
+  // "Game Name (Platform)" style, matching the original spreadsheet layout
+  const m = line.trim().match(/^(.*)\s+\(([^)]+)\)\s*$/);
+  if(m) return { game: m[1].trim(), platform: m[2].trim() };
+  return { game: line.trim(), platform: '' };
+}
+
+function parseRegularPasteBlob(raw, today){
+  const lines = raw.split(/\r?\n/);
+  const hasFormMarker = lines.some(l=> /^\s*test\s*value\s*$/i.test(l));
+
+  if(!hasFormMarker){
+    // Simple mode: one entry per non-blank line — either tab-separated
+    // (Game/Platform/Status/Points/Date) or "Game Name (Platform)".
+    return lines.filter(l=>l.trim()).map(line=>{
+      if(line.includes('\t')){
+        const parts = line.split('\t');
+        const status = normalizeStatus(parts[2]) || 'Queued';
+        const points = parts[3] !== undefined && parts[3].trim() !== '' ? parseFloat(parts[3]) : 0;
+        const date = parseFlexibleDate(parts[4]) || today;
+        return { game: (parts[0]||'').trim(), platform: (parts[1]||'').trim(), status, points: isNaN(points)?0:points, date };
       }
+      const { game, platform } = parseRegularGameLine(line);
+      return { game, platform, status: 'Queued', points: 0, date: today };
     });
-    return { agencyPay, agencyBill, wtmPay, wtmBill, totalRows: group.length, wtmKnownRows };
   }
 
-  function grandTotalHtml(r) {
-    const gt = computeGrandTotal(r);
-    const payDiffers = Math.abs(gt.agencyPay - gt.wtmPay) > TOLERANCE;
-    const billDiffers = Math.abs(gt.agencyBill - gt.wtmBill) > TOLERANCE;
-    let html = '<table class="expand-table grand-total-table"><thead><tr><th>Grand Total (all PayCodes for this placement)</th><th>Currently in WTM</th><th>From Agency Export</th><th></th></tr></thead><tbody>';
-    html += '<tr class="grand-total-row"><td class="field-name">Pay Total</td>' +
-      '<td>' + (payDiffers ? '<span class="diff-wtm">' + fmt(gt.wtmPay) + '</span>' : fmt(gt.wtmPay)) + '</td>' +
-      '<td>' + agencyValue(fmt(gt.agencyPay), payDiffers) + '</td>' +
-      '<td>' + (payDiffers ? '<span class="badge mismatch">Differs</span>' : '<span class="badge match">Matches</span>') + '</td></tr>';
-    html += '<tr class="grand-total-row"><td class="field-name">Bill Total</td>' +
-      '<td>' + (billDiffers ? '<span class="diff-wtm">' + fmt(gt.wtmBill) + '</span>' : fmt(gt.wtmBill)) + '</td>' +
-      '<td>' + agencyValue(fmt(gt.agencyBill), billDiffers) + '</td>' +
-      '<td>' + (billDiffers ? '<span class="badge mismatch">Differs</span>' : '<span class="badge match">Matches</span>') + '</td></tr>';
-    html += '</tbody></table>';
-    if (gt.wtmKnownRows < gt.totalRows) {
-      html += '<div class="expand-note">&#9888;&#65039; WTM total only reflects ' + gt.wtmKnownRows + ' of ' + gt.totalRows +
-        ' PayCode(s) for this placement \u2014 the rest are Not Found or Unmapped, so this comparison is partial.</div>';
+  // Form-dump mode (e.g. pasted from a Slack workflow submission): scan for
+  // blocks, each ending right after a "Test Value" label's answer line.
+  const records = [];
+  let block = [];
+  for(let i=0;i<lines.length;i++){
+    const line = lines[i];
+    if(!line.trim()) continue;
+    block.push(line);
+    if(/^\s*test\s*value\s*$/i.test(line)){
+      let j = i+1;
+      while(j<lines.length && !lines[j].trim()) j++;
+      if(j<lines.length){ block.push(lines[j]); i = j; }
+      records.push(block);
+      block = [];
     }
-    return html;
   }
+  if(block.length) records.push(block); // trailing incomplete block, best-effort
 
-  // Full field-by-field breakdown shown when a row is expanded — works for
-  // Matched/Mismatch (has a WTM counterpart to compare) and for Not
-  // found/Unmapped (only the sheet's own values are available).
-  // Renders just the field/value table for ONE PayCode member (no context header, no grand total)
-  function memberTableHtml(r) {
-    let html = '';
-    if (r.fields && r.fields.length) {
-      html += '<table class="expand-table"><thead><tr><th>Field</th><th>Currently in WTM</th><th>From Agency Export</th><th></th></tr></thead><tbody>';
-      r.fields.forEach(f => {
-        const wtmCell = f.differs ? '<span class="diff-wtm">' + fmt(f.wtmVal) + '</span>' : fmt(f.wtmVal);
-        const agencyCell = agencyValue(fmt(f.sheetVal), f.differs);
-        html += '<tr>' +
-          '<td class="field-name">' + escapeHtml(f.label) + '</td>' +
-          '<td>' + wtmCell + '</td>' +
-          '<td>' + agencyCell + '</td>' +
-          '<td>' + (f.differs ? '<span class="badge mismatch">Differs</span>' : '<span class="badge match">Matches</span>') + '</td>' +
-          '</tr>';
-      });
-      html += '</tbody></table>';
-    } else if (r.sheetOnly) {
-      const headline = r.status === 'missing'
-        ? 'No WTM placement exists for this yet. Everything below is what the Agency Export has \u2014 use it to create the entry in WTM:'
-        : escapeHtml(r.note) + ' Here\u2019s everything the Agency Export has on file for this row:';
-      html += '<div class="expand-note">' + headline + '</div>';
-      html += '<table class="expand-table"><thead><tr><th>Field</th><th>Enter this in WTM</th></tr></thead><tbody>';
-      const textRows = [
-        ['Employee', r.employee], ['Company', r.company], ['Job / Placement', r.job], ['PayCode', r.payCode],
-        ['Week', r.sheetOnly.weekWorked], ['PO Number', r.sheetOnly.poNumber]
-      ];
-      const numericRows = [
-        ['Pay Unit', fmt(r.sheetOnly.payUnit)], ['Pay Rate', fmt(r.sheetOnly.payRate)],
-        ['Bill Unit', fmt(r.sheetOnly.billUnit)], ['Bill Rate', fmt(r.sheetOnly.billRate)],
-        ['Pay Total', fmt(r.sheetOnly.payTotal)], ['Bill Total', fmt(r.sheetOnly.billTotal)]
-      ];
-      textRows.forEach(([label, val]) => {
-        const shown = (val === '' || val === null || val === undefined) ? '&mdash;' : escapeHtml(String(val));
-        html += '<tr><td class="field-name">' + label + '</td><td>' + agencyValue(shown, true) + '</td></tr>';
-      });
-      numericRows.forEach(([label, val]) => {
-        html += '<tr><td class="field-name">' + label + '</td><td>' + agencyValue(val, true) + '</td></tr>';
-      });
-      html += '</tbody></table>';
-    } else if (r.wtmOnly) {
-      html += '<div class="expand-note">WTM has real data for this PayCode, but the Agency Export has no matching line for this placement. Worth verifying this entry is legitimate (e.g. a manual/one-off addition) rather than something that should be removed:</div>';
-      html += '<table class="expand-table"><thead><tr><th>Field</th><th>Currently in WTM</th></tr></thead><tbody>';
-      const wtmRows = [
-        ['Pay Unit', fmt(r.wtmOnly.payUnit)], ['Pay Rate', fmt(r.wtmOnly.payRate)],
-        ['Bill Unit', fmt(r.wtmOnly.billUnit)], ['Bill Rate', fmt(r.wtmOnly.billRate)],
-        ['Pay Total', fmt(r.wtmOnly.payTotal)], ['Bill Total', fmt(r.wtmOnly.billTotal)]
-      ];
-      wtmRows.forEach(([label, val]) => {
-        html += '<tr><td class="field-name">' + label + '</td><td><span class="diff-wtm-flag">' + val + '</span></td></tr>';
-      });
-      html += '</tbody></table>';
+  return records.map(blockLines=>{
+    const { game, platform } = parseRegularGameLine(blockLines[0]);
+    let points = 0;
+    for(let i=0;i<blockLines.length-1;i++){
+      if(/^\s*test\s*value\s*$/i.test(blockLines[i])){
+        const v = parseFloat(blockLines[i+1]);
+        if(!isNaN(v)) points = v;
+        break;
+      }
     }
-    return html;
+    return { game, platform, status: 'Queued', points, date: today };
+  });
+}
+
+document.getElementById('rgPasteBtn').addEventListener('click', ()=>{
+  const raw = document.getElementById('rgPasteArea').value;
+  if(!raw.trim()) return;
+  const today = fmtISO(new Date());
+  const parsed = parseRegularPasteBlob(raw, today);
+  let count = 0;
+  let lastDate = null;
+  parsed.forEach(rec=>{
+    if(!rec.game) return;
+    const date = rec.date || today;
+    regularEntries.push({ id: uid(), date, game: rec.game, platform: rec.platform||'', result: rec.status||'Queued', points: isNaN(rec.points)?0:rec.points });
+    ensureMonthKnown(ymOf(date));
+    lastDate = date;
+    count++;
+  });
+  if(count === 0){ alert('Could not find any game rows in that paste.'); return; }
+  persistAll();
+  if(lastDate) selectedMonth = ymOf(lastDate);
+  document.getElementById('rgPasteArea').value = '';
+  renderRegular(); renderTicker();
+  const btn = document.getElementById('rgPasteBtn');
+  const original = btn.textContent;
+  btn.textContent = `Added ${count} row${count===1?'':'s'} ✓`;
+  setTimeout(()=>{ btn.textContent = original; }, 1800);
+});
+
+// beDate default is set below once selectedBeDay is initialized
+
+/* =========================================================
+   BACKEND TESTING TAB — Game / Source / Status / Date / Notes
+   ========================================================= */
+let bePage = 0;
+const PAGE_SIZE = 25;
+
+if(!settings.beKnownDays) settings.beKnownDays = [];
+if(!settings.beDayMeta) settings.beDayMeta = {};
+
+function getBeDayMeta(date){
+  if(!settings.beDayMeta[date]){
+    settings.beDayMeta[date] = { label: 'BACKEND TESTING', dateLabel: fmtDayPageTitle(date) };
   }
+  return settings.beDayMeta[date];
+}
 
-  // Full panel for a grouped placement row — one sub-section per PayCode, ending with the Grand Total.
-  function expandedGroupHtml(g) {
-    let html = '<div class="expand-panel">';
-    html += '<div class="expand-context">' +
-      '<span class="expand-context-name">' + escapeHtml(g.employee) + '</span>' +
-      '<span class="expand-context-sep">&middot;</span>' + escapeHtml(g.company) +
-      '<span class="expand-context-sep">&middot;</span>' + escapeHtml(g.job) +
-      '<span class="expand-context-sep">&middot;</span><span class="expand-context-paycode">' + escapeHtml(g.payCodeLabel) + '</span>' +
-      '</div>';
+function getAllBeDays(){
+  const set = new Set(settings.beKnownDays||[]);
+  backendEntries.forEach(e=> e.date && set.add(e.date));
+  return [...set].sort();
+}
+function ensureBeDayKnown(iso){
+  if(!iso) return;
+  if(!settings.beKnownDays.includes(iso)){
+    settings.beKnownDays.push(iso);
+    settings.beKnownDays.sort();
+    persistAll();
+  }
+}
+function fmtDayPageLabel(iso){
+  const d = toDate(iso);
+  return d.toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' });
+}
+function fmtDayPageTitle(iso){
+  const d = toDate(iso);
+  return d.toLocaleDateString(undefined, { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+}
 
-    const membersSorted = sortPayCodes(g.members.map(m => m.payCode))
-      .map(code => g.members.find(m => m.payCode === code));
+let selectedBeDay = null;
+function recomputeSelectedBeDay(){
+  const today = fmtISO(new Date());
+  if(!settings.beKnownDays.length) settings.beKnownDays = [today];
+  const all = getAllBeDays();
+  selectedBeDay = all.includes(today) ? today : all[all.length-1];
+  persistAll();
+  document.getElementById('beDate').value = selectedBeDay;
+}
+recomputeSelectedBeDay();
 
-    membersSorted.forEach(m => {
-      html += '<div class="paycode-subsection">' +
-        '<div class="paycode-subheading"><span class="paycode-subheading-name">' + escapeHtml(m.payCode) + '</span>' + statusBadge(m.status) + '</div>' +
-        memberTableHtml(m) +
-        '</div>';
+function populateBeDaySelect(){
+  const sel = document.getElementById('beDaySelect');
+  const days = getAllBeDays();
+  sel.innerHTML = days.map(d=>`<option value="${d}" ${d===selectedBeDay?'selected':''}>${fmtDayPageLabel(d)}</option>`).join('');
+}
+document.getElementById('beDaySelect').addEventListener('change', (e)=>{
+  selectedBeDay = e.target.value;
+  document.getElementById('beDate').value = selectedBeDay;
+  bePage = 0;
+  renderBackend();
+});
+document.getElementById('addBeDayBtn').addEventListener('click', ()=>{
+  document.getElementById('dayPicker').value = selectedBeDay;
+  document.getElementById('dayModalOverlay').classList.remove('hidden');
+});
+document.getElementById('dayModalCancel').addEventListener('click', ()=> document.getElementById('dayModalOverlay').classList.add('hidden'));
+document.getElementById('dayModalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='dayModalOverlay') e.currentTarget.classList.add('hidden'); });
+document.getElementById('dayModalAdd').addEventListener('click', ()=>{
+  const val = document.getElementById('dayPicker').value;
+  if(!val){ alert('Pick a date first.'); return; }
+  ensureBeDayKnown(val);
+  selectedBeDay = val;
+  document.getElementById('beDate').value = selectedBeDay;
+  document.getElementById('dayModalOverlay').classList.add('hidden');
+  bePage = 0;
+  renderBackend();
+});
+document.getElementById('deleteBeDayBtn').addEventListener('click', ()=>{
+  if(!confirm('Remove the ' + fmtDayPageTitle(selectedBeDay) + ' page? (only allowed while it has no entries)')) return;
+  settings.beKnownDays = settings.beKnownDays.filter(d=>d!==selectedBeDay);
+  delete settings.beDayMeta[selectedBeDay];
+  persistAll();
+  const all = getAllBeDays();
+  selectedBeDay = all.length ? all[all.length-1] : fmtISO(new Date());
+  ensureBeDayKnown(selectedBeDay);
+  document.getElementById('beDate').value = selectedBeDay;
+  bePage = 0;
+  renderBackend();
+});
+
+document.getElementById('clearBeDayBtn').addEventListener('click', ()=>{
+  const dayEntries = getDayEntries();
+  if(dayEntries.length === 0){ alert('This day page is already empty.'); return; }
+  const title = fmtDayPageTitle(selectedBeDay);
+  const step1 = confirm(`This will permanently delete all ${dayEntries.length} row(s) on ${title}. This cannot be undone. Continue?`);
+  if(!step1) return;
+  const typed = prompt(`To confirm, type CLEAR (all caps) to wipe ${dayEntries.length} row(s) from ${title}:`);
+  if(typed !== 'CLEAR'){ alert('Did not match "CLEAR" — nothing was deleted.'); return; }
+  backendEntries = backendEntries.filter(e=> e.date !== selectedBeDay);
+  persistAll();
+  bePage = 0;
+  renderBackend();
+  renderTicker();
+});
+
+const SOURCE_PRESETS = [
+  { name: 'Steam',       bg: '#171a21', text: '#66c0f4' },
+  { name: 'Xbox',        bg: '#107c10', text: '#ffffff' },
+  { name: 'GOG',         bg: '#8b3fa6', text: '#ffffff' },
+  { name: 'Epic Games',  bg: '#000000', text: '#ffffff' },
+  { name: 'Ubisoft',     bg: '#0b1a1a', text: '#2fe0c9' }
+];
+if(!settings.sources || !settings.sources.length){ settings.sources = SOURCE_PRESETS.map(s=>({...s})); persistAll(); }
+if(!settings.beColumnOrder) settings.beColumnOrder = ['game','platform','status','date','notes'];
+
+const COLUMN_DEFS = {
+  game:     { label: 'Game' },
+  platform: { label: 'Source' },
+  status:   { label: 'Status' },
+  date:     { label: 'Date' },
+  notes:    { label: 'Notes' }
+};
+
+function contrastText(hex){
+  const h = (hex||'#888888').replace('#','');
+  const r = parseInt(h.substring(0,2),16)||0, g = parseInt(h.substring(2,4),16)||0, b = parseInt(h.substring(4,6),16)||0;
+  const lum = (0.299*r + 0.587*g + 0.114*b)/255;
+  return lum > 0.6 ? '#0a0b08' : '#ffffff';
+}
+function hashColor(name){
+  let hash = 0;
+  for(let i=0;i<name.length;i++){ hash = name.charCodeAt(i) + ((hash<<5)-hash); }
+  const hue = Math.abs(hash) % 360;
+  return hslToHex(hue, 45, 32);
+}
+function hslToHex(h,s,l){
+  s/=100; l/=100;
+  const k = n => (n + h/30) % 12;
+  const a = s * Math.min(l, 1-l);
+  const f = n => l - a * Math.max(-1, Math.min(k(n)-3, Math.min(9-k(n), 1)));
+  const toHex = x => Math.round(255*x).toString(16).padStart(2,'0');
+  return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
+}
+function getSourceTheme(name){
+  if(!name) return { bg:'#2a2d1e', text:'#8d9280' };
+  const found = settings.sources.find(s=>s.name === name);
+  if(found) return found;
+  return { bg: hashColor(name), text: '#ffffff' };
+}
+function ensureSourceRegistered(name){
+  if(!name) return;
+  if(!settings.sources.find(s=>s.name===name)){
+    settings.sources.push({ name, bg: hashColor(name), text: '#ffffff' });
+  }
+}
+
+function populateSourceSelects(){
+  const opts = settings.sources.map(s=>`<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`).join('');
+  const addSel = document.getElementById('beSource');
+  const prevAdd = addSel.value;
+  addSel.innerHTML = opts;
+  if([...addSel.options].some(o=>o.value===prevAdd)) addSel.value = prevAdd;
+
+  const filtSel = document.getElementById('beSourceFilter');
+  const prevFilt = filtSel.value;
+  filtSel.innerHTML = '<option value="">All sources</option>' + opts;
+  filtSel.value = prevFilt;
+}
+
+document.getElementById('manageSourcesBtn').addEventListener('click', ()=>{
+  renderSourceModalList();
+  document.getElementById('sourceModalOverlay').classList.remove('hidden');
+});
+document.getElementById('sourceModalClose').addEventListener('click', ()=> document.getElementById('sourceModalOverlay').classList.add('hidden'));
+document.getElementById('sourceModalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='sourceModalOverlay') e.currentTarget.classList.add('hidden'); });
+document.getElementById('addSourceBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('newSourceName').value.trim();
+  const bg = document.getElementById('newSourceColor').value;
+  if(!name){ alert('Enter a source name.'); return; }
+  if(settings.sources.find(s=>s.name===name)){ alert('That source already exists.'); return; }
+  settings.sources.push({ name, bg, text: contrastText(bg) });
+  persistAll();
+  document.getElementById('newSourceName').value = '';
+  renderSourceModalList();
+  populateSourceSelects();
+  renderBackend();
+});
+function renderSourceModalList(){
+  const wrap = document.getElementById('sourceModalList');
+  wrap.innerHTML = settings.sources.map(s=>`
+    <div class="source-row">
+      <div class="source-swatch" style="background:${s.bg};"></div>
+      <div class="source-name" style="color:var(--text);">${escapeHtml(s.name)}</div>
+      <button class="mini-btn del" data-del-source="${escapeHtml(s.name)}" title="Delete">✕</button>
+    </div>`).join('') || '<div style="color:var(--text-faint);font-size:12.5px;">No sources yet.</div>';
+  wrap.querySelectorAll('[data-del-source]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const name = b.dataset.delSource;
+      if(!confirm(`Remove "${name}" from your sources list? Existing entries keep the label but won't be themed.`)) return;
+      settings.sources = settings.sources.filter(s=>s.name!==name);
+      persistAll();
+      renderSourceModalList();
+      populateSourceSelects();
+      renderBackend();
     });
+  });
+}
 
-    html += grandTotalHtml(g.members[0]);
-    html += '</div>';
-    return html;
+document.getElementById('beAddBtn').addEventListener('click', ()=>{
+  const date = document.getElementById('beDate').value || selectedBeDay;
+  const game = document.getElementById('beGame').value.trim();
+  const source = document.getElementById('beSource').value;
+  const status = document.getElementById('beStatus').value;
+  const notes = document.getElementById('beNotes').value.trim();
+  if(!game){ alert('Please enter a game name.'); return; }
+  backendEntries.push({ id: uid(), date: date || null, game, platform: source, status, notes });
+  persistAll();
+  if(date){ ensureBeDayKnown(date); selectedBeDay = date; document.getElementById('beDate').value = selectedBeDay; }
+  document.getElementById('beGame').value='';
+  document.getElementById('beNotes').value='';
+  bePage = 0;
+  renderBackend(); renderTicker();
+});
+
+function normalizeStatus(str){
+  if(!str) return null;
+  const found = STATUS_OPTIONS_FOR_PASTE.find(s=> s.toLowerCase() === str.trim().toLowerCase());
+  return found || null;
+}
+function parseFlexibleDate(str){
+  if(!str) return null;
+  str = str.trim();
+  if(!str) return null;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+  let s = str;
+  if(!/\d{4}/.test(s)) s = s + ' ' + new Date().getFullYear();
+  const d = new Date(s);
+  if(isNaN(d.getTime())) return null;
+  return fmtISO(d);
+}
+const STATUS_OPTIONS_FOR_PASTE = ['Queued','Downloading','Testing','Passed','Failed'];
+
+document.getElementById('bePasteArea').addEventListener('paste', (ev)=>{
+  // Always replace the whole box with exactly what was just pasted, rather
+  // than inserting at the cursor (which silently stacks with leftover text).
+  ev.preventDefault();
+  const text = (ev.clipboardData || window.clipboardData).getData('text');
+  ev.target.value = text;
+});
+
+document.getElementById('bePasteBtn').addEventListener('click', ()=>{
+  const raw = document.getElementById('bePasteArea').value;
+  if(!raw.trim()){ return; }
+  const pageDefaultDate = selectedBeDay || fmtISO(new Date());
+  let addedCount = 0, updatedCount = 0;
+  raw.split(/\r?\n/).forEach(line=>{
+    if(!line.trim()) return;
+    let parts = line.split('\t');
+    if(parts.length < 2) parts = line.split(/ {2,}/);
+    const game = (parts[0]||'').trim();
+    const source = (parts[1]||'').trim();
+    if(!game) return;
+    if(source) ensureSourceRegistered(source);
+    const statusParsed = normalizeStatus(parts[2]); // null if column not provided/unrecognized
+    const dateParsed = parseFlexibleDate(parts[3]); // null if column not provided
+    const notesProvided = parts[4] !== undefined;
+    const notes = notesProvided ? parts[4].trim() : '';
+    const date = dateParsed || pageDefaultDate;
+
+    // Match on same day + game + source so re-pasting the same list updates
+    // existing rows instead of creating duplicates.
+    const existing = backendEntries.find(e=>
+      e.date === date &&
+      (e.game||'').trim().toLowerCase() === game.toLowerCase() &&
+      (e.platform||'').trim().toLowerCase() === source.toLowerCase()
+    );
+
+    if(existing){
+      if(statusParsed) existing.status = statusParsed;
+      if(notesProvided) existing.notes = notes;
+      updatedCount++;
+    } else {
+      backendEntries.push({ id: uid(), date, game, platform: source, status: statusParsed || 'Queued', notes });
+      addedCount++;
+    }
+    ensureBeDayKnown(date);
+  });
+  if(addedCount === 0 && updatedCount === 0){ alert('Could not find any Game rows in that paste.'); return; }
+  persistAll();
+  document.getElementById('bePasteArea').value = '';
+  bePage = 0;
+  populateSourceSelects();
+  renderBackend(); renderTicker();
+  const btn = document.getElementById('bePasteBtn');
+  const original = btn.textContent;
+  const parts = [];
+  if(addedCount) parts.push(`${addedCount} added`);
+  if(updatedCount) parts.push(`${updatedCount} updated`);
+  btn.textContent = `${parts.join(', ')} ✓`;
+  setTimeout(()=>{ btn.textContent = original; }, 2200);
+});
+
+['beSearch','beSourceFilter','beStatusFilter','beSort'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', ()=>{ bePage = 0; renderBackend(); });
+  document.getElementById(id).addEventListener('change', ()=>{ bePage = 0; renderBackend(); });
+});
+document.getElementById('pagePrev').addEventListener('click', ()=>{ if(bePage>0){ bePage--; renderBackend(); } });
+document.getElementById('pageNext').addEventListener('click', ()=>{ bePage++; renderBackend(); });
+
+function getFilteredBackend(){
+  const q = document.getElementById('beSearch').value.trim().toLowerCase();
+  const pf = document.getElementById('beSourceFilter').value;
+  const sf = document.getElementById('beStatusFilter').value;
+  const sort = document.getElementById('beSort').value;
+
+  let list = backendEntries.filter(e=>{
+    if(e.date !== selectedBeDay) return false;
+    if(q && !(e.game||'').toLowerCase().includes(q)) return false;
+    if(pf && e.platform !== pf) return false;
+    if(sf && e.status !== sf) return false;
+    return true;
+  });
+
+  if(sort === 'custom') return list; // preserve backendEntries' natural (drag-arranged) order
+  list = list.slice().sort((a,b)=>{
+    if(sort === 'game_asc') return (a.game||'').localeCompare(b.game||'');
+    const da = a.date || '0000-00-00', db = b.date || '0000-00-00';
+    if(sort === 'date_asc') return da.localeCompare(db);
+    return db.localeCompare(da);
+  });
+  return list;
+}
+function getDayEntries(){ return backendEntries.filter(e=> e.date === selectedBeDay); }
+
+const STATUS_COLORS = {
+  Passed:      '#1f8f5f',
+  Failed:      '#9a1f38',
+  Testing:     '#3d7dc9',
+  Downloading: '#c9762e',
+  Queued:      '#4a4f5c'
+};
+const STATUS_OPTIONS = ['Queued','Downloading','Testing','Passed','Failed'];
+
+function renderBackendHeader(){
+  const tr = document.getElementById('beHeaderRow');
+  const cols = settings.beColumnOrder.map(key=>`<th draggable="true" data-col="${key}">${COLUMN_DEFS[key].label}</th>`).join('');
+  tr.innerHTML = `<th style="width:28px;"></th>${cols}<th></th>`;
+
+  tr.querySelectorAll('th[draggable="true"]').forEach(th=>{
+    th.addEventListener('dragstart', (ev)=>{
+      if(ev.target.closest('.col-resize-handle')){ ev.preventDefault(); return; } // resize handle shouldn't also trigger reorder
+      th.classList.add('col-dragging');
+      ev.dataTransfer.setData('text/col', th.dataset.col);
+      ev.dataTransfer.effectAllowed = 'move';
+    });
+    th.addEventListener('dragend', ()=> th.classList.remove('col-dragging'));
+    th.addEventListener('dragover', (ev)=>{ ev.preventDefault(); th.classList.add('col-drop-target'); });
+    th.addEventListener('dragleave', ()=> th.classList.remove('col-drop-target'));
+    th.addEventListener('drop', (ev)=>{
+      ev.preventDefault();
+      th.classList.remove('col-drop-target');
+      const draggedKey = ev.dataTransfer.getData('text/col');
+      const targetKey = th.dataset.col;
+      if(!draggedKey || draggedKey === targetKey) return;
+      const order = settings.beColumnOrder;
+      const from = order.indexOf(draggedKey), to = order.indexOf(targetKey);
+      order.splice(from,1);
+      order.splice(to,0,draggedKey);
+      persistAll();
+      renderBackend();
+    });
+  });
+}
+
+function buildBackendCell(col, e){
+  if(col === 'game'){
+    return `<td><div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game)}</div></td>`;
   }
+  if(col === 'platform'){
+    const theme = getSourceTheme(e.platform);
+    const opts = settings.sources.map(s=>`<option value="${escapeHtml(s.name)}" ${s.name===e.platform?'selected':''}>${escapeHtml(s.name)}</option>`).join('');
+    const extra = (e.platform && !settings.sources.find(s=>s.name===e.platform)) ? `<option value="${escAttr(e.platform)}" selected>${escapeHtml(e.platform)}</option>` : '';
+    return `<td><select class="source-select" data-field="platform" style="background-color:${theme.bg};color:${theme.text};">${extra}${opts}</select></td>`;
+  }
+  if(col === 'status'){
+    const statusColor = STATUS_COLORS[e.status] || STATUS_COLORS.Queued;
+    const opts = STATUS_OPTIONS.map(s=>`<option value="${s}" ${s===e.status?'selected':''}>${s}</option>`).join('');
+    return `<td><select class="status-select" data-field="status" style="background-color:${statusColor};">${opts}</select></td>`;
+  }
+  if(col === 'date'){
+    return `<td><input type="date" class="cell-input date-input" data-field="date" value="${e.date||''}"></td>`;
+  }
+  if(col === 'notes'){
+    return `<td><input class="cell-input" data-field="notes" value="${escAttr(e.notes)}" placeholder="—"></td>`;
+  }
+  return '<td></td>';
+}
 
-  function wireExpandButtons() {
-    document.querySelectorAll('.expand-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.expand;
-        expandedRowId = (expandedRowId === id) ? null : id;
-        renderResults();
+function renderBeBanner(){
+  const meta = getBeDayMeta(selectedBeDay);
+  const el = document.getElementById('beBanner');
+  el.innerHTML = `
+    <div class="be-banner-col" data-banner-field="label">${escapeHtml(meta.label)}</div>
+    <div class="be-banner-col" data-banner-field="dateLabel">${escapeHtml(meta.dateLabel)}</div>
+  `;
+  el.querySelectorAll('[data-banner-field]').forEach(div=>{
+    div.title = 'Click to edit';
+    div.addEventListener('click', ()=>{
+      const field = div.dataset.bannerField;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = meta[field];
+      div.textContent = '';
+      div.appendChild(input);
+      input.focus();
+      input.select();
+      let done = false;
+      const commit = ()=>{
+        if(done) return;
+        done = true;
+        const fallback = field === 'label' ? 'BACKEND TESTING' : fmtDayPageTitle(selectedBeDay);
+        meta[field] = input.value.trim() || fallback;
+        persistAll();
+        renderBeBanner();
+      };
+      input.addEventListener('blur', commit);
+      input.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter'){ e.preventDefault(); input.blur(); }
+        else if(e.key === 'Escape'){ done = true; renderBeBanner(); }
       });
     });
-  }
+  });
+}
 
-  function wireTableHeaderInteractions() {
-    const ths = document.querySelectorAll('table.results th');
-    let dragKey = null;
+function renderBackend(){
+  ensureBeDayKnown(selectedBeDay);
+  populateBeDaySelect();
+  document.getElementById('beDayTitleDisplay').textContent = fmtDayPageTitle(selectedBeDay);
+  renderBeBanner();
 
-    ths.forEach(th => {
-      const key = th.dataset.col;
-      const def = COLUMN_DEFS[key];
-      if (!def) return; // e.g. the expand-toggle column has no data-col / sort behavior
+  populateSourceSelects();
+  renderBackendHeader();
+  setupResizableTable(document.getElementById('beTable'), 'backend', [28, ...settings.beColumnOrder.map(()=>150), 90]);
 
-      // Click to sort (skip if this click was actually the tail end of a drag)
-      if (def.sortable) {
-        th.addEventListener('click', () => {
-          if (th.dataset.justDragged) { delete th.dataset.justDragged; return; }
-          if (sortKey === key) {
-            sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-          } else {
-            sortKey = key; sortDir = 'asc';
-          }
-          renderResults();
+  const filtered = getFilteredBackend();
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if(bePage >= totalPages) bePage = totalPages - 1;
+  if(bePage < 0) bePage = 0;
+  const pageItems = filtered.slice(bePage*PAGE_SIZE, bePage*PAGE_SIZE + PAGE_SIZE);
+
+  const tbody = document.getElementById('beTbody');
+  const colCount = settings.beColumnOrder.length + 2;
+  if(pageItems.length===0){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="${colCount}">No matching entries.</td></tr>`;
+  } else {
+    tbody.innerHTML = pageItems.map(e=>{
+      const cells = settings.beColumnOrder.map(col=> buildBackendCell(col, e)).join('');
+      return `<tr data-row-id="${e.id}">
+        <td class="drag-handle-cell" title="Drag to reorder">⋮⋮</td>
+        ${cells}
+        <td><div class="row-actions"><button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button></div></td>
+      </tr>`;
+    }).join('');
+
+    tbody.querySelectorAll('tr[data-row-id]').forEach(tr=>{
+      const id = tr.dataset.rowId;
+      tr.querySelectorAll('[data-field]').forEach(el=>{
+        el.addEventListener('change', ()=> commitBackendCell(id, el.dataset.field, el.value, el));
+      });
+      tr.querySelectorAll('[data-field="platform"]').forEach(sel=>{
+        sel.addEventListener('change', ()=>{ sel.style.backgroundColor = getSourceTheme(sel.value).bg; sel.style.color = getSourceTheme(sel.value).text; });
+      });
+      const gameCell = tr.querySelector('[data-game-id]');
+      if(gameCell){
+        const entry = backendEntries.find(x=>x.id===id);
+        wireGameCell(gameCell, entry ? entry.game : '', (newVal)=>{
+          if(newVal !== null && newVal !== '') commitBackendCell(id, 'game', newVal, null);
+          renderBackend();
         });
       }
+    });
+    tbody.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=> deleteBackendEntry(b.dataset.del)));
 
-      // Drag to reorder columns
-      th.addEventListener('dragstart', (e) => {
-        dragKey = key;
-        e.dataTransfer.effectAllowed = 'move';
-        th.classList.add('dragging');
-      });
-      th.addEventListener('dragend', () => {
-        th.classList.remove('dragging');
-        document.querySelectorAll('table.results th').forEach(x => x.classList.remove('drag-over'));
-      });
-      th.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        if (key !== dragKey) th.classList.add('drag-over');
-      });
-      th.addEventListener('dragleave', () => th.classList.remove('drag-over'));
-      th.addEventListener('drop', (e) => {
-        e.preventDefault();
-        th.classList.remove('drag-over');
-        if (!dragKey || dragKey === key) return;
-        const from = columnOrder.indexOf(dragKey);
-        const to = columnOrder.indexOf(key);
-        columnOrder.splice(from, 1);
-        columnOrder.splice(to, 0, dragKey);
-        th.dataset.justDragged = 'true';
-        renderResults();
-      });
+    // row drag-and-drop reordering
+    makeRowsDraggable(tbody, 'tr[data-row-id]', 'data-row-id', (draggedId, targetId)=>{
+      const from = backendEntries.findIndex(x=>x.id===draggedId);
+      const to = backendEntries.findIndex(x=>x.id===targetId);
+      if(from===-1 || to===-1) return;
+      const [moved] = backendEntries.splice(from,1);
+      backendEntries.splice(to,0,moved);
+      persistAll();
+      document.getElementById('beSort').value = 'custom';
+      renderBackend();
     });
   }
 
-  // ---------------------------------------------------------------
-  // CSV download of currently-flagged rows
-  // ---------------------------------------------------------------
-  function downloadCsv(scope) {
-    const rows = scope === 'all' ? results.slice() : results.filter(r => r.status !== 'match');
-    if (!rows.length) return;
-    const header = ['Employee','Company','Job/Placement','PayCode','Status','Detail'];
-    const lines = [header.join(',')];
-    rows.forEach(r => {
-      let detail = '';
-      if (r.status === 'mismatch') {
-        detail = r.fields.filter(f=>f.differs).map(f => f.label + ' - WTM: ' + fmt(f.wtmVal) + ' -> Enter: ' + fmt(f.sheetVal)).join(' | ');
-      } else if (r.status === 'match') {
-        detail = 'Matches WTM \u2014 no action needed';
-      } else { detail = r.note || ''; }
-      const line = [r.employee, r.company, r.job, r.payCode, r.status, detail]
-        .map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',');
-      lines.push(line);
-    });
-    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = scope === 'all' ? 'wtm_cross_check_all_rows.csv' : 'wtm_cross_check_flagged.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+  document.getElementById('pagerInfo').textContent =
+    total===0 ? 'No entries' : `Showing ${bePage*PAGE_SIZE+1}–${Math.min(total,(bePage+1)*PAGE_SIZE)} of ${total}`;
+
+  const dayEntries = getDayEntries();
+  const passed = dayEntries.filter(e=>e.status==='Passed').length;
+  const failed = dayEntries.filter(e=>e.status==='Failed').length;
+  const queuedOrTesting = dayEntries.filter(e=>e.status==='Queued' || e.status==='Testing').length;
+  const rated = passed+failed;
+  document.getElementById('beTotal').textContent = dayEntries.length;
+  document.getElementById('bePassRate').textContent = rated ? Math.round(passed/rated*100)+'%' : '—';
+  document.getElementById('bePassRateSub').textContent = `${passed} passed / ${failed} failed`;
+  document.getElementById('beUniqueGames').textContent = new Set(dayEntries.map(e=>e.game)).size;
+  document.getElementById('beQueued').textContent = queuedOrTesting;
+
+  const delBtn = document.getElementById('deleteBeDayBtn');
+  const allBeDays = getAllBeDays();
+  if(dayEntries.length===0 && allBeDays.length>1) delBtn.classList.remove('hidden'); else delBtn.classList.add('hidden');
+  document.getElementById('beDayInfo').textContent = dayEntries.length + ' entr' + (dayEntries.length===1?'y':'ies') + ' on this page';
+}
+
+function commitBackendCell(id, field, value, el){
+  const e = backendEntries.find(x=>x.id===id);
+  if(!e) return;
+  if(field === 'date'){
+    e.date = value || null;
+    persistAll();
+    renderTicker();
+    if(e.date) ensureBeDayKnown(e.date);
+    renderBackend(); // date change may move this row off the current day page
+    return;
   }
-
-  // ---------------------------------------------------------------
-  // Wiring: file slots
-  // ---------------------------------------------------------------
-  function wireSlot(inputId, slotId, statusId, onLoaded) {
-    const input = document.getElementById(inputId);
-    const slot = document.getElementById(slotId);
-    const status = document.getElementById(statusId);
-    const browseBtn = slot.querySelector('button.browse');
-
-    // The input is fully hidden (not overlaid) — the button and empty slot area both trigger it directly.
-    if (browseBtn) {
-      browseBtn.addEventListener('click', (e) => { e.stopPropagation(); input.click(); });
-    }
-    slot.addEventListener('click', (e) => {
-      if (e.target === browseBtn) return; // avoid double-open, button already handled it
-      input.click();
-    });
-
-    input.addEventListener('change', () => {
-      const file = input.files[0];
-      if (!file) return;
-      status.textContent = 'Reading ' + file.name + '&hellip;';
-      parseFile(file, (rows) => {
-        onLoaded(rows);
-        slot.classList.add('filled');
-        status.innerHTML = '<span class="ok">&#10003; ' + rows.length + ' rows loaded from ' + escapeHtml(file.name) + '</span>';
-      });
-    });
-
-    ['dragover','dragenter'].forEach(ev => slot.addEventListener(ev, (e) => { e.preventDefault(); slot.classList.add('drag'); }));
-    ['dragleave','drop'].forEach(ev => slot.addEventListener(ev, (e) => { e.preventDefault(); slot.classList.remove('drag'); }));
-    slot.addEventListener('drop', (e) => {
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        input.files = e.dataTransfer.files;
-        input.dispatchEvent(new Event('change'));
-      }
-    });
+  else if(field === 'status'){
+    e.status = value;
+    if(el) el.style.backgroundColor = STATUS_COLORS[value] || STATUS_COLORS.Queued;
   }
+  else { e[field] = value.trim(); }
+  persistAll();
+  renderTicker();
+  // lightweight refresh: only rebuild filter dropdowns/stats, not the whole table (keeps focus/scroll stable)
+  refreshBackendMeta();
+}
+function refreshBackendMeta(){
+  const dayEntries = getDayEntries();
+  const passed = dayEntries.filter(e=>e.status==='Passed').length;
+  const failed = dayEntries.filter(e=>e.status==='Failed').length;
+  const queuedOrTesting = dayEntries.filter(e=>e.status==='Queued' || e.status==='Testing').length;
+  const rated = passed+failed;
+  document.getElementById('beTotal').textContent = dayEntries.length;
+  document.getElementById('bePassRate').textContent = rated ? Math.round(passed/rated*100)+'%' : '—';
+  document.getElementById('bePassRateSub').textContent = `${passed} passed / ${failed} failed`;
+  document.getElementById('beUniqueGames').textContent = new Set(dayEntries.map(e=>e.game)).size;
+  document.getElementById('beQueued').textContent = queuedOrTesting;
+  document.getElementById('beDayInfo').textContent = dayEntries.length + ' entr' + (dayEntries.length===1?'y':'ies') + ' on this page';
+}
+function deleteBackendEntry(id){
+  if(!confirm('Delete this backend test entry?')) return;
+  backendEntries = backendEntries.filter(x=>x.id!==id);
+  persistAll(); renderBackend(); renderTicker();
+}
 
-  function onBothFilesLoaded() {
-    renderMappingTable();
-    document.getElementById('mappingPanel').open = true;
-    document.getElementById('runRow').style.display = 'flex';
-  }
-
-  function distinctWeeks(rows) {
-    const counts = {};
-    rows.forEach(r => {
-      const w = (r['WeekWorked'] || '').toString().trim();
-      if (!w) return;
-      counts[w] = (counts[w] || 0) + 1;
-    });
-    return Object.entries(counts).sort((a, b) => b[1] - a[1]); // biggest cluster first
-  }
-
-  function updateWeekPicker() {
-    const bar = document.getElementById('weekPicker');
-    if (!sheetRows || !sheetRows.length) { bar.style.display = 'none'; sheetRowsFiltered = null; return; }
-
-    const weeks = distinctWeeks(sheetRows);
-    if (weeks.length <= 1) {
-      // Single week (or no WeekWorked column at all) — nothing to pick, use everything.
-      sheetRowsFiltered = sheetRows;
-      selectedWeek = weeks.length ? weeks[0][0] : null;
-      bar.style.display = 'none';
-      return;
-    }
-
-    if (!selectedWeek || !weeks.some(([w]) => w === selectedWeek)) {
-      selectedWeek = weeks[0][0]; // default: whichever week has the most rows
-    }
-    sheetRowsFiltered = sheetRows.filter(r => (r['WeekWorked'] || '').toString().trim() === selectedWeek);
-
-    let html = '<span class="wp-label">&#128197; This sheet covers ' + weeks.length + ' different weeks &mdash; checking:</span>' +
-      '<select id="weekSelect">';
-    weeks.forEach(([w, count]) => {
-      html += '<option value="' + escapeHtml(w) + '"' + (w === selectedWeek ? ' selected' : '') + '>' +
-        escapeHtml(w) + ' &mdash; ' + count + ' rows</option>';
-    });
-    html += '</select><span class="wp-note">Only this week\'s rows are compared against the WTM export.</span>';
-    bar.innerHTML = html;
-    bar.style.display = 'flex';
-
-    document.getElementById('weekSelect').addEventListener('change', (e) => {
-      selectedWeek = e.target.value;
-      sheetRowsFiltered = sheetRows.filter(r => (r['WeekWorked'] || '').toString().trim() === selectedWeek);
-      renderMappingTable();
-      if (hasRunOnce) runCompare();
-    });
-  }
-
-  wireSlot('fileSheet', 'slotSheet', 'statusSheet', (rows) => {
-    sheetRowsRaw = rows;
-    const normalized = normalizeSheetRows(rows);
-    sheetRows = normalized.rows;
-    updateWeekPicker();
-    if (normalized.shape === 'wide') {
-      const statusEl = document.getElementById('statusSheet');
-      statusEl.innerHTML += '<div style="margin-top:0.3em;">&#8505;&#65039; Wide-format sheet detected (Workbox-style) &mdash; converted into ' +
-        sheetRows.length + ' Reg/OT/DT entries automatically.</div>';
-    }
-    if (wtmRows) onBothFilesLoaded();
+/* =========================================================
+   TICKER
+   ========================================================= */
+function renderTicker(){
+  const dated = backendEntries.filter(e=>e.date).slice().sort((a,b)=> b.date.localeCompare(a.date)).slice(0,14);
+  const recentReg = regularEntries.slice().sort((a,b)=> (b.date||'').localeCompare(a.date||'')).slice(0,6);
+  const items = [];
+  dated.forEach(e=>{
+    const cls = e.status==='Passed' ? 'pass-tok' : e.status==='Failed' ? 'fail-tok' : 'other-tok';
+    items.push(`<span><span class="${cls}">[${(e.status||'—').toUpperCase()}]</span> ${escapeHtml(e.game)} · ${escapeHtml(e.platform||'')}</span>`);
   });
-
-  wireSlot('fileWtm', 'slotWtm', 'statusWtm', (rows) => {
-    wtmRows = rows;
-    wtmBlocks = detectWtmBlocks(rows);
-    if (sheetRows) onBothFilesLoaded();
+  recentReg.forEach(e=>{
+    const cls = e.result==='Passed' ? 'pass-tok':'fail-tok';
+    items.push(`<span><span class="${cls}">[${e.result.toUpperCase()}]</span> ${escapeHtml(e.game)} · ${fmtNum(e.points)}pt</span>`);
   });
+  if(items.length===0){ items.push('<span>No entries logged yet — add your first test above.</span>'); }
+  const html = items.join('') + items.join('');
+  document.getElementById('tickerInner').innerHTML = html;
+}
 
-  document.getElementById('runCheckBtn').addEventListener('click', () => {
-    hasRunOnce = true;
-    runCompare();
-    document.getElementById('runCheckBtn').textContent = 'Re-run Check';
+/* ---------------- utils ---------------- */
+function escapeHtml(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escAttr(s){ return escapeHtml(s); }
+
+/**
+ * Turns a game-name display element into: single click = copy to clipboard,
+ * double-click or right-click = inline edit. onCommit(newValue) is called
+ * once editing is confirmed (blur or Enter); Escape cancels without saving.
+ */
+function wireGameCell(div, currentValue, onCommit){
+  div.title = 'Click to copy · double-click or right-click to edit';
+  div.addEventListener('click', ()=>{
+    const text = currentValue || '';
+    if(!text) return;
+    const flash = ()=>{
+      const original = div.textContent;
+      div.textContent = 'Copied ✓';
+      div.classList.add('copied-flash');
+      setTimeout(()=>{ if(div.isConnected){ div.textContent = original; div.classList.remove('copied-flash'); } }, 900);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(flash).catch(flash);
+    } else {
+      flash();
+    }
   });
+  const enterEdit = (ev)=>{
+    ev.preventDefault();
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'cell-input';
+    input.value = currentValue || '';
+    div.replaceWith(input);
+    input.focus();
+    input.select();
+    let done = false;
+    const finish = ()=>{
+      if(done) return;
+      done = true;
+      onCommit(input.value.trim());
+    };
+    input.addEventListener('blur', finish);
+    input.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){ e.preventDefault(); input.blur(); }
+      else if(e.key === 'Escape'){ done = true; input.blur(); onCommit(null); }
+    });
+  };
+  div.addEventListener('dblclick', enterEdit);
+  div.addEventListener('contextmenu', enterEdit);
+}
 
-  document.getElementById('hideMatched').addEventListener('change', renderResults);
-  document.getElementById('showOnlyMatched').addEventListener('change', (e) => {
-    activeFilter = e.target.checked ? 'match' : 'attention';
-    syncMatchToggle();
-    renderSummary();
-    renderResults();
+/**
+ * Like wireGameCell, but for cells that may start empty (e.g. a code that
+ * hasn't been filled in yet): clicking an empty cell edits it directly
+ * instead of copying nothing; a filled cell still copies on click and
+ * edits on double-click/right-click.
+ */
+function wireCopyEditCell(div, currentValue, onCommit){
+  div.title = currentValue ? 'Click to copy · double-click or right-click to edit' : 'Click to add';
+  const enterEdit = ()=>{
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'cell-input';
+    input.value = currentValue || '';
+    div.replaceWith(input);
+    input.focus();
+    input.select();
+    let done = false;
+    const finish = ()=>{
+      if(done) return;
+      done = true;
+      onCommit(input.value.trim());
+    };
+    input.addEventListener('blur', finish);
+    input.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){ e.preventDefault(); input.blur(); }
+      else if(e.key === 'Escape'){ done = true; input.blur(); onCommit(null); }
+    });
+  };
+  div.addEventListener('click', ()=>{
+    if(!currentValue){ enterEdit(); return; }
+    const flash = ()=>{
+      const original = div.textContent;
+      div.textContent = 'Copied ✓';
+      div.classList.add('copied-flash');
+      setTimeout(()=>{ if(div.isConnected){ div.textContent = original; div.classList.remove('copied-flash'); } }, 900);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(currentValue).then(flash).catch(flash);
+    } else {
+      flash();
+    }
   });
-  document.getElementById('searchBox').addEventListener('input', renderResults);
-  document.getElementById('downloadBtn').addEventListener('click', () => downloadCsv('flagged'));
-  document.getElementById('downloadAllBtn').addEventListener('click', () => downloadCsv('all'));
+  div.addEventListener('dblclick', (ev)=>{ ev.preventDefault(); enterEdit(); });
+  div.addEventListener('contextmenu', (ev)=>{ ev.preventDefault(); enterEdit(); });
+}
 
-  // ---------------------------------------------------------------
-  // Clear All (with confirmation modal)
-  // ---------------------------------------------------------------
-  function resetSlot(inputId, slotId, statusId) {
-    document.getElementById(inputId).value = '';
-    const slot = document.getElementById(slotId);
-    slot.classList.remove('filled', 'drag');
-    document.getElementById(statusId).innerHTML = '';
+/* ---------------- undo/redo buttons ---------------- */
+document.getElementById('btnUndo').addEventListener('click', ()=> performUndo());
+document.getElementById('btnRedo').addEventListener('click', ()=> performRedo());
+
+/* ---------------- hamburger menu ---------------- */
+document.getElementById('hamburgerBtn').addEventListener('click', (ev)=>{
+  ev.stopPropagation();
+  document.getElementById('hamburgerMenu').classList.toggle('hidden');
+});
+document.addEventListener('click', (ev)=>{
+  const menu = document.getElementById('hamburgerMenu');
+  if(!menu.classList.contains('hidden') && !menu.contains(ev.target) && ev.target.id !== 'hamburgerBtn'){
+    menu.classList.add('hidden');
   }
+});
 
-  function clearAll() {
-    sheetRowsRaw = null;
-    sheetRows = null;
-    sheetRowsFiltered = null;
-    selectedWeek = null;
-    wtmRows = null;
-    wtmBlocks = [];
-    payMap = {};
-    results = [];
-    activeFilter = 'attention';
-    hasRunOnce = false;
-    expandedRowId = null;
-    completedKeys = new Set();
-    columnOrder = ['employee', 'company', 'job', 'payCode', 'status', 'detail'];
-    sortKey = null;
-    sortDir = 'asc';
-    Object.keys(facetFilters).forEach(k => facetFilters[k].clear());
-    openFacet = null;
+/* ---------------- references ---------------- */
+if(!settings.references) settings.references = [];
 
-    resetSlot('fileSheet', 'slotSheet', 'statusSheet');
-    resetSlot('fileWtm', 'slotWtm', 'statusWtm');
+document.getElementById('menuReferencesBtn').addEventListener('click', ()=>{
+  document.getElementById('hamburgerMenu').classList.add('hidden');
+  renderReferencesList();
+  document.getElementById('referencesModalOverlay').classList.remove('hidden');
+});
+document.getElementById('referencesModalClose').addEventListener('click', ()=> document.getElementById('referencesModalOverlay').classList.add('hidden'));
+document.getElementById('referencesModalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='referencesModalOverlay') e.currentTarget.classList.add('hidden'); });
 
-    document.getElementById('weekPicker').style.display = 'none';
-    document.getElementById('weekPicker').innerHTML = '';
+document.getElementById('addReferenceBtn').addEventListener('click', ()=> openReferenceCard(null));
 
-    document.getElementById('mapTableBody').innerHTML = '';
-    document.getElementById('mappingPanel').open = false;
-
-    document.getElementById('runRow').style.display = 'none';
-    document.getElementById('runCheckBtn').textContent = 'Run Sheet Check';
-    document.getElementById('successBanner').style.display = 'none';
-
-    document.getElementById('facetBar').style.display = 'none';
-    document.getElementById('facetBar').innerHTML = '';
-    document.getElementById('legend').style.display = 'none';
-
-    document.getElementById('resultsTitle').style.display = 'none';
-    document.getElementById('resultsTitle').innerHTML = '';
-    document.getElementById('summary').style.display = 'none';
-    document.getElementById('summary').innerHTML = '';
-    document.getElementById('toolbar').style.display = 'none';
-    document.getElementById('hideMatched').checked = true;
-    document.getElementById('hideMatched').disabled = false;
-    document.getElementById('showOnlyMatched').checked = false;
-    document.getElementById('searchBox').value = '';
-
-    document.getElementById('resultsHost').innerHTML = '<div class="empty-state">Waiting on both files to run the check.</div>';
+function renderReferencesList(){
+  const wrap = document.getElementById('referencesList');
+  if(!settings.references.length){
+    wrap.innerHTML = '<div style="color:var(--text-faint);font-size:12.5px;">No references yet — click "+ Add card" to link your Wand sheets.</div>';
+    return;
   }
+  wrap.innerHTML = settings.references.map(r=>`
+    <div class="ref-card" data-ref-id="${r.id}">
+      <div class="ref-card-row">
+        <div class="ref-card-title">${escapeHtml(r.title)}</div>
+        ${r.url ? '<span style="color:var(--text-faint);font-size:11px;">🔗</span>' : ''}
+      </div>
+      ${r.notes ? `<div class="ref-card-notes">${escapeHtml(r.notes)}</div>` : ''}
+    </div>
+  `).join('');
+  wrap.querySelectorAll('[data-ref-id]').forEach(card=>{
+    card.addEventListener('click', ()=> openReferenceCard(card.dataset.refId));
+  });
+}
 
-  const clearModal = document.getElementById('clearModal');
-  document.getElementById('clearAllBtn').addEventListener('click', () => clearModal.classList.add('open'));
-  document.getElementById('clearCancelBtn').addEventListener('click', () => clearModal.classList.remove('open'));
-  document.getElementById('clearConfirmBtn').addEventListener('click', () => { clearAll(); clearModal.classList.remove('open'); });
-  clearModal.addEventListener('click', (e) => { if (e.target === clearModal) clearModal.classList.remove('open'); });
+// openReferenceCard(null) = add-new mode; openReferenceCard(id) = edit existing card
+let openRefCardId = null;
+function openReferenceCard(id){
+  openRefCardId = id;
+  const r = id ? settings.references.find(x=>x.id===id) : null;
+  document.getElementById('refCardModalTitle').textContent = r ? 'Edit reference' : 'Add reference';
+  document.getElementById('refCardTitle').value = r ? (r.title || '') : '';
+  document.getElementById('refCardUrl').value = r ? (r.url || '') : '';
+  document.getElementById('refCardNotes').value = r ? (r.notes || '') : '';
+  document.getElementById('refCardDelete').classList.toggle('hidden', !r);
+  document.getElementById('refCardModalOverlay').classList.remove('hidden');
+  document.getElementById('refCardTitle').focus();
+}
+document.getElementById('refCardCancel').addEventListener('click', ()=>{
+  document.getElementById('refCardModalOverlay').classList.add('hidden');
+  openRefCardId = null;
+});
+document.getElementById('refCardModalOverlay').addEventListener('click', (e)=>{
+  if(e.target.id==='refCardModalOverlay'){ e.currentTarget.classList.add('hidden'); openRefCardId = null; }
+});
+document.getElementById('refCardOpenLink').addEventListener('click', ()=>{
+  const url = document.getElementById('refCardUrl').value.trim();
+  if(!url){ alert('This card has no link yet.'); return; }
+  window.open(url, '_blank', 'noopener');
+});
+document.getElementById('refCardSave').addEventListener('click', ()=>{
+  const title = document.getElementById('refCardTitle').value.trim();
+  const url = document.getElementById('refCardUrl').value.trim();
+  const notes = document.getElementById('refCardNotes').value.trim();
+  if(!title && !url){ alert('Add at least a title or a link.'); return; }
+  if(openRefCardId){
+    const r = settings.references.find(x=>x.id===openRefCardId);
+    if(r){ r.title = title || url; r.url = url; r.notes = notes; }
+  } else {
+    settings.references.push({ id: uid(), title: title || url, url, notes });
+  }
+  persistAll();
+  document.getElementById('refCardModalOverlay').classList.add('hidden');
+  openRefCardId = null;
+  renderReferencesList();
+});
+document.getElementById('refCardDelete').addEventListener('click', ()=>{
+  if(!openRefCardId) return;
+  if(!confirm('Delete this reference card?')) return;
+  settings.references = settings.references.filter(r=>r.id!==openRefCardId);
+  persistAll();
+  document.getElementById('refCardModalOverlay').classList.add('hidden');
+  openRefCardId = null;
+  renderReferencesList();
+});
+
+/* ---------------- manual cloud sync ---------------- */
+document.getElementById('btnSyncNow').addEventListener('click', async ()=>{
+  if(!syncEnabled){
+    alert('No cloud URL is set up yet, so this device is running in local-only mode. Ask for the Apps Script URL to be added to enable syncing.');
+    return;
+  }
+  const btn = document.getElementById('btnSyncNow');
+  btn.disabled = true;
+  // Pull-only: changes on this device already auto-push in the background,
+  // so clicking Sync here just grabs whatever the OTHER device saved most
+  // recently, without risking overwriting it with this device's own state.
+  const ok = await loadFromCloud();
+  if(ok){
+    recomputeSelectedMonth();
+    recomputeSelectedBeDay();
+    renderRegular();
+    renderBackend();
+    renderTicker();
+  }
+  btn.disabled = false;
+});
+
+/* ---------------- export / import / reset ---------------- */
+document.getElementById('btnExport').addEventListener('click', ()=>{
+  const payload = { regularEntries, backendEntries, settings, exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'qa-log-backup-' + fmtISO(new Date()) + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+});
+document.getElementById('btnImport').addEventListener('click', ()=> document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', (ev)=>{
+  const file = ev.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = JSON.parse(reader.result);
+      if(!confirm('Import will replace your current data with this backup. Continue?')) return;
+      regularEntries = (data.regularEntries||[]).map(e=> e.id ? e : {...e, id:uid()});
+      backendEntries = (data.backendEntries||[]).map(e=> e.id ? e : {...e, id:uid()});
+      if(data.settings) settings = data.settings;
+      if(!settings.knownMonths) settings.knownMonths = [];
+      if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
+      if(!settings.beKnownDays) settings.beKnownDays = [];
+      if(!settings.beDayMeta) settings.beDayMeta = {};
+      if(!settings.sources || !settings.sources.length) settings.sources = SOURCE_PRESETS.map(s=>({...s}));
+      if(!settings.beColumnOrder) settings.beColumnOrder = ['game','platform','status','date','notes'];
+      if(!settings.references) settings.references = [];
+      persistAll();
+      document.getElementById('regTargetInput').value = settings.monthlyTarget;
+      const all = getAllMonths();
+      selectedMonth = all.includes(ymNow()) ? ymNow() : all[all.length-1];
+      const allBeDays = getAllBeDays();
+      const today = fmtISO(new Date());
+      selectedBeDay = allBeDays.includes(today) ? today : (allBeDays[allBeDays.length-1] || today);
+      ensureBeDayKnown(selectedBeDay);
+      document.getElementById('beDate').value = selectedBeDay;
+      renderRegular(); renderBackend(); renderTicker();
+      alert('Import complete.');
+    }catch(e){ alert('Could not read that file — is it a valid QA Log backup JSON?'); }
+  };
+  reader.readAsText(file);
+  ev.target.value = '';
+});
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  if(!confirm('This will permanently erase all data stored in this browser. Export a backup first if you want to keep it. Continue?')) return;
+  localStorage.removeItem(LS_REG); localStorage.removeItem(LS_BE); localStorage.removeItem(LS_SET);
+  location.reload();
+});
+
+/* ---------------- init ---------------- */
+renderRegular();
+renderBackend();
+renderTicker();
+setSyncStatus(syncEnabled ? 'syncing' : 'offline');
+
+if(syncEnabled){
+  loadFromCloud().then(ok=>{
+    if(ok){
+      recomputeSelectedMonth();
+      recomputeSelectedBeDay();
+      renderRegular();
+      renderBackend();
+      renderTicker();
+    }
+    appInitializing = false; // safe to auto-push from here on
+  });
+} else {
+  appInitializing = false;
+}
 
 })();
 </script>
