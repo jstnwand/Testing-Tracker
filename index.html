@@ -448,6 +448,24 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
       </div>
     </div>
 
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Not Started</div>
+        <div class="stat-value" style="color:var(--slate);" id="regNotStarted">0</div>
+        <div class="stat-sub">Queued tickets this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Testing</div>
+        <div class="stat-value" style="color:#3d7dc9;" id="regTestingCount">0</div>
+        <div class="stat-sub">in progress this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Downloading</div>
+        <div class="stat-value" style="color:#c9762e;" id="regDownloadingCount">0</div>
+        <div class="stat-sub">fetching build this month</div>
+      </div>
+    </div>
+
     <div class="week-nav">
       <div class="week-status-badge badge-empty" id="monthStatusBadge">NO DATA</div>
       <button class="icon-btn danger hidden" id="deleteMonthBtn">Delete this month page</button>
@@ -659,14 +677,19 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
           <div class="stat-sub" id="bePassRateSub">— passed / — failed</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Unique Games</div>
-          <div class="stat-value purple" id="beUniqueGames">0</div>
-          <div class="stat-sub">distinct titles this day</div>
+          <div class="stat-label">Not Started</div>
+          <div class="stat-value" style="color:var(--slate);" id="beNotStarted">0</div>
+          <div class="stat-sub">Queued tickets</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">In Queue / Testing</div>
-          <div class="stat-value amber" id="beQueued">0</div>
-          <div class="stat-sub" id="beQueuedSub">waiting or in progress</div>
+          <div class="stat-label">Testing</div>
+          <div class="stat-value" style="color:#3d7dc9;" id="beTestingCount">0</div>
+          <div class="stat-sub">in progress</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Downloading</div>
+          <div class="stat-value" style="color:#c9762e;" id="beDownloadingCount">0</div>
+          <div class="stat-sub">fetching build</div>
         </div>
       </div>
     </div>
@@ -1077,12 +1100,17 @@ function renderRegular(){
   document.getElementById('monthTitleDisplay').textContent = fmtMonthLabel(selectedMonth);
 
   const nDays = daysInMonth(selectedMonth);
-  let monthTotal = 0, daysLogged = 0;
+  let monthTotal = 0, daysLogged = 0, notStarted = 0, testingCount = 0, downloadingCount = 0;
   for(let day=1; day<=nDays; day++){
     const iso = selectedMonth + '-' + String(day).padStart(2,'0');
     const list = regEntriesByDate[iso] || [];
     if(list.length) daysLogged++;
-    list.forEach(e=> monthTotal += (pointsCount(e) ? Number(e.points||0) : 0));
+    list.forEach(e=>{
+      monthTotal += (pointsCount(e) ? Number(e.points||0) : 0);
+      if(e.result==='Queued') notStarted++;
+      else if(e.result==='Testing') testingCount++;
+      else if(e.result==='Downloading') downloadingCount++;
+    });
   }
 
   const target = Number(settings.monthlyTarget||0);
@@ -1092,6 +1120,9 @@ function renderRegular(){
   document.getElementById('regMonthTargetDisplay').textContent = fmtNum(target);
   document.getElementById('regDaysLogged').textContent = daysLogged + ' / ' + nDays;
   document.getElementById('regDaysLoggedSub').textContent = 'out of ' + nDays + ' days';
+  document.getElementById('regNotStarted').textContent = notStarted;
+  document.getElementById('regTestingCount').textContent = testingCount;
+  document.getElementById('regDownloadingCount').textContent = downloadingCount;
 
   const remEl = document.getElementById('regRemaining');
   const remSub = document.getElementById('regRemainingSub');
@@ -1955,13 +1986,16 @@ function renderBackend(){
   const dayEntries = getDayEntries();
   const passed = dayEntries.filter(e=>e.status==='Passed').length;
   const failed = dayEntries.filter(e=>e.status==='Failed').length;
-  const queuedOrTesting = dayEntries.filter(e=>e.status==='Queued' || e.status==='Testing').length;
+  const notStarted = dayEntries.filter(e=>e.status==='Queued').length;
+  const testingCount = dayEntries.filter(e=>e.status==='Testing').length;
+  const downloadingCount = dayEntries.filter(e=>e.status==='Downloading').length;
   const rated = passed+failed;
   document.getElementById('beTotal').textContent = dayEntries.length;
   document.getElementById('bePassRate').textContent = rated ? Math.round(passed/rated*100)+'%' : '—';
   document.getElementById('bePassRateSub').textContent = `${passed} passed / ${failed} failed`;
-  document.getElementById('beUniqueGames').textContent = new Set(dayEntries.map(e=>e.game)).size;
-  document.getElementById('beQueued').textContent = queuedOrTesting;
+  document.getElementById('beNotStarted').textContent = notStarted;
+  document.getElementById('beTestingCount').textContent = testingCount;
+  document.getElementById('beDownloadingCount').textContent = downloadingCount;
 
   const delBtn = document.getElementById('deleteBeDayBtn');
   const allBeDays = getAllBeDays();
@@ -1994,13 +2028,16 @@ function refreshBackendMeta(){
   const dayEntries = getDayEntries();
   const passed = dayEntries.filter(e=>e.status==='Passed').length;
   const failed = dayEntries.filter(e=>e.status==='Failed').length;
-  const queuedOrTesting = dayEntries.filter(e=>e.status==='Queued' || e.status==='Testing').length;
+  const notStarted = dayEntries.filter(e=>e.status==='Queued').length;
+  const testingCount = dayEntries.filter(e=>e.status==='Testing').length;
+  const downloadingCount = dayEntries.filter(e=>e.status==='Downloading').length;
   const rated = passed+failed;
   document.getElementById('beTotal').textContent = dayEntries.length;
   document.getElementById('bePassRate').textContent = rated ? Math.round(passed/rated*100)+'%' : '—';
   document.getElementById('bePassRateSub').textContent = `${passed} passed / ${failed} failed`;
-  document.getElementById('beUniqueGames').textContent = new Set(dayEntries.map(e=>e.game)).size;
-  document.getElementById('beQueued').textContent = queuedOrTesting;
+  document.getElementById('beNotStarted').textContent = notStarted;
+  document.getElementById('beTestingCount').textContent = testingCount;
+  document.getElementById('beDownloadingCount').textContent = downloadingCount;
   document.getElementById('beDayInfo').textContent = dayEntries.length + ' entr' + (dayEntries.length===1?'y':'ies') + ' on this page';
 }
 function deleteBackendEntry(id){
