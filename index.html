@@ -80,7 +80,7 @@ a{color:var(--lime);}
 .brand-text h1{font-size:16px;margin:0;font-weight:700;letter-spacing:0.2px;}
 .brand-text p{margin:2px 0 0;font-size:12px;color:var(--text-dim);}
 
-.topbar-actions{display:flex;align-items:center;gap:10px;}
+.topbar-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .undo-toast{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
   background:var(--card);border:1px solid var(--border);color:var(--text);
@@ -154,7 +154,7 @@ a{color:var(--lime);}
 .month-controls select:focus{border-color:var(--lime);}
 
 .modal-overlay{position:fixed;inset:0;background:rgba(5,6,3,0.7);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:50;}
-.modal-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;width:300px;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;width:300px;max-width:88vw;box-shadow:0 20px 60px rgba(0,0,0,0.6);max-height:85vh;overflow-y:auto;}
 .modal-box h3{margin:0 0 16px;font-size:14px;font-weight:700;}
 .modal-box .field-label-sm{display:block;margin-bottom:6px;}
 .modal-box input[type="month"], .modal-box input[type="date"]{
@@ -206,7 +206,7 @@ a{color:var(--lime);}
 .weekend-tag{font-size:10px;color:var(--purple);font-family:var(--mono);margin-left:8px;letter-spacing:0.05em;}
 
 table{width:100%;border-collapse:collapse;table-layout:fixed;}
-.col-resize-handle{position:absolute;top:0;right:-4px;bottom:0;width:8px;cursor:col-resize;z-index:5;}
+.col-resize-handle{position:absolute;top:0;right:-4px;bottom:0;width:8px;cursor:col-resize;z-index:5;touch-action:none;}
 .col-resize-handle:hover, .col-resize-handle.active{background:rgba(215,255,62,0.35);}
 .game-table th{
   text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;color:#0a0b08;
@@ -251,7 +251,7 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
   text-align:inherit;
 }
 .be-banner + .table-wrap{border-top-left-radius:0;border-top-right-radius:0;border-top:none;}
-.table-scroll{overflow-x:auto;overflow-y:auto;max-height:70vh;}
+.table-scroll{overflow-x:auto;overflow-y:auto;max-height:70vh;-webkit-overflow-scrolling:touch;}
 .status-pill{font-family:var(--mono);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;display:inline-block;white-space:nowrap;}
 .status-Passed{background:rgba(61,220,138,0.12);color:var(--green);border:1px solid rgba(61,220,138,0.3);}
 .status-Failed{background:rgba(255,92,114,0.1);color:var(--red);border:1px solid rgba(255,92,114,0.28);}
@@ -291,9 +291,9 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
 }
 .source-select option{font-weight:600;}
 
-.drag-handle-cell{width:28px;text-align:center;cursor:grab;color:var(--text-faint);user-select:none;}
+.drag-handle-cell{width:28px;text-align:center;cursor:grab;color:var(--text-faint);user-select:none;touch-action:none;}
 .drag-handle-cell:hover{color:var(--text);}
-.game-table th[draggable="true"]{cursor:grab;}
+.game-table th.col-draggable{cursor:grab;touch-action:none;}
 .game-table th.col-dragging{opacity:0.4;}
 .game-table tr.row-dragging{opacity:0.35;}
 .game-table tr.row-drop-target td{border-top:2px solid var(--lime);}
@@ -333,6 +333,36 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
   .form-row{flex-direction:column;align-items:stretch;}
   .field{width:100%;}
   .stat-grid{grid-template-columns:1fr 1fr;}
+}
+
+/* Tablet (iPad and similar) */
+@media(max-width:1024px){
+  .shell{padding:20px 16px 60px;}
+  .backend-sidebar{width:220px;}
+}
+
+/* Phone (iPhone 14/16 and similar widths) */
+@media(max-width:480px){
+  .shell{padding:14px 12px 50px;}
+  .brand-text p{display:none;}
+  .brand-text h1{font-size:14px;}
+  .brand-mark{width:34px;height:34px;font-size:17px;}
+  .hamburger-btn{width:32px;height:32px;font-size:14px;}
+  .month-title{font-size:20px;}
+  .icon-btn{font-size:11.5px;padding:8px 10px;}
+  .btn{padding:10px 14px;font-size:12.5px;}
+  .tabs{width:100%;}
+  .tab-btn{flex:1;padding:9px 8px;font-size:12.5px;}
+  .stat-card{padding:12px 14px;}
+  .stat-value{font-size:21px;}
+  .form-card{padding:14px;}
+  .modal-box{padding:18px;}
+  .game-table th, .game-table td{padding:8px 10px;font-size:12.5px;}
+  .drag-handle-cell{width:24px;}
+  .mini-btn{width:30px;height:30px;}
+  .table-scroll{max-height:60vh;}
+  .backend-sidebar{flex-direction:column;}
+  .backend-sidebar .stat-card{min-width:0;}
 }
 </style>
 </head>
@@ -726,9 +756,10 @@ function makeRowsDraggable(tbody, rowSelector, idAttr, onReorder){
   tbody.querySelectorAll(rowSelector).forEach(tr=>{
     const handle = tr.querySelector('.drag-handle-cell');
     if(!handle) return;
-    handle.addEventListener('mousedown', (ev)=>{
+    handle.addEventListener('pointerdown', (ev)=>{
       ev.preventDefault();
       ev.stopPropagation();
+      if(handle.setPointerCapture) { try{ handle.setPointerCapture(ev.pointerId); }catch(e){} }
       const draggingTr = tr;
       const draggedId = tr.getAttribute(idAttr);
       draggingTr.classList.add('row-dragging');
@@ -751,8 +782,9 @@ function makeRowsDraggable(tbody, rowSelector, idAttr, onReorder){
         if(target) target.classList.add('row-drop-target');
       }
       function onUp(e){
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        document.removeEventListener('pointercancel', onUp);
         document.body.style.userSelect = prevUserSelect;
         draggingTr.classList.remove('row-dragging');
         const target = findRowAt(e.clientY);
@@ -762,8 +794,9 @@ function makeRowsDraggable(tbody, rowSelector, idAttr, onReorder){
           if(targetId && targetId !== draggedId) onReorder(draggedId, targetId);
         }
       }
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+      document.addEventListener('pointercancel', onUp);
     });
   });
 }
@@ -788,9 +821,10 @@ function setupResizableTable(table, storeKey, defaultWidths){
     const handle = document.createElement('div');
     handle.className = 'col-resize-handle';
     th.appendChild(handle);
-    handle.addEventListener('mousedown', (ev)=>{
+    handle.addEventListener('pointerdown', (ev)=>{
       ev.preventDefault();
       ev.stopPropagation();
+      if(handle.setPointerCapture) { try{ handle.setPointerCapture(ev.pointerId); }catch(e){} }
       handle.classList.add('active');
       const startX = ev.clientX;
       const startWidth = cols[idx].getBoundingClientRect().width;
@@ -800,13 +834,15 @@ function setupResizableTable(table, storeKey, defaultWidths){
       }
       function onUp(){
         handle.classList.remove('active');
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        document.removeEventListener('pointercancel', onUp);
         colWidthsStore[storeKey] = [...cols].map(c=> parseInt(c.style.width,10) || 0);
         saveColWidths();
       }
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+      document.addEventListener('pointercancel', onUp);
     });
   });
 }
@@ -1831,31 +1867,55 @@ const STATUS_OPTIONS = ['Queued','Downloading','Testing','Passed','Failed'];
 
 function renderBackendHeader(){
   const tr = document.getElementById('beHeaderRow');
-  const cols = settings.beColumnOrder.map(key=>`<th draggable="true" data-col="${key}">${COLUMN_DEFS[key].label}</th>`).join('');
+  const cols = settings.beColumnOrder.map(key=>`<th data-col="${key}">${COLUMN_DEFS[key].label}</th>`).join('');
   tr.innerHTML = `<th style="width:28px;"></th>${cols}<th></th>`;
 
-  tr.querySelectorAll('th[draggable="true"]').forEach(th=>{
-    th.addEventListener('dragstart', (ev)=>{
-      if(ev.target.closest('.col-resize-handle')){ ev.preventDefault(); return; } // resize handle shouldn't also trigger reorder
-      th.classList.add('col-dragging');
-      ev.dataTransfer.setData('text/col', th.dataset.col);
-      ev.dataTransfer.effectAllowed = 'move';
-    });
-    th.addEventListener('dragend', ()=> th.classList.remove('col-dragging'));
-    th.addEventListener('dragover', (ev)=>{ ev.preventDefault(); th.classList.add('col-drop-target'); });
-    th.addEventListener('dragleave', ()=> th.classList.remove('col-drop-target'));
-    th.addEventListener('drop', (ev)=>{
+  tr.querySelectorAll('th[data-col]').forEach(th=>{
+    th.classList.add('col-draggable');
+    th.addEventListener('pointerdown', (ev)=>{
+      if(ev.target.closest('.col-resize-handle')) return; // resize handle has its own pointerdown, this is a safety net
       ev.preventDefault();
-      th.classList.remove('col-drop-target');
-      const draggedKey = ev.dataTransfer.getData('text/col');
-      const targetKey = th.dataset.col;
-      if(!draggedKey || draggedKey === targetKey) return;
-      const order = settings.beColumnOrder;
-      const from = order.indexOf(draggedKey), to = order.indexOf(targetKey);
-      order.splice(from,1);
-      order.splice(to,0,draggedKey);
-      persistAll();
-      renderBackend();
+      if(th.setPointerCapture){ try{ th.setPointerCapture(ev.pointerId); }catch(e){} }
+      th.classList.add('col-dragging');
+      const draggedKey = th.dataset.col;
+
+      function othersExceptDragging(){
+        return [...tr.querySelectorAll('th[data-col]')].filter(t=>t!==th);
+      }
+      function findThAt(clientX){
+        for(const t of othersExceptDragging()){
+          const rect = t.getBoundingClientRect();
+          if(clientX >= rect.left && clientX <= rect.right) return t;
+        }
+        return null;
+      }
+      function onMove(e){
+        othersExceptDragging().forEach(t=> t.classList.remove('col-drop-target'));
+        const target = findThAt(e.clientX);
+        if(target) target.classList.add('col-drop-target');
+      }
+      function onUp(e){
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        document.removeEventListener('pointercancel', onUp);
+        th.classList.remove('col-dragging');
+        const target = findThAt(e.clientX);
+        othersExceptDragging().forEach(t=> t.classList.remove('col-drop-target'));
+        if(target){
+          const targetKey = target.dataset.col;
+          if(targetKey && targetKey !== draggedKey){
+            const order = settings.beColumnOrder;
+            const from = order.indexOf(draggedKey), to = order.indexOf(targetKey);
+            order.splice(from,1);
+            order.splice(to,0,draggedKey);
+            persistAll();
+            renderBackend();
+          }
+        }
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+      document.addEventListener('pointercancel', onUp);
     });
   });
 }
