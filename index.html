@@ -357,7 +357,9 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
   .stat-value{font-size:21px;}
   .form-card{padding:14px;}
   .modal-box{padding:18px;}
-  .game-table th, .game-table td{padding:8px 10px;font-size:12.5px;}
+  .game-table th, .game-table td{padding:6px 7px;font-size:11.5px;}
+  .cell-input, .status-select, .source-select{padding:5px 6px;font-size:11.5px;}
+  .status-select, .source-select{padding-right:20px;background-size:11px;background-position:right 5px center;}
   .drag-handle-cell{width:24px;}
   .mini-btn{width:30px;height:30px;}
   .table-scroll{max-height:60vh;}
@@ -801,11 +803,19 @@ function makeRowsDraggable(tbody, rowSelector, idAttr, onReorder){
   });
 }
 
+function isMobileViewport(){ return window.innerWidth <= 640; }
+
 function setupResizableTable(table, storeKey, defaultWidths){
   const ths = table.querySelectorAll('thead th');
   if(!ths.length) return;
-  let widths = colWidthsStore[storeKey];
-  if(!widths || widths.length !== ths.length) widths = defaultWidths.slice();
+  const mobile = isMobileViewport();
+  const effectiveKey = storeKey + (mobile ? '_mobile' : '');
+  const effectiveDefaults = mobile
+    ? defaultWidths.map((w,i)=> i===0 ? 22 : Math.max(60, Math.round(w*0.5))) // shrink hard for phones, handle column stays tiny
+    : defaultWidths;
+
+  let widths = colWidthsStore[effectiveKey];
+  if(!widths || widths.length !== ths.length) widths = effectiveDefaults.slice();
 
   let colgroup = table.querySelector('colgroup');
   if(!colgroup){
@@ -837,7 +847,7 @@ function setupResizableTable(table, storeKey, defaultWidths){
         document.removeEventListener('pointermove', onMove);
         document.removeEventListener('pointerup', onUp);
         document.removeEventListener('pointercancel', onUp);
-        colWidthsStore[storeKey] = [...cols].map(c=> parseInt(c.style.width,10) || 0);
+        colWidthsStore[effectiveKey] = [...cols].map(c=> parseInt(c.style.width,10) || 0);
         saveColWidths();
       }
       document.addEventListener('pointermove', onMove);
@@ -2418,6 +2428,20 @@ if(syncEnabled){
 } else {
   appInitializing = false;
 }
+
+let resizeRerenderTimer = null;
+let lastMobileState = isMobileViewport();
+window.addEventListener('resize', ()=>{
+  clearTimeout(resizeRerenderTimer);
+  resizeRerenderTimer = setTimeout(()=>{
+    const nowMobile = isMobileViewport();
+    if(nowMobile !== lastMobileState){
+      lastMobileState = nowMobile;
+      renderRegular();
+      renderBackend();
+    }
+  }, 200);
+});
 
 })();
 </script>
