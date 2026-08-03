@@ -333,6 +333,24 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
   .form-row{flex-direction:column;align-items:stretch;}
   .field{width:100%;}
   .stat-grid{grid-template-columns:1fr 1fr;}
+
+  /* Freeze the drag-handle + Game columns; everything else scrolls sideways underneath */
+  .game-table th:nth-child(1), .game-table td:nth-child(1),
+  .game-table th:nth-child(2), .game-table td:nth-child(2){
+    position:sticky;
+    z-index:2;
+  }
+  .game-table th:nth-child(1), .game-table td:nth-child(1){ left:0; }
+  .game-table th:nth-child(2), .game-table td:nth-child(2){ left:24px; }
+  .game-table td:nth-child(1), .game-table td:nth-child(2){
+    background:var(--card);
+    box-shadow:2px 0 6px rgba(0,0,0,0.35);
+  }
+  .game-table th:nth-child(1), .game-table th:nth-child(2){
+    z-index:3;
+    box-shadow:2px 0 6px rgba(0,0,0,0.35);
+  }
+  .game-table td:nth-child(2){ white-space:normal; }
 }
 
 /* Tablet (iPad and similar) */
@@ -811,7 +829,7 @@ function setupResizableTable(table, storeKey, defaultWidths){
   const mobile = isMobileViewport();
   const effectiveKey = storeKey + (mobile ? '_mobile' : '');
   const effectiveDefaults = mobile
-    ? defaultWidths.map((w,i)=> i===0 ? 22 : Math.max(60, Math.round(w*0.5))) // shrink hard for phones, handle column stays tiny
+    ? defaultWidths.map((w,i)=> i===0 ? 24 : (i===1 ? 190 : w)) // handle stays tiny, frozen 2nd column (Game) gets comfortable room, the rest keep normal width and scroll freely
     : defaultWidths;
 
   let widths = colWidthsStore[effectiveKey];
