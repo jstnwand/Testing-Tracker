@@ -235,6 +235,19 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
 .filter-bar input:focus, .filter-bar select:focus{border-color:var(--lime);}
 
 .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.be-card-list{display:none;flex-direction:column;gap:12px;}
+.be-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.be-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border-soft);}
+.be-card-header .drag-handle-cell{width:auto;padding:0 2px;}
+.be-card-header .game-cell{flex:1;font-size:14.5px;}
+.be-card-row{display:flex;align-items:center;gap:10px;padding:6px 0;}
+.be-card-row + .be-card-row{border-top:1px solid var(--border-soft);}
+.be-card-label{width:64px;flex-shrink:0;font-size:11px;font-weight:700;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.04em;}
+.be-card-row > select, .be-card-row > input{flex:1;}
+@media(max-width:640px){
+  .table-wrap{display:none;}
+  .be-card-list{display:flex;}
+}
 .be-banner{
   display:flex;background:var(--lime);border-radius:var(--radius) var(--radius) 0 0;
   overflow:hidden;border:1px solid #0a0b08;border-bottom:none;
@@ -708,9 +721,12 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
               <tbody id="beTbody"></tbody>
             </table>
           </div>
-          <div class="pager">
-            <span id="pagerInfo">—</span>
-          </div>
+        </div>
+
+        <div class="be-card-list" id="beCardList"></div>
+
+        <div class="pager">
+          <span id="pagerInfo">—</span>
         </div>
 
       </div>
@@ -1948,28 +1964,31 @@ function renderBackendHeader(){
   });
 }
 
-function buildBackendCell(col, e){
+function buildBackendFieldControl(col, e){
   if(col === 'game'){
-    return `<td><div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game)}</div></td>`;
+    return `<div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game)}</div>`;
   }
   if(col === 'platform'){
     const theme = getSourceTheme(e.platform);
     const opts = settings.sources.map(s=>`<option value="${escapeHtml(s.name)}" ${s.name===e.platform?'selected':''}>${escapeHtml(s.name)}</option>`).join('');
     const extra = (e.platform && !settings.sources.find(s=>s.name===e.platform)) ? `<option value="${escAttr(e.platform)}" selected>${escapeHtml(e.platform)}</option>` : '';
-    return `<td><select class="source-select" data-field="platform" style="background-color:${theme.bg};color:${theme.text};">${extra}${opts}</select></td>`;
+    return `<select class="source-select" data-field="platform" style="background-color:${theme.bg};color:${theme.text};">${extra}${opts}</select>`;
   }
   if(col === 'status'){
     const statusColor = STATUS_COLORS[e.status] || STATUS_COLORS.Queued;
     const opts = STATUS_OPTIONS.map(s=>`<option value="${s}" ${s===e.status?'selected':''}>${s}</option>`).join('');
-    return `<td><select class="status-select" data-field="status" style="background-color:${statusColor};">${opts}</select></td>`;
+    return `<select class="status-select" data-field="status" style="background-color:${statusColor};">${opts}</select>`;
   }
   if(col === 'date'){
-    return `<td><input type="date" class="cell-input date-input" data-field="date" value="${e.date||''}"></td>`;
+    return `<input type="date" class="cell-input date-input" data-field="date" value="${e.date||''}">`;
   }
   if(col === 'notes'){
-    return `<td><input class="cell-input" data-field="notes" value="${escAttr(e.notes)}" placeholder="—"></td>`;
+    return `<input class="cell-input" data-field="notes" value="${escAttr(e.notes)}" placeholder="—">`;
   }
-  return '<td></td>';
+  return '';
+}
+function buildBackendCell(col, e){
+  return `<td>${buildBackendFieldControl(col, e)}</td>`;
 }
 
 function renderBeBanner(){
@@ -2022,6 +2041,17 @@ function renderBackend(){
   const total = filtered.length;
   const pageItems = filtered; // no pagination — one continuous, scrollable list so rows are draggable across the whole day
 
+  function reorderBackendEntries(draggedId, targetId){
+    const from = backendEntries.findIndex(x=>x.id===draggedId);
+    const to = backendEntries.findIndex(x=>x.id===targetId);
+    if(from===-1 || to===-1) return;
+    const [moved] = backendEntries.splice(from,1);
+    backendEntries.splice(to,0,moved);
+    persistAll();
+    document.getElementById('beSort').value = 'custom';
+    renderBackend();
+  }
+
   const tbody = document.getElementById('beTbody');
   const colCount = settings.beColumnOrder.length + 2;
   if(pageItems.length===0){
@@ -2056,16 +2086,48 @@ function renderBackend(){
     tbody.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=> deleteBackendEntry(b.dataset.del)));
 
     // row drag-and-drop reordering
-    makeRowsDraggable(tbody, 'tr[data-row-id]', 'data-row-id', (draggedId, targetId)=>{
-      const from = backendEntries.findIndex(x=>x.id===draggedId);
-      const to = backendEntries.findIndex(x=>x.id===targetId);
-      if(from===-1 || to===-1) return;
-      const [moved] = backendEntries.splice(from,1);
-      backendEntries.splice(to,0,moved);
-      persistAll();
-      document.getElementById('beSort').value = 'custom';
-      renderBackend();
+    makeRowsDraggable(tbody, 'tr[data-row-id]', 'data-row-id', reorderBackendEntries);
+  }
+
+  // mobile card list — same data, stacked-card layout instead of a wide table
+  const cardList = document.getElementById('beCardList');
+  if(pageItems.length===0){
+    cardList.innerHTML = '<div class="empty-row" style="border:1px solid var(--border);border-radius:var(--radius);">No matching entries.</div>';
+  } else {
+    const fieldLabels = { platform:'Source', status:'Status', date:'Date', notes:'Notes' };
+    cardList.innerHTML = pageItems.map(e=>{
+      const rows = settings.beColumnOrder.filter(col=>col!=='game').map(col=>
+        `<div class="be-card-row"><span class="be-card-label">${fieldLabels[col]||col}</span>${buildBackendFieldControl(col, e)}</div>`
+      ).join('');
+      return `<div class="be-card" data-card-id="${e.id}">
+        <div class="be-card-header">
+          <span class="drag-handle-cell" title="Drag to reorder">⋮⋮</span>
+          <div class="game-cell" data-game-id="card-${e.id}">${escapeHtml(e.game)}</div>
+          <button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button>
+        </div>
+        ${rows}
+      </div>`;
+    }).join('');
+
+    cardList.querySelectorAll('.be-card').forEach(card=>{
+      const id = card.dataset.cardId;
+      card.querySelectorAll('[data-field]').forEach(el=>{
+        el.addEventListener('change', ()=> commitBackendCell(id, el.dataset.field, el.value, el));
+      });
+      card.querySelectorAll('[data-field="platform"]').forEach(sel=>{
+        sel.addEventListener('change', ()=>{ sel.style.backgroundColor = getSourceTheme(sel.value).bg; sel.style.color = getSourceTheme(sel.value).text; });
+      });
+      const gameCell = card.querySelector('[data-game-id]');
+      if(gameCell){
+        const entry = backendEntries.find(x=>x.id===id);
+        wireGameCell(gameCell, entry ? entry.game : '', (newVal)=>{
+          if(newVal !== null && newVal !== '') commitBackendCell(id, 'game', newVal, null);
+          renderBackend();
+        });
+      }
     });
+    cardList.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=> deleteBackendEntry(b.dataset.del)));
+    makeRowsDraggable(cardList, '.be-card', 'data-card-id', reorderBackendEntries);
   }
 
   document.getElementById('pagerInfo').textContent =
