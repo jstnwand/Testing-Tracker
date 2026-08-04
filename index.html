@@ -239,13 +239,14 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
 .be-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
 .be-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border-soft);}
 .be-card-header .drag-handle-cell{width:auto;padding:0 2px;}
-.be-card-header .game-cell{flex:1;font-size:14.5px;}
+.be-card-header .game-cell{flex:1;font-size:14.5px;min-width:0;}
 .be-card-row{display:flex;align-items:center;gap:10px;padding:6px 0;}
 .be-card-row + .be-card-row{border-top:1px solid var(--border-soft);}
 .be-card-label{width:64px;flex-shrink:0;font-size:11px;font-weight:700;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.04em;}
-.be-card-row > select, .be-card-row > input{flex:1;}
+.be-card-row > select, .be-card-row > input{flex:1;min-width:0;}
+.be-card-row{min-width:0;}
 @media(max-width:640px){
-  .table-wrap{display:none;}
+  .table-wrap, .day-table-wrap{display:none;}
   .be-card-list{display:flex;}
 }
 .be-banner{
@@ -282,7 +283,7 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
 .game-cell{
   width:100%;padding:6px 7px;border-radius:6px;border:1px solid transparent;
   font-family:var(--sans);font-size:13px;font-weight:600;color:var(--text);
-  cursor:pointer;transition:.15s;user-select:none;
+  cursor:pointer;transition:.15s;user-select:none;word-break:break-word;
 }
 .game-cell:hover{border-color:var(--border);background:var(--bg-raised);}
 .game-cell.copied-flash{color:var(--lime);border-color:rgba(215,255,62,0.4);background:var(--lime-soft);}
@@ -1268,6 +1269,7 @@ function buildDayGroup(dateObj){
 
   if(!collapsed){
     const tblWrap = document.createElement('div');
+    tblWrap.className = 'day-table-wrap';
     let rows = '';
     if(list.length === 0){
       rows = `<tr class="empty-row"><td colspan="6">No games logged for this day.</td></tr>`;
@@ -1362,6 +1364,79 @@ function buildDayGroup(dateObj){
     });
 
     wireQuickAddRow(tblWrap, iso);
+
+    // mobile card list — same data, stacked-card layout instead of a wide table
+    const cardList = document.createElement('div');
+    cardList.className = 'be-card-list reg-card-list';
+    let cardsHtml = '';
+    list.forEach(e=>{
+      const statusColor = STATUS_COLORS[e.result] || STATUS_COLORS.Queued;
+      const opts = STATUS_OPTIONS.map(s=>`<option value="${s}" ${s===e.result?'selected':''}>${s}</option>`).join('');
+      cardsHtml += `<div class="be-card" data-reg-card-id="${e.id}">
+        <div class="be-card-header">
+          <span class="drag-handle-cell" title="Drag to reorder">⋮⋮</span>
+          <div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game||'')}</div>
+          <button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button>
+        </div>
+        ${e.platform ? `<div class="platform-tag" style="margin:-6px 0 8px;">(${escapeHtml(e.platform)})</div>` : ''}
+        <div class="be-card-row"><span class="be-card-label">Status</span><select class="status-select" data-status-id="${e.id}" style="background-color:${statusColor};">${opts}</select></div>
+        <div class="be-card-row"><span class="be-card-label">Points</span><input type="number" step="0.25" class="cell-input pts-input" data-points-id="${e.id}" value="${e.points}" title="${pointsCount(e) ? '' : 'Not counted yet — mark Passed or Failed to add these points to the total'}" style="text-align:right;font-family:var(--mono);${pointsCount(e) ? '' : 'opacity:0.45;'}"></div>
+        <div class="be-card-row"><span class="be-card-label">Code</span><div class="game-cell trainer-code-cell" data-trainer-id="${e.id}">${e.trainerCode ? escapeHtml(e.trainerCode) : '<span class="add-link-hint">+ Add code</span>'}</div></div>
+        <div class="be-card-row"><span class="be-card-label">Link</span><button class="mini-btn ${e.resultUrl ? 'has-link' : ''}" data-result-btn="${e.id}" title="${e.resultUrl ? 'Click to open result link · right-click to edit' : 'Add a result link'}">🔗</button></div>
+      </div>`;
+    });
+    cardsHtml += `<div class="be-card quick-add-row">
+      <div class="be-card-row"><span class="be-card-label">Game</span><input type="text" class="qa-game cell-input" placeholder="+ Add a game…"></div>
+      <div class="be-card-row"><span class="be-card-label">Platform</span><input type="text" class="qa-platform cell-input" placeholder="Platform" list="platformList"></div>
+      <div class="be-card-row"><span class="be-card-label">Status</span><select class="qa-result status-select" style="background-color:${STATUS_COLORS.Queued};">${STATUS_OPTIONS.map(s=>`<option value="${s}">${s}</option>`).join('')}</select></div>
+      <div class="be-card-row"><span class="be-card-label">Points</span><input type="number" step="0.25" class="qa-points cell-input" placeholder="pts"></div>
+      <button class="btn btn-primary qa-add-btn" style="width:100%;margin-top:8px;">+ Add entry</button>
+    </div>`;
+    cardList.innerHTML = cardsHtml;
+    wrap.appendChild(cardList);
+
+    cardList.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', (ev)=>{ ev.stopPropagation(); deleteRegularEntry(b.dataset.del); }));
+    cardList.querySelectorAll('[data-status-id]').forEach(sel=>{
+      sel.addEventListener('change', ()=> commitRegularStatus(sel.dataset.statusId, sel.value, sel));
+    });
+    cardList.querySelectorAll('[data-points-id]').forEach(inp=>{
+      inp.addEventListener('change', ()=> commitRegularPoints(inp.dataset.pointsId, inp.value));
+    });
+    cardList.querySelectorAll('[data-game-id]').forEach(div=>{
+      const id = div.dataset.gameId;
+      const entry = regularEntries.find(x=>x.id===id);
+      wireGameCell(div, entry ? entry.game : '', (newVal)=>{
+        if(newVal !== null && newVal !== '' && entry){ entry.game = newVal; persistAll(); renderTicker(); }
+        renderRegular();
+      });
+    });
+    cardList.querySelectorAll('[data-result-btn]').forEach(btn=>{
+      const id = btn.dataset.resultBtn;
+      btn.addEventListener('click', ()=>{
+        const entry = regularEntries.find(x=>x.id===id);
+        if(entry && entry.resultUrl) window.open(entry.resultUrl, '_blank', 'noopener');
+        else promptEditResultLink(id);
+      });
+      btn.addEventListener('contextmenu', (ev)=>{ ev.preventDefault(); promptEditResultLink(id); });
+    });
+    cardList.querySelectorAll('[data-trainer-id]').forEach(div=>{
+      const id = div.dataset.trainerId;
+      const entry = regularEntries.find(x=>x.id===id);
+      wireCopyEditCell(div, entry ? (entry.trainerCode||'') : '', (newVal)=>{
+        if(newVal !== null && entry){ entry.trainerCode = newVal; persistAll(); }
+        renderRegular();
+      });
+    });
+    makeRowsDraggable(cardList, '.be-card[data-reg-card-id]', 'data-reg-card-id', (draggedId, targetId)=>{
+      const from = regularEntries.findIndex(x=>x.id===draggedId);
+      const to = regularEntries.findIndex(x=>x.id===targetId);
+      if(from===-1 || to===-1) return;
+      const [moved] = regularEntries.splice(from,1);
+      regularEntries.splice(to,0,moved);
+      persistAll();
+      renderRegular();
+    });
+    wireQuickAddRow(cardList, iso);
   }
 
   return wrap;
