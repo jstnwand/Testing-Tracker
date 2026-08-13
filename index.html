@@ -19,7 +19,8 @@
   --text-dim:#8d9280;
   --text-faint:#5c6154;
   --lime:#d7ff3e;
-  --lime-soft:rgba(215,255,62,0.12);
+  --lime-rgb:215,255,62;
+  --lime-soft:rgba(var(--lime-rgb),0.12);
   --amber:#f2b84b;
   --green:#3ddc8a;
   --red:#ff5c72;
@@ -28,6 +29,12 @@
   --mono:'JetBrains Mono', monospace;
   --sans:'Inter', sans-serif;
   --radius:14px;
+}
+/* Content Testing gets its own distinct accent — same components, different personality */
+#panel-content{
+  --lime:#b565f5;
+  --lime-rgb:181,101,245;
+  --lime-soft:rgba(181,101,245,0.14);
 }
 *{box-sizing:border-box;}
 *{scrollbar-width:thin;scrollbar-color:#3a3f28 #12140b;}
@@ -39,15 +46,15 @@
 html,body{margin:0;padding:0;}
 body{
   background:
-    radial-gradient(1200px 500px at 15% -10%, rgba(215,255,62,0.05), transparent),
-    radial-gradient(1000px 500px at 100% 0%, rgba(215,255,62,0.03), transparent),
+    radial-gradient(1200px 500px at 15% -10%, rgba(var(--lime-rgb),0.05), transparent),
+    radial-gradient(1000px 500px at 100% 0%, rgba(var(--lime-rgb),0.03), transparent),
     var(--bg);
   color:var(--text);
   font-family:var(--sans);
   min-height:100vh;
   -webkit-font-smoothing:antialiased;
 }
-::selection{background:rgba(215,255,62,0.25);}
+::selection{background:rgba(var(--lime-rgb),0.25);}
 a{color:var(--lime);}
 
 /* ---------- layout shell ---------- */
@@ -100,11 +107,11 @@ a{color:var(--lime);}
 
 /* build-log ticker */
 .ticker-wrap{
-  border:1px solid var(--border-soft);background:linear-gradient(180deg, rgba(215,255,62,0.02), transparent);
+  border:1px solid var(--border-soft);background:linear-gradient(180deg, rgba(var(--lime-rgb),0.02), transparent);
   border-radius:10px;padding:9px 14px;margin-bottom:22px;display:flex;align-items:center;gap:10px;overflow:hidden;
   font-family:var(--mono);font-size:12px;color:var(--text-faint);
 }
-.ticker-dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 8px rgba(215,255,62,0.6);flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
+.ticker-dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 8px rgba(var(--lime-rgb),0.6);flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
 .ticker-track{white-space:nowrap;overflow:hidden;position:relative;flex:1;}
 .ticker-inner{display:inline-block;animation:scroll-left 32s linear infinite;}
@@ -162,7 +169,7 @@ a{color:var(--lime);}
   border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:13px;outline:none;margin-bottom:18px;
   color-scheme:dark;box-sizing:border-box;
 }
-.modal-box input[type="month"]:focus, .modal-box input[type="date"]:focus{border-color:var(--lime);box-shadow:0 0 0 3px rgba(215,255,62,0.12);}
+.modal-box input[type="month"]:focus, .modal-box input[type="date"]:focus{border-color:var(--lime);box-shadow:0 0 0 3px rgba(var(--lime-rgb),0.12);}
 .modal-actions{display:flex;justify-content:flex-end;gap:10px;}
 .modal-actions.fill .btn{flex:1;}
 
@@ -185,7 +192,7 @@ a{color:var(--lime);}
   background:var(--bg-raised);border:1px solid var(--border);color:var(--text);
   border-radius:8px;padding:9px 11px;font-family:var(--sans);font-size:13px;outline:none;transition:.15s;
 }
-.field input:focus, .field select:focus, .field textarea:focus{border-color:var(--lime);box-shadow:0 0 0 3px rgba(215,255,62,0.12);}
+.field input:focus, .field select:focus, .field textarea:focus{border-color:var(--lime);box-shadow:0 0 0 3px rgba(var(--lime-rgb),0.12);}
 .field.grow-2{flex:2;}
 .btn{border:none;border-radius:9px;padding:10px 18px;font-family:var(--sans);font-weight:700;font-size:13px;cursor:pointer;transition:.15s;white-space:nowrap;}
 .btn-primary{background:var(--lime);color:#0a0b08;}
@@ -207,15 +214,15 @@ a{color:var(--lime);}
 
 table{width:100%;border-collapse:collapse;table-layout:fixed;}
 .col-resize-handle{position:absolute;top:0;right:-4px;bottom:0;width:8px;cursor:col-resize;z-index:5;touch-action:none;}
-.col-resize-handle:hover, .col-resize-handle.active{background:rgba(215,255,62,0.35);}
+.col-resize-handle:hover, .col-resize-handle.active{background:rgba(var(--lime-rgb),0.35);}
 .game-table th{
   text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;color:#0a0b08;
   padding:11px 16px;border:1px solid #0a0b08;font-weight:800;background:var(--lime);
 }
 .game-table td{padding:10px 16px;font-size:13.5px;border:1px solid var(--border-soft);}
-.game-table tr:hover td{background:rgba(215,255,62,0.02);}
+.game-table tr:hover td{background:rgba(var(--lime-rgb),0.02);}
 .platform-tag{font-size:11px;color:var(--text-dim);font-family:var(--mono);}
-.mini-btn.has-link{color:var(--lime);border-color:rgba(215,255,62,0.4);}
+.mini-btn.has-link{color:var(--lime);border-color:rgba(var(--lime-rgb),0.4);}
 .result-tag{font-family:var(--mono);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-block;}
 .result-passed{background:rgba(61,220,138,0.1);color:var(--green);}
 .result-failed{background:rgba(255,92,114,0.1);color:var(--red);}
@@ -225,7 +232,7 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
 .mini-btn:hover{color:var(--text);border-color:#3a4025;}
 .mini-btn.del:hover{color:var(--red);border-color:rgba(255,92,114,0.4);}
 .empty-row td{text-align:center;color:var(--text-faint);font-size:12.5px;padding:18px;font-style:italic;}
-.quick-add-row td{background:rgba(215,255,62,0.02);padding:8px 16px;}
+.quick-add-row td{background:rgba(var(--lime-rgb),0.02);padding:8px 16px;}
 .quick-add-row .qa-game:focus, .quick-add-row .qa-platform:focus, .quick-add-row .qa-points:focus{border-color:var(--lime);}
 
 /* ---------- backend filters/table ---------- */
@@ -278,7 +285,7 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
   border-radius:6px;padding:6px 7px;font-family:var(--sans);font-size:13px;outline:none;transition:.15s;
 }
 .cell-input:hover{border-color:var(--border);background:var(--bg-raised);}
-.cell-input:focus{border-color:var(--lime);background:var(--bg-raised);box-shadow:0 0 0 2px rgba(215,255,62,0.12);}
+.cell-input:focus{border-color:var(--lime);background:var(--bg-raised);box-shadow:0 0 0 2px rgba(var(--lime-rgb),0.12);}
 .cell-input.date-input{font-family:var(--mono);color-scheme:dark;min-width:130px;}
 .game-cell{
   width:100%;padding:6px 7px;border-radius:6px;border:1px solid transparent;
@@ -286,7 +293,7 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
   cursor:pointer;transition:.15s;user-select:none;word-break:break-word;
 }
 .game-cell:hover{border-color:var(--border);background:var(--bg-raised);}
-.game-cell.copied-flash{color:var(--lime);border-color:rgba(215,255,62,0.4);background:var(--lime-soft);}
+.game-cell.copied-flash{color:var(--lime);border-color:rgba(var(--lime-rgb),0.4);background:var(--lime-soft);}
 .trainer-code-cell{font-family:var(--mono);font-weight:600;font-size:12.5px;}
 .status-select{
   width:100%;appearance:none;-webkit-appearance:none;cursor:pointer;
@@ -329,9 +336,9 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
 .ref-card-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .btn-neon{
   background:var(--lime);color:#0a0b08;font-weight:800;border:none;
-  box-shadow:0 0 0 1px rgba(215,255,62,0.5), 0 0 16px rgba(215,255,62,0.45);
+  box-shadow:0 0 0 1px rgba(var(--lime-rgb),0.5), 0 0 16px rgba(var(--lime-rgb),0.45);
 }
-.btn-neon:hover{filter:brightness(1.1);box-shadow:0 0 0 1px rgba(215,255,62,0.7), 0 0 22px rgba(215,255,62,0.65);}
+.btn-neon:hover{filter:brightness(1.1);box-shadow:0 0 0 1px rgba(var(--lime-rgb),0.7), 0 0 22px rgba(var(--lime-rgb),0.65);}
 .source-swatch{width:16px;height:16px;border-radius:4px;flex-shrink:0;}
 .source-row .source-name{flex:1;font-size:13px;font-weight:600;}
 .source-row .mini-btn{flex-shrink:0;}
@@ -395,8 +402,25 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
   .drag-handle-cell{width:24px;}
   .mini-btn{width:30px;height:30px;}
   .table-scroll{max-height:60vh;}
-  .backend-sidebar{flex-direction:column;}
-  .backend-sidebar .stat-card{min-width:0;}
+  .backend-sidebar{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    position:static;
+  }
+  .backend-sidebar .stat-card{
+    min-width:0;
+    padding:14px 12px;
+    border-left:3px solid var(--lime);
+    background:linear-gradient(135deg, rgba(var(--lime-rgb),0.05), transparent);
+  }
+  .backend-sidebar .stat-card:nth-child(2){border-left-color:var(--green);background:linear-gradient(135deg, rgba(61,220,138,0.06), transparent);}
+  .backend-sidebar .stat-card:nth-child(3){border-left-color:var(--slate);background:linear-gradient(135deg, rgba(125,131,153,0.06), transparent);}
+  .backend-sidebar .stat-card:nth-child(4){border-left-color:#3d7dc9;background:linear-gradient(135deg, rgba(61,125,201,0.07), transparent);}
+  .backend-sidebar .stat-card:nth-child(5){border-left-color:#c9762e;background:linear-gradient(135deg, rgba(201,118,46,0.07), transparent);grid-column:span 2;}
+  .backend-sidebar .stat-label{font-size:9.5px;letter-spacing:0.06em;margin-bottom:6px;}
+  .backend-sidebar .stat-value{font-size:26px;line-height:1;}
+  .backend-sidebar .stat-sub{font-size:10px;margin-top:4px;}
 }
 </style>
 </head>
@@ -470,6 +494,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
   <div class="tabs">
     <button class="tab-btn active" data-tab="regular">Regular Testing</button>
     <button class="tab-btn" data-tab="backend">Backend Testing</button>
+    <button class="tab-btn" data-tab="content">Content Testing</button>
   </div>
 
   <!-- ============ REGULAR TESTING ============ -->
@@ -763,6 +788,157 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
 
   </div>
 
+  <div class="panel" id="panel-content">
+
+    <div class="month-header">
+      <div>
+        <div class="month-eyebrow">Content Testing</div>
+        <h2 class="month-title" id="contentDayTitleDisplay">—</h2>
+      </div>
+      <div class="month-controls">
+        <select id="contentDaySelect"></select>
+        <button class="icon-btn btn-neon" id="addContentDayBtn">+ New day</button>
+      </div>
+    </div>
+
+    <div class="week-nav">
+      <span class="stat-sub" id="contentDayInfo">—</span>
+      <div style="display:flex;gap:8px;">
+        <button class="icon-btn danger" id="clearContentDayBtn">🗑 Clear this day</button>
+        <button class="icon-btn danger hidden" id="deleteContentDayBtn">Delete this day page</button>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="contentDayModalOverlay">
+      <div class="modal-box">
+        <h3>Add a day page</h3>
+        <label class="field-label-sm">Date</label>
+        <input type="date" id="contentDayPicker">
+        <div class="modal-actions fill">
+          <button class="btn btn-ghost" id="contentDayModalCancel">Cancel</button>
+          <button class="btn btn-primary" id="contentDayModalAdd">Add page</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="backend-layout">
+      <div class="backend-main">
+
+        <div class="form-card">
+          <h3>Log a content test</h3>
+          <div class="form-row">
+            <div class="field">
+              <label>Date</label>
+              <input type="date" id="contentDate">
+            </div>
+            <div class="field grow-2">
+              <label>Game</label>
+              <input type="text" id="contentGame" placeholder="e.g. Resident Evil 4">
+            </div>
+            <div class="field">
+              <label>Source</label>
+              <select id="contentSource"></select>
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <select id="contentStatus">
+                <option>Queued</option>
+                <option>Downloading</option>
+                <option>Testing</option>
+                <option>Passed</option>
+                <option>Failed</option>
+              </select>
+            </div>
+            <div class="field grow-2">
+              <label>Notes</label>
+              <input type="text" id="contentNotes" placeholder="optional">
+            </div>
+            <button class="btn btn-primary" id="contentAddBtn">+ Add entry</button>
+          </div>
+          <div style="margin-top:12px;">
+            <button class="icon-btn" id="manageSourcesBtnContent">🎨 Manage sources</button>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h3>Paste from sheet</h3>
+          <p class="hint">Copy columns straight from your spreadsheet (tab-separated) and paste below — one row per line. Supports Game, Source, Status, Date, Notes in that order; Status/Date are optional and default to Queued / this page's day if left out. Re-pasting a Game + Source that already exists on this day updates that row instead of duplicating it.</p>
+          <div class="form-row">
+            <div class="field grow-2">
+              <textarea id="contentPasteArea" rows="3" placeholder="Palworld&#9;Steam&#9;Failed&#9;July 25&#10;Palworld&#9;Xbox&#9;Passed&#9;July 25" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
+              <p class="hint" style="margin:6px 0 0;">Pasting always replaces what's in this box — it won't stack with anything left over from before.</p>
+            </div>
+            <button class="btn btn-primary" id="contentPasteBtn">+ Add pasted rows</button>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" id="contentSearch" placeholder="Search game…">
+          <select id="contentSourceFilter"><option value="">All sources</option></select>
+          <select id="contentStatusFilter">
+            <option value="">All statuses</option>
+            <option>Queued</option><option>Downloading</option><option>Testing</option><option>Passed</option><option>Failed</option>
+          </select>
+          <select id="contentSort">
+            <option value="custom">Custom (drag to arrange)</option>
+            <option value="date_desc">Newest first</option>
+            <option value="date_asc">Oldest first</option>
+            <option value="game_asc">Game A–Z</option>
+          </select>
+        </div>
+
+        <div class="be-banner" id="contentBanner"></div>
+
+        <div class="table-wrap">
+          <div class="table-scroll">
+            <table class="game-table" id="contentTable">
+              <thead>
+                <tr id="contentHeaderRow"></tr>
+              </thead>
+              <tbody id="contentTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="be-card-list" id="contentCardList"></div>
+
+        <div class="pager">
+          <span id="contentPagerInfo">—</span>
+        </div>
+
+      </div>
+
+      <div class="backend-sidebar">
+        <div class="stat-card">
+          <div class="stat-label">Total Tests</div>
+          <div class="stat-value lime" id="contentTotal">0</div>
+          <div class="stat-sub">logged this day</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pass Rate</div>
+          <div class="stat-value green" id="contentPassRate">0%</div>
+          <div class="stat-sub" id="contentPassRateSub">— passed / — failed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Not Started</div>
+          <div class="stat-value" style="color:var(--slate);" id="contentNotStarted">0</div>
+          <div class="stat-sub">Queued tickets</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Testing</div>
+          <div class="stat-value" style="color:#3d7dc9;" id="contentTestingCount">0</div>
+          <div class="stat-sub">in progress</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Downloading</div>
+          <div class="stat-value" style="color:#c9762e;" id="contentDownloadingCount">0</div>
+          <div class="stat-sub">fetching build</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
   <footer class="foot">QA Log · data lives only in this browser (localStorage) · export a backup before switching devices</footer>
 </div>
 
@@ -773,6 +949,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
 /* ---------------- storage ---------------- */
 const LS_REG = 'qa_regular_entries_v2';
 const LS_BE  = 'qa_backend_entries_v2';
+const LS_CONTENT = 'qa_content_entries_v1';
 const LS_SET = 'qa_settings_v2';
 
 function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4); }
@@ -903,6 +1080,7 @@ function saveJSON(key, val){
 
 let regularEntries = loadJSON(LS_REG, []);
 let backendEntries = loadJSON(LS_BE, []);
+let contentEntries = loadJSON(LS_CONTENT, []);
 let settings = loadJSON(LS_SET, { monthlyTarget: 150, dailyCap: 9, knownMonths: [] });
 if(!settings.knownMonths) settings.knownMonths = [];
 if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
@@ -919,12 +1097,13 @@ let lastCommittedSnapshot = null;
 let suppressSnapshot = false;
 
 function snapshotState(){
-  return JSON.stringify({ regularEntries, backendEntries, settings });
+  return JSON.stringify({ regularEntries, backendEntries, contentEntries, settings });
 }
 function restoreState(str){
   const d = JSON.parse(str);
   regularEntries = d.regularEntries;
   backendEntries = d.backendEntries;
+  contentEntries = d.contentEntries || [];
   settings = d.settings;
 }
 function showToast(msg){
@@ -950,7 +1129,8 @@ function performUndo(){
   persistAll();
   recomputeSelectedMonth();
   recomputeSelectedBeDay();
-  renderRegular(); renderBackend(); renderTicker();
+  recomputeSelectedContentDay();
+  renderRegular(); renderBackend(); renderContent(); renderTicker();
   suppressSnapshot = false;
   showToast('↶ Undid last change');
 }
@@ -964,7 +1144,8 @@ function performRedo(){
   persistAll();
   recomputeSelectedMonth();
   recomputeSelectedBeDay();
-  renderRegular(); renderBackend(); renderTicker();
+  recomputeSelectedContentDay();
+  renderRegular(); renderBackend(); renderContent(); renderTicker();
   suppressSnapshot = false;
   showToast('↷ Redid change');
 }
@@ -989,6 +1170,7 @@ function persistAll(){
   }
   saveJSON(LS_REG, regularEntries);
   saveJSON(LS_BE, backendEntries);
+  saveJSON(LS_CONTENT, contentEntries);
   saveJSON(LS_SET, settings);
   lastCommittedSnapshot = snapshotState();
   queueAutoPush();
@@ -1030,15 +1212,20 @@ async function loadFromCloud(){
     if(data && typeof data === 'object'){
       regularEntries = Array.isArray(data.regularEntries) ? data.regularEntries : regularEntries;
       backendEntries = Array.isArray(data.backendEntries) ? data.backendEntries : backendEntries;
+      contentEntries = Array.isArray(data.contentEntries) ? data.contentEntries : contentEntries;
       if(data.settings && typeof data.settings === 'object') settings = Object.assign({}, settings, data.settings);
       if(!settings.knownMonths) settings.knownMonths = [];
       if(!settings.beKnownDays) settings.beKnownDays = [];
       if(!settings.sources || !settings.sources.length) settings.sources = SOURCE_PRESETS.map(s=>({...s}));
       if(!settings.beColumnOrder) settings.beColumnOrder = ['game','platform','status','date','notes'];
       if(!settings.beDayMeta) settings.beDayMeta = {};
+      if(!settings.contentKnownDays) settings.contentKnownDays = [];
+      if(!settings.contentDayMeta) settings.contentDayMeta = {};
+      if(!settings.contentColumnOrder) settings.contentColumnOrder = ['game','platform','status','date','notes'];
       if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
       saveJSON(LS_REG, regularEntries);
       saveJSON(LS_BE, backendEntries);
+      saveJSON(LS_CONTENT, contentEntries);
       saveJSON(LS_SET, settings);
     }
     setSyncStatus('synced');
@@ -1057,7 +1244,7 @@ async function pushToCloudNow(){
     await fetch(SCRIPT_URL, {
       method:'POST',
       headers: { 'Content-Type':'text/plain;charset=utf-8' }, // avoids CORS preflight against Apps Script
-      body: JSON.stringify({ regularEntries, backendEntries, settings })
+      body: JSON.stringify({ regularEntries, backendEntries, contentEntries, settings })
     });
     setSyncStatus('synced');
   }catch(err){
@@ -1810,6 +1997,19 @@ function populateSourceSelects(){
   const prevFilt = filtSel.value;
   filtSel.innerHTML = '<option value="">All sources</option>' + opts;
   filtSel.value = prevFilt;
+
+  const contentAddSel = document.getElementById('contentSource');
+  if(contentAddSel){
+    const prevContentAdd = contentAddSel.value;
+    contentAddSel.innerHTML = opts;
+    if([...contentAddSel.options].some(o=>o.value===prevContentAdd)) contentAddSel.value = prevContentAdd;
+  }
+  const contentFiltSel = document.getElementById('contentSourceFilter');
+  if(contentFiltSel){
+    const prevContentFilt = contentFiltSel.value;
+    contentFiltSel.innerHTML = '<option value="">All sources</option>' + opts;
+    contentFiltSel.value = prevContentFilt;
+  }
 }
 
 document.getElementById('manageSourcesBtn').addEventListener('click', ()=>{
@@ -1829,6 +2029,7 @@ document.getElementById('addSourceBtn').addEventListener('click', ()=>{
   renderSourceModalList();
   populateSourceSelects();
   renderBackend();
+  renderContent();
 });
 function renderSourceModalList(){
   const wrap = document.getElementById('sourceModalList');
@@ -1847,6 +2048,7 @@ function renderSourceModalList(){
       renderSourceModalList();
       populateSourceSelects();
       renderBackend();
+      renderContent();
     });
   });
 }
@@ -2272,6 +2474,458 @@ function deleteBackendEntry(id){
 }
 
 /* =========================================================
+   CONTENT TESTING TAB — Game / Platform / Status / Date / Notes
+   Mirrors Backend Testing's architecture; shares sources, statuses,
+   and date/status parsing helpers, but keeps fully independent data,
+   day-pages, and column order.
+   ========================================================= */
+if(!settings.contentKnownDays) settings.contentKnownDays = [];
+if(!settings.contentDayMeta) settings.contentDayMeta = {};
+if(!settings.contentColumnOrder) settings.contentColumnOrder = ['game','platform','status','date','notes'];
+
+function getContentDayMeta(date){
+  if(!settings.contentDayMeta[date]){
+    settings.contentDayMeta[date] = { label: 'CONTENT TESTING', dateLabel: fmtDayPageTitle(date) };
+  }
+  return settings.contentDayMeta[date];
+}
+function getAllContentDays(){
+  const set = new Set(settings.contentKnownDays||[]);
+  contentEntries.forEach(e=> e.date && set.add(e.date));
+  return [...set].sort();
+}
+function ensureContentDayKnown(iso){
+  if(!iso) return;
+  if(!settings.contentKnownDays.includes(iso)){
+    settings.contentKnownDays.push(iso);
+    settings.contentKnownDays.sort();
+    persistAll();
+  }
+}
+
+let selectedContentDay = null;
+function recomputeSelectedContentDay(){
+  const today = fmtISO(new Date());
+  if(!settings.contentKnownDays.length) settings.contentKnownDays = [today];
+  const all = getAllContentDays();
+  selectedContentDay = all.includes(today) ? today : all[all.length-1];
+  persistAll();
+  document.getElementById('contentDate').value = selectedContentDay;
+}
+recomputeSelectedContentDay();
+
+function populateContentDaySelect(){
+  const sel = document.getElementById('contentDaySelect');
+  const days = getAllContentDays();
+  sel.innerHTML = days.map(d=>`<option value="${d}" ${d===selectedContentDay?'selected':''}>${fmtDayPageLabel(d)}</option>`).join('');
+}
+document.getElementById('contentDaySelect').addEventListener('change', (e)=>{
+  selectedContentDay = e.target.value;
+  document.getElementById('contentDate').value = selectedContentDay;
+  renderContent();
+});
+document.getElementById('addContentDayBtn').addEventListener('click', ()=>{
+  document.getElementById('contentDayPicker').value = selectedContentDay;
+  document.getElementById('contentDayModalOverlay').classList.remove('hidden');
+});
+document.getElementById('contentDayModalCancel').addEventListener('click', ()=> document.getElementById('contentDayModalOverlay').classList.add('hidden'));
+document.getElementById('contentDayModalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='contentDayModalOverlay') e.currentTarget.classList.add('hidden'); });
+document.getElementById('contentDayModalAdd').addEventListener('click', ()=>{
+  const val = document.getElementById('contentDayPicker').value;
+  if(!val){ alert('Pick a date first.'); return; }
+  ensureContentDayKnown(val);
+  selectedContentDay = val;
+  document.getElementById('contentDate').value = selectedContentDay;
+  document.getElementById('contentDayModalOverlay').classList.add('hidden');
+  renderContent();
+});
+document.getElementById('deleteContentDayBtn').addEventListener('click', ()=>{
+  if(!confirm('Remove the ' + fmtDayPageTitle(selectedContentDay) + ' page? (only allowed while it has no entries)')) return;
+  settings.contentKnownDays = settings.contentKnownDays.filter(d=>d!==selectedContentDay);
+  delete settings.contentDayMeta[selectedContentDay];
+  persistAll();
+  const all = getAllContentDays();
+  selectedContentDay = all.length ? all[all.length-1] : fmtISO(new Date());
+  ensureContentDayKnown(selectedContentDay);
+  document.getElementById('contentDate').value = selectedContentDay;
+  renderContent();
+});
+document.getElementById('clearContentDayBtn').addEventListener('click', ()=>{
+  const dayEntries = getContentDayEntries();
+  if(dayEntries.length === 0){ alert('This day page is already empty.'); return; }
+  const title = fmtDayPageTitle(selectedContentDay);
+  const step1 = confirm(`This will permanently delete all ${dayEntries.length} row(s) on ${title}. This cannot be undone. Continue?`);
+  if(!step1) return;
+  const typed = prompt(`To confirm, type CLEAR (all caps) to wipe ${dayEntries.length} row(s) from ${title}:`);
+  if(typed !== 'CLEAR'){ alert('Did not match "CLEAR" — nothing was deleted.'); return; }
+  contentEntries = contentEntries.filter(e=> e.date !== selectedContentDay);
+  persistAll();
+  renderContent();
+  renderTicker();
+});
+
+document.getElementById('manageSourcesBtnContent').addEventListener('click', ()=>{
+  renderSourceModalList();
+  document.getElementById('sourceModalOverlay').classList.remove('hidden');
+});
+
+document.getElementById('contentAddBtn').addEventListener('click', ()=>{
+  const date = document.getElementById('contentDate').value || selectedContentDay;
+  const game = document.getElementById('contentGame').value.trim();
+  const source = document.getElementById('contentSource').value;
+  const status = document.getElementById('contentStatus').value;
+  const notes = document.getElementById('contentNotes').value.trim();
+  if(!game){ alert('Please enter a game name.'); return; }
+  contentEntries.push({ id: uid(), date: date || null, game, platform: source, status, notes });
+  persistAll();
+  if(date){ ensureContentDayKnown(date); selectedContentDay = date; document.getElementById('contentDate').value = selectedContentDay; }
+  document.getElementById('contentGame').value='';
+  document.getElementById('contentNotes').value='';
+  renderContent(); renderTicker();
+});
+
+document.getElementById('contentPasteArea').addEventListener('paste', (ev)=>{
+  ev.preventDefault();
+  const text = (ev.clipboardData || window.clipboardData).getData('text');
+  ev.target.value = text;
+});
+
+document.getElementById('contentPasteBtn').addEventListener('click', ()=>{
+  const raw = document.getElementById('contentPasteArea').value;
+  if(!raw.trim()){ return; }
+  const pageDefaultDate = selectedContentDay || fmtISO(new Date());
+  let addedCount = 0, updatedCount = 0;
+  raw.split(/\r?\n/).forEach(line=>{
+    if(!line.trim()) return;
+    let parts = line.split('\t');
+    if(parts.length < 2) parts = line.split(/ {2,}/);
+    const game = (parts[0]||'').trim();
+    const source = (parts[1]||'').trim();
+    if(!game) return;
+    if(source) ensureSourceRegistered(source);
+    const statusParsed = normalizeStatus(parts[2]);
+    const dateParsed = parseFlexibleDate(parts[3]);
+    const notesProvided = parts[4] !== undefined;
+    const notes = notesProvided ? parts[4].trim() : '';
+    const date = dateParsed || pageDefaultDate;
+
+    const existing = contentEntries.find(e=>
+      e.date === date &&
+      (e.game||'').trim().toLowerCase() === game.toLowerCase() &&
+      (e.platform||'').trim().toLowerCase() === source.toLowerCase()
+    );
+
+    if(existing){
+      if(statusParsed) existing.status = statusParsed;
+      if(notesProvided) existing.notes = notes;
+      updatedCount++;
+    } else {
+      contentEntries.push({ id: uid(), date, game, platform: source, status: statusParsed || 'Queued', notes });
+      addedCount++;
+    }
+    ensureContentDayKnown(date);
+  });
+  if(addedCount === 0 && updatedCount === 0){ alert('Could not find any Game rows in that paste.'); return; }
+  persistAll();
+  document.getElementById('contentPasteArea').value = '';
+  populateSourceSelects();
+  renderContent(); renderTicker();
+  const btn = document.getElementById('contentPasteBtn');
+  const original = btn.textContent;
+  const parts = [];
+  if(addedCount) parts.push(`${addedCount} added`);
+  if(updatedCount) parts.push(`${updatedCount} updated`);
+  btn.textContent = `${parts.join(', ')} ✓`;
+  setTimeout(()=>{ btn.textContent = original; }, 2200);
+});
+
+['contentSearch','contentSourceFilter','contentStatusFilter','contentSort'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', ()=> renderContent());
+  document.getElementById(id).addEventListener('change', ()=> renderContent());
+});
+
+function getFilteredContent(){
+  const q = document.getElementById('contentSearch').value.trim().toLowerCase();
+  const pf = document.getElementById('contentSourceFilter').value;
+  const sf = document.getElementById('contentStatusFilter').value;
+  const sort = document.getElementById('contentSort').value;
+
+  let list = contentEntries.filter(e=>{
+    if(e.date !== selectedContentDay) return false;
+    if(q && !(e.game||'').toLowerCase().includes(q)) return false;
+    if(pf && e.platform !== pf) return false;
+    if(sf && e.status !== sf) return false;
+    return true;
+  });
+
+  if(sort === 'custom') return list;
+  list = list.slice().sort((a,b)=>{
+    if(sort === 'game_asc') return (a.game||'').localeCompare(b.game||'');
+    const da = a.date || '0000-00-00', db = b.date || '0000-00-00';
+    if(sort === 'date_asc') return da.localeCompare(db);
+    return db.localeCompare(da);
+  });
+  return list;
+}
+function getContentDayEntries(){ return contentEntries.filter(e=> e.date === selectedContentDay); }
+
+function renderContentHeader(){
+  const tr = document.getElementById('contentHeaderRow');
+  const cols = settings.contentColumnOrder.map(key=>`<th data-col="${key}">${COLUMN_DEFS[key].label}</th>`).join('');
+  tr.innerHTML = `<th style="width:28px;"></th>${cols}<th></th>`;
+
+  tr.querySelectorAll('th[data-col]').forEach(th=>{
+    th.classList.add('col-draggable');
+    th.addEventListener('pointerdown', (ev)=>{
+      if(ev.target.closest('.col-resize-handle')) return;
+      ev.preventDefault();
+      if(th.setPointerCapture){ try{ th.setPointerCapture(ev.pointerId); }catch(e){} }
+      th.classList.add('col-dragging');
+      const draggedKey = th.dataset.col;
+
+      function othersExceptDragging(){
+        return [...tr.querySelectorAll('th[data-col]')].filter(t=>t!==th);
+      }
+      function findThAt(clientX){
+        for(const t of othersExceptDragging()){
+          const rect = t.getBoundingClientRect();
+          if(clientX >= rect.left && clientX <= rect.right) return t;
+        }
+        return null;
+      }
+      function onMove(e){
+        othersExceptDragging().forEach(t=> t.classList.remove('col-drop-target'));
+        const target = findThAt(e.clientX);
+        if(target) target.classList.add('col-drop-target');
+      }
+      function onUp(e){
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        document.removeEventListener('pointercancel', onUp);
+        th.classList.remove('col-dragging');
+        const target = findThAt(e.clientX);
+        othersExceptDragging().forEach(t=> t.classList.remove('col-drop-target'));
+        if(target){
+          const targetKey = target.dataset.col;
+          if(targetKey && targetKey !== draggedKey){
+            const order = settings.contentColumnOrder;
+            const from = order.indexOf(draggedKey), to = order.indexOf(targetKey);
+            order.splice(from,1);
+            order.splice(to,0,draggedKey);
+            persistAll();
+            renderContent();
+          }
+        }
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+      document.addEventListener('pointercancel', onUp);
+    });
+  });
+}
+
+function renderContentBanner(){
+  const meta = getContentDayMeta(selectedContentDay);
+  const el = document.getElementById('contentBanner');
+  el.innerHTML = `
+    <div class="be-banner-col" data-banner-field="label">${escapeHtml(meta.label)}</div>
+    <div class="be-banner-col" data-banner-field="dateLabel">${escapeHtml(meta.dateLabel)}</div>
+  `;
+  el.querySelectorAll('[data-banner-field]').forEach(div=>{
+    div.title = 'Click to edit';
+    div.addEventListener('click', ()=>{
+      const field = div.dataset.bannerField;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = meta[field];
+      div.textContent = '';
+      div.appendChild(input);
+      input.focus();
+      input.select();
+      let done = false;
+      const commit = ()=>{
+        if(done) return;
+        done = true;
+        const fallback = field === 'label' ? 'CONTENT TESTING' : fmtDayPageTitle(selectedContentDay);
+        meta[field] = input.value.trim() || fallback;
+        persistAll();
+        renderContentBanner();
+      };
+      input.addEventListener('blur', commit);
+      input.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter'){ e.preventDefault(); input.blur(); }
+        else if(e.key === 'Escape'){ done = true; renderContentBanner(); }
+      });
+    });
+  });
+}
+
+function renderContent(){
+  ensureContentDayKnown(selectedContentDay);
+  populateContentDaySelect();
+  document.getElementById('contentDayTitleDisplay').textContent = fmtDayPageTitle(selectedContentDay);
+  renderContentBanner();
+
+  populateSourceSelects();
+  renderContentHeader();
+  setupResizableTable(document.getElementById('contentTable'), 'content', [28, ...settings.contentColumnOrder.map(()=>150), 90]);
+
+  const filtered = getFilteredContent();
+  const total = filtered.length;
+  const pageItems = filtered;
+
+  function reorderContentEntries(draggedId, targetId){
+    const from = contentEntries.findIndex(x=>x.id===draggedId);
+    const to = contentEntries.findIndex(x=>x.id===targetId);
+    if(from===-1 || to===-1) return;
+    const [moved] = contentEntries.splice(from,1);
+    contentEntries.splice(to,0,moved);
+    persistAll();
+    document.getElementById('contentSort').value = 'custom';
+    renderContent();
+  }
+
+  const tbody = document.getElementById('contentTbody');
+  const colCount = settings.contentColumnOrder.length + 2;
+  if(pageItems.length===0){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="${colCount}">No matching entries.</td></tr>`;
+  } else {
+    tbody.innerHTML = pageItems.map(e=>{
+      const cells = settings.contentColumnOrder.map(col=> buildBackendCell(col, e)).join('');
+      return `<tr data-row-id="${e.id}">
+        <td class="drag-handle-cell" title="Drag to reorder">⋮⋮</td>
+        ${cells}
+        <td><div class="row-actions"><button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button></div></td>
+      </tr>`;
+    }).join('');
+
+    tbody.querySelectorAll('tr[data-row-id]').forEach(tr=>{
+      const id = tr.dataset.rowId;
+      tr.querySelectorAll('[data-field]').forEach(el=>{
+        el.addEventListener('change', ()=> commitContentCell(id, el.dataset.field, el.value, el));
+      });
+      tr.querySelectorAll('[data-field="platform"]').forEach(sel=>{
+        sel.addEventListener('change', ()=>{ sel.style.backgroundColor = getSourceTheme(sel.value).bg; sel.style.color = getSourceTheme(sel.value).text; });
+      });
+      const gameCell = tr.querySelector('[data-game-id]');
+      if(gameCell){
+        const entry = contentEntries.find(x=>x.id===id);
+        wireGameCell(gameCell, entry ? entry.game : '', (newVal)=>{
+          if(newVal !== null && newVal !== '') commitContentCell(id, 'game', newVal, null);
+          renderContent();
+        });
+      }
+    });
+    tbody.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=> deleteContentEntry(b.dataset.del)));
+    makeRowsDraggable(tbody, 'tr[data-row-id]', 'data-row-id', reorderContentEntries);
+  }
+
+  const cardList = document.getElementById('contentCardList');
+  if(pageItems.length===0){
+    cardList.innerHTML = '<div class="empty-row" style="border:1px solid var(--border);border-radius:var(--radius);">No matching entries.</div>';
+  } else {
+    const fieldLabels = { platform:'Source', status:'Status', date:'Date', notes:'Notes' };
+    cardList.innerHTML = pageItems.map(e=>{
+      const rows = settings.contentColumnOrder.filter(col=>col!=='game').map(col=>
+        `<div class="be-card-row"><span class="be-card-label">${fieldLabels[col]||col}</span>${buildBackendFieldControl(col, e)}</div>`
+      ).join('');
+      return `<div class="be-card" data-card-id="${e.id}">
+        <div class="be-card-header">
+          <span class="drag-handle-cell" title="Drag to reorder">⋮⋮</span>
+          <div class="game-cell" data-game-id="card-${e.id}">${escapeHtml(e.game)}</div>
+          <button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button>
+        </div>
+        ${rows}
+      </div>`;
+    }).join('');
+
+    cardList.querySelectorAll('.be-card').forEach(card=>{
+      const id = card.dataset.cardId;
+      card.querySelectorAll('[data-field]').forEach(el=>{
+        el.addEventListener('change', ()=> commitContentCell(id, el.dataset.field, el.value, el));
+      });
+      card.querySelectorAll('[data-field="platform"]').forEach(sel=>{
+        sel.addEventListener('change', ()=>{ sel.style.backgroundColor = getSourceTheme(sel.value).bg; sel.style.color = getSourceTheme(sel.value).text; });
+      });
+      const gameCell = card.querySelector('[data-game-id]');
+      if(gameCell){
+        const entry = contentEntries.find(x=>x.id===id);
+        wireGameCell(gameCell, entry ? entry.game : '', (newVal)=>{
+          if(newVal !== null && newVal !== '') commitContentCell(id, 'game', newVal, null);
+          renderContent();
+        });
+      }
+    });
+    cardList.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=> deleteContentEntry(b.dataset.del)));
+    makeRowsDraggable(cardList, '.be-card', 'data-card-id', reorderContentEntries);
+  }
+
+  document.getElementById('contentPagerInfo').textContent =
+    total===0 ? 'No entries' : `${total} entr${total===1?'y':'ies'} — scroll to see more`;
+
+  const dayEntries = getContentDayEntries();
+  const passed = dayEntries.filter(e=>e.status==='Passed').length;
+  const failed = dayEntries.filter(e=>e.status==='Failed').length;
+  const notStarted = dayEntries.filter(e=>e.status==='Queued').length;
+  const testingCount = dayEntries.filter(e=>e.status==='Testing').length;
+  const downloadingCount = dayEntries.filter(e=>e.status==='Downloading').length;
+  const rated = passed+failed;
+  document.getElementById('contentTotal').textContent = dayEntries.length;
+  document.getElementById('contentPassRate').textContent = rated ? Math.round(passed/rated*100)+'%' : '—';
+  document.getElementById('contentPassRateSub').textContent = `${passed} passed / ${failed} failed`;
+  document.getElementById('contentNotStarted').textContent = notStarted;
+  document.getElementById('contentTestingCount').textContent = testingCount;
+  document.getElementById('contentDownloadingCount').textContent = downloadingCount;
+
+  const delBtn = document.getElementById('deleteContentDayBtn');
+  const allContentDays = getAllContentDays();
+  if(dayEntries.length===0 && allContentDays.length>1) delBtn.classList.remove('hidden'); else delBtn.classList.add('hidden');
+  document.getElementById('contentDayInfo').textContent = dayEntries.length + ' entr' + (dayEntries.length===1?'y':'ies') + ' on this page';
+}
+
+function commitContentCell(id, field, value, el){
+  const e = contentEntries.find(x=>x.id===id);
+  if(!e) return;
+  if(field === 'date'){
+    e.date = value || null;
+    persistAll();
+    renderTicker();
+    if(e.date) ensureContentDayKnown(e.date);
+    renderContent();
+    return;
+  }
+  else if(field === 'status'){
+    e.status = value;
+    if(el) el.style.backgroundColor = STATUS_COLORS[value] || STATUS_COLORS.Queued;
+  }
+  else { e[field] = value.trim(); }
+  persistAll();
+  renderTicker();
+  refreshContentMeta();
+}
+function refreshContentMeta(){
+  const dayEntries = getContentDayEntries();
+  const passed = dayEntries.filter(e=>e.status==='Passed').length;
+  const failed = dayEntries.filter(e=>e.status==='Failed').length;
+  const notStarted = dayEntries.filter(e=>e.status==='Queued').length;
+  const testingCount = dayEntries.filter(e=>e.status==='Testing').length;
+  const downloadingCount = dayEntries.filter(e=>e.status==='Downloading').length;
+  const rated = passed+failed;
+  document.getElementById('contentTotal').textContent = dayEntries.length;
+  document.getElementById('contentPassRate').textContent = rated ? Math.round(passed/rated*100)+'%' : '—';
+  document.getElementById('contentPassRateSub').textContent = `${passed} passed / ${failed} failed`;
+  document.getElementById('contentNotStarted').textContent = notStarted;
+  document.getElementById('contentTestingCount').textContent = testingCount;
+  document.getElementById('contentDownloadingCount').textContent = downloadingCount;
+  document.getElementById('contentDayInfo').textContent = dayEntries.length + ' entr' + (dayEntries.length===1?'y':'ies') + ' on this page';
+}
+function deleteContentEntry(id){
+  if(!confirm('Delete this content test entry?')) return;
+  contentEntries = contentEntries.filter(x=>x.id!==id);
+  persistAll(); renderContent(); renderTicker();
+}
+
+/* =========================================================
    TICKER
    ========================================================= */
 function renderTicker(){
@@ -2514,7 +3168,7 @@ document.getElementById('btnSyncNow').addEventListener('click', async ()=>{
 
 /* ---------------- export / import / reset ---------------- */
 document.getElementById('btnExport').addEventListener('click', ()=>{
-  const payload = { regularEntries, backendEntries, settings, exportedAt: new Date().toISOString() };
+  const payload = { regularEntries, backendEntries, contentEntries, settings, exportedAt: new Date().toISOString() };
   const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -2533,6 +3187,7 @@ document.getElementById('importFile').addEventListener('change', (ev)=>{
       if(!confirm('Import will replace your current data with this backup. Continue?')) return;
       regularEntries = (data.regularEntries||[]).map(e=> e.id ? e : {...e, id:uid()});
       backendEntries = (data.backendEntries||[]).map(e=> e.id ? e : {...e, id:uid()});
+      contentEntries = (data.contentEntries||[]).map(e=> e.id ? e : {...e, id:uid()});
       if(data.settings) settings = data.settings;
       if(!settings.knownMonths) settings.knownMonths = [];
       if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
@@ -2540,6 +3195,9 @@ document.getElementById('importFile').addEventListener('change', (ev)=>{
       if(!settings.beDayMeta) settings.beDayMeta = {};
       if(!settings.sources || !settings.sources.length) settings.sources = SOURCE_PRESETS.map(s=>({...s}));
       if(!settings.beColumnOrder) settings.beColumnOrder = ['game','platform','status','date','notes'];
+      if(!settings.contentKnownDays) settings.contentKnownDays = [];
+      if(!settings.contentDayMeta) settings.contentDayMeta = {};
+      if(!settings.contentColumnOrder) settings.contentColumnOrder = ['game','platform','status','date','notes'];
       if(!settings.references) settings.references = [];
       persistAll();
       document.getElementById('regTargetInput').value = settings.monthlyTarget;
@@ -2550,7 +3208,11 @@ document.getElementById('importFile').addEventListener('change', (ev)=>{
       selectedBeDay = allBeDays.includes(today) ? today : (allBeDays[allBeDays.length-1] || today);
       ensureBeDayKnown(selectedBeDay);
       document.getElementById('beDate').value = selectedBeDay;
-      renderRegular(); renderBackend(); renderTicker();
+      const allContentDays = getAllContentDays();
+      selectedContentDay = allContentDays.includes(today) ? today : (allContentDays[allContentDays.length-1] || today);
+      ensureContentDayKnown(selectedContentDay);
+      document.getElementById('contentDate').value = selectedContentDay;
+      renderRegular(); renderBackend(); renderContent(); renderTicker();
       alert('Import complete.');
     }catch(e){ alert('Could not read that file — is it a valid QA Log backup JSON?'); }
   };
@@ -2559,13 +3221,14 @@ document.getElementById('importFile').addEventListener('change', (ev)=>{
 });
 document.getElementById('btnReset').addEventListener('click', ()=>{
   if(!confirm('This will permanently erase all data stored in this browser. Export a backup first if you want to keep it. Continue?')) return;
-  localStorage.removeItem(LS_REG); localStorage.removeItem(LS_BE); localStorage.removeItem(LS_SET);
+  localStorage.removeItem(LS_REG); localStorage.removeItem(LS_BE); localStorage.removeItem(LS_CONTENT); localStorage.removeItem(LS_SET);
   location.reload();
 });
 
 /* ---------------- init ---------------- */
 renderRegular();
 renderBackend();
+renderContent();
 renderTicker();
 setSyncStatus(syncEnabled ? 'syncing' : 'offline');
 
@@ -2574,8 +3237,10 @@ if(syncEnabled){
     if(ok){
       recomputeSelectedMonth();
       recomputeSelectedBeDay();
+      recomputeSelectedContentDay();
       renderRegular();
       renderBackend();
+      renderContent();
       renderTicker();
     }
     appInitializing = false; // safe to auto-push from here on
@@ -2594,6 +3259,7 @@ window.addEventListener('resize', ()=>{
       lastMobileState = nowMobile;
       renderRegular();
       renderBackend();
+      renderContent();
     }
   }, 200);
 });
