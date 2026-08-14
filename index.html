@@ -232,6 +232,7 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
 .mini-btn:hover{color:var(--text);border-color:#3a4025;}
 .mini-btn.del:hover{color:var(--red);border-color:rgba(255,92,114,0.4);}
 .empty-row td{text-align:center;color:var(--text-faint);font-size:12.5px;padding:18px;font-style:italic;}
+div.empty-row{text-align:center;color:var(--text-faint);font-size:12.5px;padding:18px;font-style:italic;background:var(--card);}
 .quick-add-row td{background:rgba(var(--lime-rgb),0.02);padding:8px 16px;}
 .quick-add-row .qa-game:focus, .quick-add-row .qa-platform:focus, .quick-add-row .qa-points:focus{border-color:var(--lime);}
 
@@ -1016,15 +1017,20 @@ function makeRowsDraggable(tbody, rowSelector, idAttr, onReorder){
 }
 
 function isMobileViewport(){ return window.innerWidth <= 640; }
+function isTabletViewport(){ return window.innerWidth > 640 && window.innerWidth <= 1024; }
 
 function setupResizableTable(table, storeKey, defaultWidths){
   const ths = table.querySelectorAll('thead th');
   if(!ths.length) return;
   const mobile = isMobileViewport();
-  const effectiveKey = storeKey + (mobile ? '_mobile' : '');
-  const effectiveDefaults = mobile
-    ? defaultWidths.map((w,i)=> i===0 ? 24 : (i===1 ? 190 : w)) // handle stays tiny, frozen 2nd column (Game) gets comfortable room, the rest keep normal width and scroll freely
-    : defaultWidths;
+  const tablet = isTabletViewport();
+  const effectiveKey = storeKey + (mobile ? '_mobile' : (tablet ? '_tablet' : ''));
+  let effectiveDefaults = defaultWidths;
+  if(mobile){
+    effectiveDefaults = defaultWidths.map((w,i)=> i===0 ? 24 : (i===1 ? 190 : w)); // handle stays tiny, frozen 2nd column (Game) gets comfortable room, the rest keep normal width and scroll freely
+  } else if(tablet){
+    effectiveDefaults = defaultWidths.map((w,i)=> i===0 ? 26 : Math.max(95, Math.round(w*0.72))); // moderate shrink so tablets need far less horizontal scroll
+  }
 
   let widths = colWidthsStore[effectiveKey];
   if(!widths || widths.length !== ths.length) widths = effectiveDefaults.slice();
@@ -3251,12 +3257,15 @@ if(syncEnabled){
 
 let resizeRerenderTimer = null;
 let lastMobileState = isMobileViewport();
+let lastTabletState = isTabletViewport();
 window.addEventListener('resize', ()=>{
   clearTimeout(resizeRerenderTimer);
   resizeRerenderTimer = setTimeout(()=>{
     const nowMobile = isMobileViewport();
-    if(nowMobile !== lastMobileState){
+    const nowTablet = isTabletViewport();
+    if(nowMobile !== lastMobileState || nowTablet !== lastTabletState){
       lastMobileState = nowMobile;
+      lastTabletState = nowTablet;
       renderRegular();
       renderBackend();
       renderContent();
