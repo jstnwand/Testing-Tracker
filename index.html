@@ -30,7 +30,7 @@
   --sans:'Inter', sans-serif;
   --radius:14px;
 }
-/* Content Testing gets its own distinct accent — same components, different personality */
+/* Copywrite Testing gets its own distinct accent — same components, different personality */
 #panel-content{
   --lime:#b565f5;
   --lime-rgb:181,101,245;
@@ -495,7 +495,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
   <div class="tabs">
     <button class="tab-btn active" data-tab="regular">Regular Testing</button>
     <button class="tab-btn" data-tab="backend">Backend Testing</button>
-    <button class="tab-btn" data-tab="content">Content Testing</button>
+    <button class="tab-btn" data-tab="content">Copywrite Testing</button>
   </div>
 
   <!-- ============ REGULAR TESTING ============ -->
@@ -793,7 +793,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
 
     <div class="month-header">
       <div>
-        <div class="month-eyebrow">Content Testing</div>
+        <div class="month-eyebrow">Copywrite Testing</div>
         <h2 class="month-title" id="contentDayTitleDisplay">—</h2>
       </div>
       <div class="month-controls">
@@ -826,8 +826,12 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
       <div class="backend-main">
 
         <div class="form-card">
-          <h3>Log a content test</h3>
+          <h3>Log a copywrite test</h3>
           <div class="form-row">
+            <div class="field">
+              <label>Ticket ID</label>
+              <input type="text" id="contentTicketId" placeholder="e.g. 49755" style="font-family:var(--mono);">
+            </div>
             <div class="field">
               <label>Date</label>
               <input type="date" id="contentDate">
@@ -863,10 +867,10 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
 
         <div class="form-card">
           <h3>Paste from sheet</h3>
-          <p class="hint">Copy columns straight from your spreadsheet (tab-separated) and paste below — one row per line. Supports Game, Source, Status, Date, Notes in that order; Status/Date are optional and default to Queued / this page's day if left out. Re-pasting a Game + Source that already exists on this day updates that row instead of duplicating it.</p>
+          <p class="hint">Paste a ticket dump in <code>ID</code> / <code>Game</code> / <code>Platform</code> label-value format (one field per line) and it'll match/update by Ticket ID automatically. Tab-separated Game/Source/Status/Date/Notes and plain "Game (Platform)" lines also still work, defaulting to Queued / this page's day if left out.</p>
           <div class="form-row">
             <div class="field grow-2">
-              <textarea id="contentPasteArea" rows="3" placeholder="Palworld&#9;Steam&#9;Failed&#9;July 25&#10;Palworld&#9;Xbox&#9;Passed&#9;July 25" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
+              <textarea id="contentPasteArea" rows="6" placeholder="ID&#10;49755&#10;Game&#10;Castle Crashers (Steam, STiNGERR)&#10;Platform&#10;Steam" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
               <p class="hint" style="margin:6px 0 0;">Pasting always replaces what's in this box — it won't stack with anything left over from before.</p>
             </div>
             <button class="btn btn-primary" id="contentPasteBtn">+ Add pasted rows</button>
@@ -1227,7 +1231,7 @@ async function loadFromCloud(){
       if(!settings.beDayMeta) settings.beDayMeta = {};
       if(!settings.contentKnownDays) settings.contentKnownDays = [];
       if(!settings.contentDayMeta) settings.contentDayMeta = {};
-      if(!settings.contentColumnOrder) settings.contentColumnOrder = ['game','platform','status','date','notes'];
+      if(!settings.contentColumnOrder) settings.contentColumnOrder = ['ticketId','game','platform','status','date','notes'];
       if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
       saveJSON(LS_REG, regularEntries);
       saveJSON(LS_BE, backendEntries);
@@ -1952,6 +1956,7 @@ if(!settings.sources || !settings.sources.length){ settings.sources = SOURCE_PRE
 if(!settings.beColumnOrder) settings.beColumnOrder = ['game','platform','status','date','notes'];
 
 const COLUMN_DEFS = {
+  ticketId: { label: 'ID' },
   game:     { label: 'Game' },
   platform: { label: 'Source' },
   status:   { label: 'Status' },
@@ -2248,6 +2253,9 @@ function renderBackendHeader(){
 }
 
 function buildBackendFieldControl(col, e){
+  if(col === 'ticketId'){
+    return `<input class="cell-input" data-field="ticketId" value="${escAttr(e.ticketId||'')}" placeholder="—" style="font-family:var(--mono);">`;
+  }
   if(col === 'game'){
     return `<div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game)}</div>`;
   }
@@ -2480,18 +2488,19 @@ function deleteBackendEntry(id){
 }
 
 /* =========================================================
-   CONTENT TESTING TAB — Game / Platform / Status / Date / Notes
+   COPYWRITE TESTING TAB — ID / Game / Platform / Status / Date / Notes
    Mirrors Backend Testing's architecture; shares sources, statuses,
    and date/status parsing helpers, but keeps fully independent data,
    day-pages, and column order.
    ========================================================= */
 if(!settings.contentKnownDays) settings.contentKnownDays = [];
 if(!settings.contentDayMeta) settings.contentDayMeta = {};
-if(!settings.contentColumnOrder) settings.contentColumnOrder = ['game','platform','status','date','notes'];
+if(!settings.contentColumnOrder) settings.contentColumnOrder = ['ticketId','game','platform','status','date','notes'];
+if(!settings.contentColumnOrder.includes('ticketId')) settings.contentColumnOrder.unshift('ticketId');
 
 function getContentDayMeta(date){
   if(!settings.contentDayMeta[date]){
-    settings.contentDayMeta[date] = { label: 'CONTENT TESTING', dateLabel: fmtDayPageTitle(date) };
+    settings.contentDayMeta[date] = { label: 'COPYWRITE TESTING', dateLabel: fmtDayPageTitle(date) };
   }
   return settings.contentDayMeta[date];
 }
@@ -2576,15 +2585,17 @@ document.getElementById('manageSourcesBtnContent').addEventListener('click', ()=
 });
 
 document.getElementById('contentAddBtn').addEventListener('click', ()=>{
+  const ticketId = document.getElementById('contentTicketId').value.trim();
   const date = document.getElementById('contentDate').value || selectedContentDay;
   const game = document.getElementById('contentGame').value.trim();
   const source = document.getElementById('contentSource').value;
   const status = document.getElementById('contentStatus').value;
   const notes = document.getElementById('contentNotes').value.trim();
   if(!game){ alert('Please enter a game name.'); return; }
-  contentEntries.push({ id: uid(), date: date || null, game, platform: source, status, notes });
+  contentEntries.push({ id: uid(), ticketId, date: date || null, game, platform: source, status, notes });
   persistAll();
   if(date){ ensureContentDayKnown(date); selectedContentDay = date; document.getElementById('contentDate').value = selectedContentDay; }
+  document.getElementById('contentTicketId').value='';
   document.getElementById('contentGame').value='';
   document.getElementById('contentNotes').value='';
   renderContent(); renderTicker();
@@ -2596,37 +2607,94 @@ document.getElementById('contentPasteArea').addEventListener('paste', (ev)=>{
   ev.target.value = text;
 });
 
+function parseCopyrightPasteBlob(raw, defaultDate){
+  const lines = raw.split(/\r?\n/);
+  const hasIdMarker = lines.some(l => /^\s*id\s*$/i.test(l));
+
+  if(!hasIdMarker){
+    // Simple mode: one entry per non-blank line — tab-separated
+    // (Game/Platform/Status/Date/Notes) or "Game Name (Platform)".
+    return lines.filter(l=>l.trim()).map(line=>{
+      if(line.includes('\t')){
+        const parts = line.split('\t');
+        return {
+          ticketId: '',
+          game: (parts[0]||'').trim(),
+          platform: (parts[1]||'').trim(),
+          status: normalizeStatus(parts[2]) || 'Queued',
+          date: parseFlexibleDate(parts[3]) || defaultDate,
+          notes: parts[4] !== undefined ? parts[4].trim() : ''
+        };
+      }
+      const m = line.trim().match(/^(.*)\s+\(([^)]+)\)\s*$/);
+      return {
+        ticketId: '',
+        game: m ? m[1].trim() : line.trim(),
+        platform: m ? m[2].trim() : '',
+        status: 'Queued', date: defaultDate, notes: ''
+      };
+    });
+  }
+
+  // Label/value form-dump mode (e.g. pasted from a workflow/ticket export):
+  // each "ID" label line starts a new record.
+  const records = [];
+  let block = [];
+  for(let i=0;i<lines.length;i++){
+    const line = lines[i];
+    if(!line.trim()) continue;
+    if(/^\s*id\s*$/i.test(line) && block.length){
+      records.push(block);
+      block = [];
+    }
+    block.push(line);
+  }
+  if(block.length) records.push(block);
+
+  return records.map(blockLines=>{
+    let ticketId = '', game = '', platform = '';
+    for(let i=0;i<blockLines.length-1;i++){
+      const label = blockLines[i].trim().toLowerCase();
+      const value = blockLines[i+1].trim();
+      if(label === 'id') ticketId = value;
+      else if(label === 'game'){
+        const m = value.match(/^(.*)\s+\([^)]*\)\s*$/); // strip trailing "(Steam, Whatever)" — Platform is given separately
+        game = m ? m[1].trim() : value;
+      }
+      else if(label === 'platform') platform = value;
+    }
+    return { ticketId, game, platform, status: 'Queued', date: defaultDate, notes: '' };
+  });
+}
+
 document.getElementById('contentPasteBtn').addEventListener('click', ()=>{
   const raw = document.getElementById('contentPasteArea').value;
   if(!raw.trim()){ return; }
   const pageDefaultDate = selectedContentDay || fmtISO(new Date());
+  const parsed = parseCopyrightPasteBlob(raw, pageDefaultDate);
   let addedCount = 0, updatedCount = 0;
-  raw.split(/\r?\n/).forEach(line=>{
-    if(!line.trim()) return;
-    let parts = line.split('\t');
-    if(parts.length < 2) parts = line.split(/ {2,}/);
-    const game = (parts[0]||'').trim();
-    const source = (parts[1]||'').trim();
-    if(!game) return;
-    if(source) ensureSourceRegistered(source);
-    const statusParsed = normalizeStatus(parts[2]);
-    const dateParsed = parseFlexibleDate(parts[3]);
-    const notesProvided = parts[4] !== undefined;
-    const notes = notesProvided ? parts[4].trim() : '';
-    const date = dateParsed || pageDefaultDate;
+  parsed.forEach(rec=>{
+    if(!rec.game) return;
+    if(rec.platform) ensureSourceRegistered(rec.platform);
+    const date = rec.date || pageDefaultDate;
 
-    const existing = contentEntries.find(e=>
-      e.date === date &&
-      (e.game||'').trim().toLowerCase() === game.toLowerCase() &&
-      (e.platform||'').trim().toLowerCase() === source.toLowerCase()
-    );
+    // Match on Ticket ID when we have one (most reliable); otherwise fall
+    // back to matching by day + game + source, same as before.
+    const existing = rec.ticketId
+      ? contentEntries.find(e => e.ticketId && e.ticketId === rec.ticketId)
+      : contentEntries.find(e =>
+          e.date === date &&
+          (e.game||'').trim().toLowerCase() === rec.game.toLowerCase() &&
+          (e.platform||'').trim().toLowerCase() === (rec.platform||'').toLowerCase()
+        );
 
     if(existing){
-      if(statusParsed) existing.status = statusParsed;
-      if(notesProvided) existing.notes = notes;
+      existing.game = rec.game || existing.game;
+      if(rec.platform) existing.platform = rec.platform;
+      if(rec.ticketId) existing.ticketId = rec.ticketId;
       updatedCount++;
     } else {
-      contentEntries.push({ id: uid(), date, game, platform: source, status: statusParsed || 'Queued', notes });
+      contentEntries.push({ id: uid(), ticketId: rec.ticketId||'', date, game: rec.game, platform: rec.platform||'', status: rec.status||'Queued', notes: rec.notes||'' });
       addedCount++;
     }
     ensureContentDayKnown(date);
@@ -2752,7 +2820,7 @@ function renderContentBanner(){
       const commit = ()=>{
         if(done) return;
         done = true;
-        const fallback = field === 'label' ? 'CONTENT TESTING' : fmtDayPageTitle(selectedContentDay);
+        const fallback = field === 'label' ? 'COPYWRITE TESTING' : fmtDayPageTitle(selectedContentDay);
         meta[field] = input.value.trim() || fallback;
         persistAll();
         renderContentBanner();
@@ -2830,7 +2898,7 @@ function renderContent(){
   if(pageItems.length===0){
     cardList.innerHTML = '<div class="empty-row" style="border:1px solid var(--border);border-radius:var(--radius);">No matching entries.</div>';
   } else {
-    const fieldLabels = { platform:'Source', status:'Status', date:'Date', notes:'Notes' };
+    const fieldLabels = { ticketId:'ID', platform:'Source', status:'Status', date:'Date', notes:'Notes' };
     cardList.innerHTML = pageItems.map(e=>{
       const rows = settings.contentColumnOrder.filter(col=>col!=='game').map(col=>
         `<div class="be-card-row"><span class="be-card-label">${fieldLabels[col]||col}</span>${buildBackendFieldControl(col, e)}</div>`
@@ -2926,7 +2994,7 @@ function refreshContentMeta(){
   document.getElementById('contentDayInfo').textContent = dayEntries.length + ' entr' + (dayEntries.length===1?'y':'ies') + ' on this page';
 }
 function deleteContentEntry(id){
-  if(!confirm('Delete this content test entry?')) return;
+  if(!confirm('Delete this copywrite test entry?')) return;
   contentEntries = contentEntries.filter(x=>x.id!==id);
   persistAll(); renderContent(); renderTicker();
 }
@@ -3203,7 +3271,7 @@ document.getElementById('importFile').addEventListener('change', (ev)=>{
       if(!settings.beColumnOrder) settings.beColumnOrder = ['game','platform','status','date','notes'];
       if(!settings.contentKnownDays) settings.contentKnownDays = [];
       if(!settings.contentDayMeta) settings.contentDayMeta = {};
-      if(!settings.contentColumnOrder) settings.contentColumnOrder = ['game','platform','status','date','notes'];
+      if(!settings.contentColumnOrder) settings.contentColumnOrder = ['ticketId','game','platform','status','date','notes'];
       if(!settings.references) settings.references = [];
       persistAll();
       document.getElementById('regTargetInput').value = settings.monthlyTarget;
