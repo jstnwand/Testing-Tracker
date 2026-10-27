@@ -227,6 +227,17 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
 .result-passed{background:rgba(61,220,138,0.1);color:var(--green);}
 .result-failed{background:rgba(255,92,114,0.1);color:var(--red);}
 .pts-cell{font-family:var(--mono);font-weight:600;color:var(--text);}
+.weekly-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;}
+.weekly-scroll{overflow-x:auto;}
+.weekly-table{table-layout:auto;min-width:720px;}
+.weekly-table th{text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#0a0b08;padding:9px 12px;border:1px solid #0a0b08;font-weight:800;background:var(--lime);white-space:nowrap;}
+.weekly-table th:first-child{text-align:left;}
+.weekly-table td{padding:9px 12px;font-size:13px;border:1px solid var(--border);font-family:var(--mono);text-align:right;white-space:nowrap;}
+.weekly-table td:first-child{text-align:left;font-family:var(--sans);font-weight:600;}
+.weekly-table td.wk-zero{color:var(--text-faint);}
+.weekly-table td.wk-total{color:var(--lime);font-weight:700;}
+.weekly-table tr.wk-current td{background:rgba(var(--lime-rgb),0.06);}
+.weekly-table tfoot td{font-weight:700;background:var(--card-2);}
 .row-actions{display:flex;gap:6px;justify-content:flex-end;}
 .mini-btn{background:transparent;border:1px solid var(--border);color:var(--text-faint);width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;justify-content:center;}
 .mini-btn:hover{color:var(--text);border-color:#3a4025;}
@@ -433,11 +444,12 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
       <button class="hamburger-btn" id="hamburgerBtn" title="Menu" aria-label="Menu">☰</button>
       <div class="hamburger-menu hidden" id="hamburgerMenu">
         <button class="hamburger-item" id="menuReferencesBtn">📎 References</button>
+        <button class="hamburger-item" id="menuSyncKeyBtn">🔑 Change sync word</button>
       </div>
       <div class="brand-mark">W</div>
       <div class="brand-text">
         <h1>Justine QA Log — Wand</h1>
-        <p>Personal testing tracker · saved in this browser</p>
+        <p>Personal testing tracker · synced across devices</p>
       </div>
     </div>
     <div class="topbar-actions">
@@ -616,6 +628,21 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
         </div>
         <button class="btn btn-primary" id="rgPasteBtn">+ Add pasted rows</button>
       </div>
+    </div>
+
+    <div class="weekly-card">
+      <div class="day-head" id="weeklyHead">
+        <div class="day-head-left">
+          <span class="chev">▾</span>
+          <span class="day-name">Weekly points (Sun – Sat)</span>
+          <span class="day-date" id="weeklyScopeLabel"></span>
+        </div>
+        <select id="weeklyScope" onclick="event.stopPropagation()" style="background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:5px 8px;font-size:12px;">
+          <option value="month">Weeks touching this month</option>
+          <option value="all">All weeks</option>
+        </select>
+      </div>
+      <div class="weekly-scroll" id="weeklyBody"></div>
     </div>
 
     <div id="regDayGroups"></div>
@@ -944,7 +971,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
 
   </div>
 
-  <footer class="foot">QA Log · data lives only in this browser (localStorage) · export a backup before switching devices</footer>
+  <footer class="foot">QA Log · syncs to the cloud when the status says ☁ Synced · if it says ⚠ NOT synced, export a backup</footer>
 </div>
 
 <script>
@@ -1183,14 +1210,43 @@ function persistAll(){
   saveJSON(LS_CONTENT, contentEntries);
   saveJSON(LS_SET, settings);
   lastCommittedSnapshot = snapshotState();
+  if(!appInitializing){ changeSeq++; markDirty(true); }
   queueAutoPush();
 }
 
+/* Unsynced-changes flag. Survives reloads, so a device never lets the cloud copy
+   silently overwrite edits that failed to upload. */
+const LS_DIRTY = 'qa_unsynced_since_v1';
+let changeSeq = 0;
+function markDirty(on){
+  try{
+    if(on){ if(!localStorage.getItem(LS_DIRTY)) localStorage.setItem(LS_DIRTY, new Date().toISOString()); }
+    else localStorage.removeItem(LS_DIRTY);
+  }catch(e){}
+}
+function dirtySince(){ try{ return localStorage.getItem(LS_DIRTY); }catch(e){ return null; } }
+
 /* ---------------- cloud sync (Google Apps Script + Sheets) ---------------- */
-// Paste your deployed Apps Script Web App URL below to enable cross-device sync.
-// Leave as-is to keep this device running in local-only (browser storage) mode.
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwB9_0XkF16hKP6E6aVAHe9eKkALIi7zqusxVshZKd4Q492VGBLqvFwtZDgHBHoS5e_4g/exec';
-const syncEnabled = !!SCRIPT_URL && !SCRIPT_URL.includes('PASTE_YOUR');
+// The sync word is NOT stored in this file (so the page can be hosted publicly).
+// Each device asks for it once and remembers it in its own browser storage.
+const SCRIPT_BASE_URL = 'https://script.google.com/macros/s/AKfycbwx7E0jYI8AxV9w0dq0zzmYjgfiXYW_g_efKDBWLEo3I94MoZvC3XdmHCJERUo3DT5-/exec';
+const LS_SYNC_KEY = 'qa_sync_key_v1';
+function getSyncKey(){ try{ return localStorage.getItem(LS_SYNC_KEY) || ''; }catch(e){ return ''; } }
+function askForSyncKey(){
+  const k = prompt('Enter your sync word to load your QA log on this device.\n(Cancel = use this device offline only.)');
+  if(!k || !k.trim()) return '';
+  try{ localStorage.setItem(LS_SYNC_KEY, k.trim()); }catch(e){}
+  return k.trim();
+}
+function forgetSyncKey(){ try{ localStorage.removeItem(LS_SYNC_KEY); }catch(e){} }
+const syncKey = getSyncKey() || askForSyncKey();
+const SCRIPT_URL = syncKey ? SCRIPT_BASE_URL + '?key=' + encodeURIComponent(syncKey) : '';
+const syncEnabled = !!SCRIPT_URL;
+function handleWrongKey(){
+  forgetSyncKey();
+  setSyncStatus('error');
+  alert('That sync word was not accepted, so nothing was loaded or saved to the cloud.\nReload the page to enter it again.');
+}
 let autoPushTimer = null;
 
 function setSyncStatus(status){
@@ -1199,7 +1255,7 @@ function setSyncStatus(status){
   if(status==='syncing') el.textContent = '⏳ Syncing…';
   else if(status==='synced') el.textContent = '☁ Synced';
   else if(status==='pending') el.textContent = '● Saving…';
-  else if(status==='error') el.textContent = '⚠ Sync failed (saved locally)';
+  else if(status==='error') el.textContent = '⚠ NOT synced (saved on this device only)';
   else el.textContent = '💾 Local only';
 }
 
@@ -1213,12 +1269,27 @@ function queueAutoPush(){
   autoPushTimer = setTimeout(()=>{ pushToCloudNow(); }, 1000);
 }
 
+// Returns true if cloud data was loaded, 'kept-local' if this device kept its own
+// unsynced data (caller should push it), false on error.
 async function loadFromCloud(){
   if(!syncEnabled){ setSyncStatus('offline'); return false; }
   setSyncStatus('syncing');
   try{
     const res = await fetch(SCRIPT_URL, { method:'GET', cache:'no-store' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
+    if(data && data.error === 'wrong key'){ handleWrongKey(); return false; }
+    const since = dirtySince();
+    if(since){
+      const when = new Date(since).toLocaleString();
+      const keepLocal = confirm(
+        'This device has changes (since ' + when + ') that never reached the cloud.\n\n' +
+        'OK = keep THIS device\'s data and upload it.\n' +
+        'Cancel = throw away this device\'s unsynced changes and load the cloud copy.\n\n' +
+        'Tip: if unsure, press OK, then Export backup on both devices.');
+      if(keepLocal){ setSyncStatus('pending'); return 'kept-local'; }
+      markDirty(false);
+    }
     if(data && typeof data === 'object'){
       regularEntries = Array.isArray(data.regularEntries) ? data.regularEntries : regularEntries;
       backendEntries = Array.isArray(data.backendEntries) ? data.backendEntries : backendEntries;
@@ -1247,21 +1318,53 @@ async function loadFromCloud(){
   }
 }
 
+function entriesSignature(d){
+  const sig = arr => (Array.isArray(arr) ? arr : []).map(e=> [e.id, e.date, e.result||e.status||'', Number(e.points||0), e.game||''].join('~')).join('|');
+  return [sig(d.regularEntries), sig(d.backendEntries), sig(d.contentEntries)].join('#');
+}
+let syncErrorAlerted = false;
 async function pushToCloudNow(){
-  if(!syncEnabled) return;
+  if(!syncEnabled) return false;
   setSyncStatus('syncing');
+  const startSeq = changeSeq;
+  const sent = { regularEntries, backendEntries, contentEntries, settings };
+  const body = JSON.stringify(sent);
   try{
-    await fetch(SCRIPT_URL, {
+    const res = await fetch(SCRIPT_URL, {
       method:'POST',
       headers: { 'Content-Type':'text/plain;charset=utf-8' }, // avoids CORS preflight against Apps Script
-      body: JSON.stringify({ regularEntries, backendEntries, contentEntries, settings })
+      body
     });
+    const text = await res.text();
+    if(!res.ok) throw new Error('Cloud answered HTTP ' + res.status);
+    if(/"error"\s*:\s*"wrong key"/.test(text)){ handleWrongKey(); return false; }
+    // A crashed Apps Script still answers 200, but with an HTML error page.
+    if(/^\s*</.test(text)) throw new Error('Apps Script error: ' + text.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,240));
+    // Read it back: only call it synced if the cloud really holds what we sent.
+    const check = await fetch(SCRIPT_URL, { method:'GET', cache:'no-store' });
+    const cloud = await check.json();
+    if(entriesSignature(cloud) !== entriesSignature(sent)){
+      throw new Error('The cloud did not keep the upload (read-back does not match). Upload size: ' + body.length.toLocaleString() + ' characters.');
+    }
+    if(changeSeq === startSeq) markDirty(false);
     setSyncStatus('synced');
+    syncErrorAlerted = false;
+    return true;
   }catch(err){
     console.error('Cloud push failed', err);
     setSyncStatus('error');
+    const el = document.getElementById('syncStatus');
+    if(el) el.title = String(err && err.message || err);
+    if(!syncErrorAlerted){
+      syncErrorAlerted = true;
+      alert('Your latest changes did NOT save to the cloud.\nThey are still saved on this device.\n\nReason: ' + (err && err.message || err) + '\n\nExport a backup now to be safe.');
+    }
+    return false;
   }
 }
+window.addEventListener('beforeunload', (ev)=>{
+  if(syncEnabled && dirtySince()){ ev.preventDefault(); ev.returnValue = ''; }
+});
 
 /* ---------------- date helpers ---------------- */
 function toDate(s){ if(!s) return null; const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
@@ -1422,6 +1525,8 @@ function renderRegular(){
   const allMonths = getAllMonths();
   if(monthTotal===0 && allMonths.length>1) delBtn.classList.remove('hidden'); else delBtn.classList.add('hidden');
 
+  renderWeekly();
+
   const container = document.getElementById('regDayGroups');
   container.innerHTML = '';
   for(let day=1; day<=nDays; day++){
@@ -1435,6 +1540,71 @@ function renderRegular(){
   const dl1 = document.getElementById('platformList');
   dl1.innerHTML = [...platforms].sort().map(p=>`<option value="${escapeHtml(p)}">`).join('');
 }
+
+/* ---------------- weekly points (Sunday–Saturday) ---------------- */
+let weeklyCollapsed = false;
+let weeklyScope = 'month';
+try{ weeklyScope = localStorage.getItem('qa_weekly_scope') || 'month'; }catch(e){}
+function weekStartOf(d){ const s = new Date(d.getFullYear(), d.getMonth(), d.getDate()); s.setDate(s.getDate() - s.getDay()); return s; }
+function renderWeekly(){
+  const head = document.getElementById('weeklyHead');
+  const body = document.getElementById('weeklyBody');
+  const scopeSel = document.getElementById('weeklyScope');
+  if(!head || !body) return;
+  scopeSel.value = weeklyScope;
+  head.classList.toggle('collapsed', weeklyCollapsed);
+  body.style.display = weeklyCollapsed ? 'none' : '';
+
+  // Week start (Sunday ISO) -> { days:[7 point sums], tests }
+  const weeks = {};
+  regularEntries.forEach(e=>{
+    if(!e.date || !pointsCount(e)) return;
+    const d = toDate(e.date);
+    const key = fmtISO(weekStartOf(d));
+    if(!weeks[key]) weeks[key] = { days:[0,0,0,0,0,0,0], tests:0 };
+    weeks[key].days[d.getDay()] += Number(e.points||0);
+    weeks[key].tests++;
+  });
+
+  let keys;
+  if(weeklyScope === 'month'){
+    // every Sun–Sat week that overlaps the selected month, even empty ones
+    const [y,m] = selectedMonth.split('-').map(Number);
+    const last = new Date(y, m-1, daysInMonth(selectedMonth));
+    keys = [];
+    for(let w = weekStartOf(new Date(y, m-1, 1)); w <= last; w.setDate(w.getDate()+7)) keys.push(fmtISO(w));
+    document.getElementById('weeklyScopeLabel').textContent = fmtMonthShort(selectedMonth);
+  } else {
+    keys = Object.keys(weeks).sort().reverse();
+    document.getElementById('weeklyScopeLabel').textContent = keys.length + ' weeks';
+  }
+  if(!keys.length){ body.innerHTML = '<div class="hint" style="padding:14px 16px;">No Passed/Failed points logged yet.</div>'; return; }
+
+  const thisWeek = fmtISO(weekStartOf(new Date()));
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const colTotals = [0,0,0,0,0,0,0]; let grand = 0, grandTests = 0;
+  const rows = keys.map(k=>{
+    const w = weeks[k] || { days:[0,0,0,0,0,0,0], tests:0 };
+    const start = toDate(k); const end = new Date(start); end.setDate(end.getDate()+6);
+    const total = w.days.reduce((a,b)=>a+b,0);
+    w.days.forEach((v,i)=> colTotals[i]+=v); grand += total; grandTests += w.tests;
+    const label = fmtDateShort(start) + ' – ' + fmtDateShort(end) + (start.getFullYear() !== new Date().getFullYear() ? ', ' + start.getFullYear() : '');
+    return `<tr class="${k===thisWeek?'wk-current':''}"><td>${label}${k===thisWeek?' <span class="day-cap-note">THIS WEEK</span>':''}</td>${
+      w.days.map(v=>`<td class="${v?'':'wk-zero'}">${v?fmtNum(v):'–'}</td>`).join('')
+    }<td class="wk-total">${fmtNum(total)}</td><td>${w.tests}</td></tr>`;
+  }).join('');
+  body.innerHTML = `<table class="weekly-table">
+    <thead><tr><th>Week</th>${dayNames.map(n=>`<th>${n}</th>`).join('')}<th>Total</th><th>Tests</th></tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr><td>${weeklyScope==='month'?'All weeks shown':'All time'}</td>${colTotals.map(v=>`<td>${fmtNum(v)}</td>`).join('')}<td class="wk-total">${fmtNum(grand)}</td><td>${grandTests}</td></tr></tfoot>
+  </table>`;
+}
+document.getElementById('weeklyHead').addEventListener('click', ()=>{ weeklyCollapsed = !weeklyCollapsed; renderWeekly(); });
+document.getElementById('weeklyScope').addEventListener('change', (e)=>{
+  weeklyScope = e.target.value;
+  try{ localStorage.setItem('qa_weekly_scope', weeklyScope); }catch(err){}
+  renderWeekly();
+});
 
 function buildDayGroup(dateObj){
   const iso = fmtISO(dateObj);
@@ -3134,6 +3304,13 @@ document.addEventListener('click', (ev)=>{
   }
 });
 
+document.getElementById('menuSyncKeyBtn').addEventListener('click', ()=>{
+  document.getElementById('hamburgerMenu').classList.add('hidden');
+  if(!confirm('Enter a different sync word on this device? The page will reload.')) return;
+  forgetSyncKey();
+  if(askForSyncKey()) location.reload();
+});
+
 /* ---------------- references ---------------- */
 if(!settings.references) settings.references = [];
 
@@ -3221,7 +3398,7 @@ document.getElementById('refCardDelete').addEventListener('click', ()=>{
 /* ---------------- manual cloud sync ---------------- */
 document.getElementById('btnSyncNow').addEventListener('click', async ()=>{
   if(!syncEnabled){
-    alert('No cloud URL is set up yet, so this device is running in local-only mode. Ask for the Apps Script URL to be added to enable syncing.');
+    if(askForSyncKey()) location.reload();
     return;
   }
   const btn = document.getElementById('btnSyncNow');
@@ -3230,11 +3407,15 @@ document.getElementById('btnSyncNow').addEventListener('click', async ()=>{
   // so clicking Sync here just grabs whatever the OTHER device saved most
   // recently, without risking overwriting it with this device's own state.
   const ok = await loadFromCloud();
-  if(ok){
+  if(ok === 'kept-local'){
+    await pushToCloudNow();
+  } else if(ok){
     recomputeSelectedMonth();
     recomputeSelectedBeDay();
+    recomputeSelectedContentDay();
     renderRegular();
     renderBackend();
+    renderContent();
     renderTicker();
   }
   btn.disabled = false;
@@ -3308,7 +3489,7 @@ setSyncStatus(syncEnabled ? 'syncing' : 'offline');
 
 if(syncEnabled){
   loadFromCloud().then(ok=>{
-    if(ok){
+    if(ok === true){
       recomputeSelectedMonth();
       recomputeSelectedBeDay();
       recomputeSelectedContentDay();
@@ -3318,6 +3499,7 @@ if(syncEnabled){
       renderTicker();
     }
     appInitializing = false; // safe to auto-push from here on
+    if(ok === 'kept-local') pushToCloudNow();
   });
 } else {
   appInitializing = false;
