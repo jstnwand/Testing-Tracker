@@ -227,6 +227,13 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
 .result-passed{background:rgba(61,220,138,0.1);color:var(--green);}
 .result-failed{background:rgba(255,92,114,0.1);color:var(--red);}
 .pts-cell{font-family:var(--mono);font-weight:600;color:var(--text);}
+.week-block{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;overflow:hidden;background:var(--bg-raised);}
+.week-block-head{background:var(--lime);color:#0a0b08;font-weight:800;font-size:16px;letter-spacing:0.04em;text-align:center;padding:11px 16px;}
+.week-block-range{font-family:var(--mono);font-size:12px;font-weight:600;margin-left:8px;opacity:0.75;}
+.week-block-body{padding:10px 10px 0;}
+.week-block-body .day-group{margin-bottom:10px;}
+.week-block-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;background:var(--card-2);border-top:1px solid var(--border);font-weight:800;}
+.week-block-foot .wk-pts{font-family:var(--mono);color:var(--lime);font-size:17px;}
 .weekly-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;}
 .weekly-scroll{overflow-x:auto;}
 .weekly-table{table-layout:auto;min-width:720px;}
@@ -536,6 +543,10 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
         <div class="stat-sub">
           <input type="number" id="regTargetInput" step="0.25" style="width:70px;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:3px 6px;font-family:var(--mono);font-size:11px;">
           edit target
+        </div>
+        <div class="stat-sub">
+          <input type="number" id="regWeekTargetInput" step="0.25" placeholder="—" style="width:70px;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:3px 6px;font-family:var(--mono);font-size:11px;">
+          weekly target
         </div>
       </div>
       <div class="stat-card">
@@ -1432,6 +1443,14 @@ function recomputeSelectedMonth(){
 }
 recomputeSelectedMonth();
 
+document.getElementById('regWeekTargetInput').value = settings.weeklyTarget || '';
+document.getElementById('regWeekTargetInput').addEventListener('change', (e)=>{
+  const v = parseFloat(e.target.value);
+  settings.weeklyTarget = isNaN(v) ? 0 : v;
+  persistAll();
+  renderRegular();
+});
+
 document.getElementById('regTargetInput').value = settings.monthlyTarget;
 document.getElementById('regTargetInput').addEventListener('change', (e)=>{
   const v = parseFloat(e.target.value);
@@ -1529,9 +1548,40 @@ function renderRegular(){
 
   const container = document.getElementById('regDayGroups');
   container.innerHTML = '';
-  for(let day=1; day<=nDays; day++){
-    const dObj = new Date(my, mm-1, day);
-    container.appendChild(buildDayGroup(dObj));
+  const monthName = new Date(my, mm-1, 1).toLocaleDateString(undefined, { month:'long' }).toUpperCase();
+  const weekTarget = Number(settings.weeklyTarget||0);
+  const todayMidnight = new Date(new Date().setHours(0,0,0,0));
+  let weekNo = 0;
+  for(let ws = weekStartOf(new Date(my, mm-1, 1)); ws <= monthEnd; ws.setDate(ws.getDate()+7)){
+    weekNo++;
+    // only the days of this Sun–Sat week that fall inside the selected month
+    const days = [];
+    for(let i=0; i<7; i++){
+      const d = new Date(ws.getFullYear(), ws.getMonth(), ws.getDate()+i);
+      if(d.getMonth() === mm-1) days.push(d);
+    }
+    const weekPts = days.reduce((sum,d)=> sum + (regEntriesByDate[fmtISO(d)]||[]).reduce((a,e)=> a + (pointsCount(e) ? Number(e.points||0) : 0), 0), 0);
+    const first = days[0], last = days[days.length-1];
+    const range = fmtDateShort(first) + ' – ' + fmtDateShort(last);
+
+    const block = document.createElement('div');
+    block.className = 'week-block';
+    block.innerHTML = `<div class="week-block-head">${monthName} WEEK ${weekNo}<span class="week-block-range">${range}</span></div><div class="week-block-body"></div>`;
+    const body = block.querySelector('.week-block-body');
+    days.forEach(d=> body.appendChild(buildDayGroup(d)));
+
+    let quota = '';
+    if(weekTarget > 0){
+      const reached = weekPts >= weekTarget;
+      const over = last < todayMidnight;
+      const cls = reached ? 'badge-reached' : (over ? 'badge-missed' : 'badge-progress');
+      quota = `<span class="week-status-badge ${cls}">${reached ? 'QUOTA REACHED' : 'QUOTA NOT REACHED'}</span>`;
+    }
+    const foot = document.createElement('div');
+    foot.className = 'week-block-foot';
+    foot.innerHTML = `<span>Weekly total · ${range}</span><span style="display:flex;gap:10px;align-items:center;">${quota}<span class="wk-pts">${fmtNum(weekPts)}${weekTarget>0 ? ' / '+fmtNum(weekTarget) : ''} pts</span></span>`;
+    block.appendChild(foot);
+    container.appendChild(block);
   }
 
   const platforms = new Set();
