@@ -26,8 +26,8 @@
   --red:#ff5c72;
   --purple:#b490ff;
   --slate:#7d8399;
-  --week-head-bg:#b8e02f;
-  --week-head-text:#0a0b08;
+  --week-head-bg:#2b3313;
+  --week-head-text:#d7ff3e;
   --mono:'JetBrains Mono', monospace;
   --sans:'Inter', sans-serif;
   --radius:14px;
@@ -176,8 +176,8 @@ a{color:var(--lime);}
 .wk-target-reset{background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:6px;padding:2px 7px;cursor:pointer;font-size:12px;}
 .wk-target-reset:hover{color:var(--text);}
 .wk-target-custom{color:var(--amber, #e0a63a);}
+.fab-stack{position:fixed;right:4px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:6px;}
 .scroll-today-fab{
-  position:fixed;right:4px;top:50%;transform:translateY(-50%);z-index:40;
   width:26px;height:26px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   background:var(--card-2);color:var(--lime);border:1px solid var(--border);
@@ -189,7 +189,7 @@ a{color:var(--lime);}
 body.tab-content .scroll-today-fab{color:#b565f5;}
 body.tab-content .scroll-today-fab:hover,body.tab-content .scroll-today-fab:focus-visible{border-color:#b565f5;}
 @media (hover:none){ .scroll-today-fab:active{opacity:1;} }
-@media (max-width:640px){ .scroll-today-fab{top:auto;bottom:18px;transform:none;right:12px;width:34px;height:34px;} }
+@media (max-width:640px){ .fab-stack{top:auto;bottom:18px;transform:none;right:12px;gap:8px;} .scroll-today-fab{width:34px;height:34px;} }
 .today-flash{animation:todayflash 1.6s ease-out;}
 @keyframes todayflash{0%,30%{box-shadow:0 0 0 2px var(--lime);}100%{box-shadow:0 0 0 2px transparent;}}
 .month-controls select{
@@ -1044,7 +1044,10 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
   <footer class="foot">QA Log · syncs to the cloud when the status says ☁ Synced · if it says ⚠ NOT synced, export a backup</footer>
 </div>
 
-<button type="button" class="scroll-today-fab" id="scrollTodayFab" title="Scroll to today" aria-label="Scroll to today"><span class="fab-arrow" id="scrollTodayArrow">↓</span></button>
+<div class="fab-stack">
+  <button type="button" class="scroll-today-fab" id="scrollTopFab" title="Scroll to top" aria-label="Scroll to top"><span class="fab-arrow">⤒</span></button>
+  <button type="button" class="scroll-today-fab" id="scrollTodayFab" title="Scroll to today" aria-label="Scroll to today"><span class="fab-arrow" id="scrollTodayArrow">↓</span></button>
+</div>
 
 <script>
 (function(){
@@ -3799,6 +3802,10 @@ document.getElementById('scrollTodayFab').addEventListener('click', ()=>{
   btn.click();
   document.getElementById('scrollTodayFab').blur();
   setTimeout(updateScrollTodayArrow, 600);
+});
+document.getElementById('scrollTopFab').addEventListener('click', ()=>{
+  window.scrollTo({ top:0, behavior:'smooth' });
+  document.getElementById('scrollTopFab').blur();
 });
 let scrollArrowRaf = 0;
 window.addEventListener('scroll', ()=>{
