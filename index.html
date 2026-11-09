@@ -26,6 +26,8 @@
   --red:#ff5c72;
   --purple:#b490ff;
   --slate:#7d8399;
+  --week-head-bg:#b8e02f;
+  --week-head-text:#0a0b08;
   --mono:'JetBrains Mono', monospace;
   --sans:'Inter', sans-serif;
   --radius:14px;
@@ -250,7 +252,13 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
 .result-failed{background:rgba(255,92,114,0.1);color:var(--red);}
 .pts-cell{font-family:var(--mono);font-weight:600;color:var(--text);}
 .week-block{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;overflow:hidden;background:var(--bg-raised);}
-.week-block-head{background:var(--lime);color:#0a0b08;font-weight:800;font-size:16px;letter-spacing:0.04em;text-align:center;padding:11px 16px;}
+.week-block-head{background:var(--week-head-bg);color:var(--week-head-text);font-weight:800;font-size:16px;letter-spacing:0.04em;text-align:center;padding:11px 44px;position:relative;cursor:pointer;user-select:none;}
+.week-block-head:hover{filter:brightness(1.06);}
+.week-block-head:focus-visible{outline:2px solid var(--text);outline-offset:-4px;}
+.week-chev{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:13px;transition:transform .15s;}
+.week-block.collapsed .week-chev{transform:translateY(-50%) rotate(-90deg);}
+.week-block.collapsed .week-block-body{display:none;}
+.week-hidden-note{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:0;opacity:.7;}
 .week-block-range{font-family:var(--mono);font-size:12px;font-weight:600;margin-left:8px;opacity:0.75;}
 .week-block-body{padding:10px 10px 0;}
 .week-block-body .day-group{margin-bottom:10px;}
@@ -1540,6 +1548,15 @@ document.getElementById('deleteMonthBtn').addEventListener('click', ()=>{
 
 const collapsedDays = {};
 
+// Collapsed week blocks, keyed by the week's Sunday (YYYY-MM-DD). Remembered on this device.
+const LS_COLLAPSED_WEEKS = 'qa_collapsed_weeks';
+let collapsedWeeks = {};
+try{ collapsedWeeks = JSON.parse(localStorage.getItem(LS_COLLAPSED_WEEKS) || '{}') || {}; }catch(e){ collapsedWeeks = {}; }
+function setWeekCollapsed(wsIso, on){
+  if(on) collapsedWeeks[wsIso] = true; else delete collapsedWeeks[wsIso];
+  try{ localStorage.setItem(LS_COLLAPSED_WEEKS, JSON.stringify(collapsedWeeks)); }catch(e){}
+}
+
 /* per-week target overrides, keyed by the week's Sunday (YYYY-MM-DD).
    Weeks without an override use the default weekly target. */
 function hasCustomWeekTarget(wsIso){
@@ -1686,8 +1703,14 @@ function renderRegular(){
     const range = fmtDateShort(first) + ' – ' + fmtDateShort(last);
 
     const block = document.createElement('div');
-    block.className = 'week-block';
-    block.innerHTML = `<div class="week-block-head">${monthName} WEEK ${weekNo}<span class="week-block-range">${range}</span></div><div class="week-block-body"></div>`;
+    const wkCollapsed = !!collapsedWeeks[wsIso];
+    block.className = 'week-block' + (wkCollapsed ? ' collapsed' : '');
+    block.dataset.week = wsIso;
+    block.innerHTML = `<div class="week-block-head" role="button" tabindex="0" aria-expanded="${!wkCollapsed}"><span class="week-chev">▾</span>${monthName} WEEK ${weekNo}<span class="week-block-range">${range}</span>${wkCollapsed ? `<span class="week-hidden-note">${days.length} days hidden</span>` : ''}</div><div class="week-block-body"></div>`;
+    const wkHead = block.querySelector('.week-block-head');
+    const toggleWeek = ()=>{ setWeekCollapsed(wsIso, !collapsedWeeks[wsIso]); renderRegular(); };
+    wkHead.addEventListener('click', toggleWeek);
+    wkHead.addEventListener('keydown', (ev)=>{ if(ev.key==='Enter' || ev.key===' '){ ev.preventDefault(); toggleWeek(); } });
     const body = block.querySelector('.week-block-body');
     days.forEach(d=> body.appendChild(buildDayGroup(d)));
 
@@ -3708,6 +3731,7 @@ document.getElementById('regTodayBtn').addEventListener('click', ()=>{
   const iso = fmtISO(new Date());
   if(selectedMonth !== ymNow()){ selectedMonth = ymNow(); ensureMonthKnown(selectedMonth); }
   collapsedDays['day_'+iso] = false;
+  setWeekCollapsed(fmtISO(weekStartOf(new Date())), false);
   renderRegular();
   flashAndScroll(document.querySelector('#regDayGroups .day-group[data-date="'+iso+'"]'));
 });
