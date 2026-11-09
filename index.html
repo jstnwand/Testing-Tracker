@@ -154,6 +154,26 @@ a{color:var(--lime);}
 .month-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);font-weight:700;margin-bottom:4px;}
 .month-title{font-size:28px;font-weight:800;margin:0;letter-spacing:-0.01em;}
 .month-controls{display:flex;align-items:center;gap:10px;}
+.wk-foot-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+.wk-card-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.wk-edit-btn{padding:4px 8px;font-size:11px;}
+.wk-modal{width:440px;}
+.wk-default-input{width:100%;box-sizing:border-box;padding:8px 10px;font-size:13px;margin-bottom:16px;}
+.wk-modal-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.wk-modal-row{display:grid;grid-template-columns:1fr 80px 28px;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--card-2);}
+.wk-modal-row.current{border-color:var(--lime);}
+.wk-modal-row .wk-target-input{width:100%;box-sizing:border-box;}
+.wk-modal-label{font-size:12.5px;line-height:1.4;}
+.wk-modal-label span{color:var(--text-dim);font-family:var(--mono);font-size:11.5px;}
+.wk-modal-label .day-cap-note{font-family:inherit;}
+.wk-spill{font-size:10px !important;text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--border);border-radius:4px;padding:0 4px;}
+.wk-modal-sum{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--text-dim);margin-bottom:16px;}
+.wk-modal-sum b{color:var(--text);font-family:var(--mono);}
+.wk-target-input{width:64px;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 6px;font-family:var(--mono);font-size:12px;}
+.wk-target-input.custom{border-color:var(--amber, #e0a63a);color:var(--amber, #e0a63a);}
+.wk-target-reset{background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:6px;padding:2px 7px;cursor:pointer;font-size:12px;}
+.wk-target-reset:hover{color:var(--text);}
+.wk-target-custom{color:var(--amber, #e0a63a);}
 .today-flash{animation:todayflash 1.6s ease-out;}
 @keyframes todayflash{0%,30%{box-shadow:0 0 0 2px var(--lime);}100%{box-shadow:0 0 0 2px transparent;}}
 .month-controls select{
@@ -543,13 +563,10 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
       <div class="stat-card">
         <div class="stat-label">Monthly Target</div>
         <div class="stat-value amber" id="regMonthTargetDisplay">0</div>
-        <div class="stat-sub">
-          <input type="number" id="regTargetInput" step="0.25" style="width:70px;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:3px 6px;font-family:var(--mono);font-size:11px;">
-          edit target
-        </div>
-        <div class="stat-sub">
-          <input type="number" id="regWeekTargetInput" step="0.25" placeholder="—" style="width:70px;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:3px 6px;font-family:var(--mono);font-size:11px;">
-          weekly target
+        <div class="stat-sub" id="regMonthTargetSub">sum of this month's weekly targets</div>
+        <div class="stat-sub wk-card-row">
+          <span id="regWeekTargetSummary">weekly: —</span>
+          <button type="button" class="icon-btn wk-edit-btn" id="editWeekTargetsBtn">✎ Weekly targets</button>
         </div>
       </div>
       <div class="stat-card">
@@ -585,6 +602,21 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
     <div class="week-nav">
       <div class="week-status-badge badge-empty" id="monthStatusBadge">NO DATA</div>
       <button class="icon-btn danger hidden" id="deleteMonthBtn">Delete this month page</button>
+    </div>
+
+    <div class="modal-overlay hidden" id="weekTargetsOverlay">
+      <div class="modal-box wk-modal">
+        <h3>Weekly targets · <span id="wkModalMonth">—</span></h3>
+        <label class="field-label-sm" for="wkDefaultInput">Default (used by any week without its own target)</label>
+        <input type="number" step="0.25" min="0" id="wkDefaultInput" class="wk-target-input wk-default-input" placeholder="—">
+        <div class="wk-modal-list" id="wkModalList"></div>
+        <div class="wk-modal-sum">
+          <span>Monthly target (sum of the weeks above): <b id="wkModalSum">0</b> pts</span>
+        </div>
+        <div class="modal-actions fill">
+          <button class="btn btn-primary" id="wkModalDone">Done</button>
+        </div>
+      </div>
     </div>
 
     <div class="modal-overlay hidden" id="monthModalOverlay">
@@ -1134,7 +1166,14 @@ function saveJSON(key, val){
 let regularEntries = loadJSON(LS_REG, []);
 let backendEntries = loadJSON(LS_BE, []);
 let contentEntries = loadJSON(LS_CONTENT, []);
-let settings = loadJSON(LS_SET, { monthlyTarget: 150, dailyCap: 9, knownMonths: [] });
+let settings = loadJSON(LS_SET, { monthlyTarget: 150, dailyCap: 9, knownMonths: [], weeklyTarget: 36, weeklyDefault36: true });
+// One-time switch of the default weekly target to 36. Runs once per data set (the flag
+// travels with settings to the cloud), so any later edit in the Weekly targets editor sticks.
+function applyWeeklyDefault36(){
+  if(settings && !settings.weeklyDefault36){ settings.weeklyTarget = 36; settings.weeklyDefault36 = true; }
+}
+applyWeeklyDefault36();
+saveJSON(LS_SET, settings);
 if(!settings.knownMonths) settings.knownMonths = [];
 if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
 
@@ -1310,7 +1349,7 @@ async function loadFromCloud(){
       regularEntries = Array.isArray(data.regularEntries) ? data.regularEntries : regularEntries;
       backendEntries = Array.isArray(data.backendEntries) ? data.backendEntries : backendEntries;
       contentEntries = Array.isArray(data.contentEntries) ? data.contentEntries : contentEntries;
-      if(data.settings && typeof data.settings === 'object') settings = Object.assign({}, settings, data.settings);
+      if(data.settings && typeof data.settings === 'object'){ settings = Object.assign({}, settings, data.settings); applyWeeklyDefault36(); }
       if(!settings.knownMonths) settings.knownMonths = [];
       if(!settings.beKnownDays) settings.beKnownDays = [];
       if(!settings.sources || !settings.sources.length) settings.sources = SOURCE_PRESETS.map(s=>({...s}));
@@ -1448,21 +1487,25 @@ function recomputeSelectedMonth(){
 }
 recomputeSelectedMonth();
 
-document.getElementById('regWeekTargetInput').value = settings.weeklyTarget || '';
-document.getElementById('regWeekTargetInput').addEventListener('change', (e)=>{
+
+document.getElementById('editWeekTargetsBtn').addEventListener('click', ()=>{
+  renderWeekTargetsModal();
+  document.getElementById('weekTargetsOverlay').classList.remove('hidden');
+});
+function closeWeekTargetsModal(){
+  const a = document.activeElement; if(a && a.blur) a.blur(); // commit a value still being typed
+  document.getElementById('weekTargetsOverlay').classList.add('hidden');
+}
+document.getElementById('wkModalDone').addEventListener('click', closeWeekTargetsModal);
+document.getElementById('weekTargetsOverlay').addEventListener('click', (e)=>{ if(e.target.id==='weekTargetsOverlay') closeWeekTargetsModal(); });
+document.getElementById('wkDefaultInput').addEventListener('change', (e)=>{
   const v = parseFloat(e.target.value);
   settings.weeklyTarget = isNaN(v) ? 0 : v;
   persistAll();
   renderRegular();
+  renderWeekTargetsModal();
 });
-
-document.getElementById('regTargetInput').value = settings.monthlyTarget;
-document.getElementById('regTargetInput').addEventListener('change', (e)=>{
-  const v = parseFloat(e.target.value);
-  settings.monthlyTarget = isNaN(v) ? 0 : v;
-  persistAll();
-  renderRegular();
-});
+document.getElementById('wkDefaultInput').addEventListener('keydown', (ev)=>{ if(ev.key==='Enter') ev.target.blur(); });
 
 function populateMonthSelect(){
   const sel = document.getElementById('monthSelect');
@@ -1497,12 +1540,82 @@ document.getElementById('deleteMonthBtn').addEventListener('click', ()=>{
 
 const collapsedDays = {};
 
+/* per-week target overrides, keyed by the week's Sunday (YYYY-MM-DD).
+   Weeks without an override use the default weekly target. */
+function hasCustomWeekTarget(wsIso){
+  return !!(settings.weekTargets && Object.prototype.hasOwnProperty.call(settings.weekTargets, wsIso));
+}
+function weekTargetFor(wsIso){
+  return hasCustomWeekTarget(wsIso) ? Number(settings.weekTargets[wsIso]||0) : Number(settings.weeklyTarget||0);
+}
+function weeksOfMonth(ym){
+  const [y,m] = ym.split('-').map(Number);
+  const last = new Date(y, m-1, daysInMonth(ym));
+  const out = [];
+  for(let ws = weekStartOf(new Date(y, m-1, 1)); ws <= last; ws.setDate(ws.getDate()+7)){
+    const first = new Date(Math.max(ws, new Date(y, m-1, 1)));
+    const end = new Date(ws.getFullYear(), ws.getMonth(), ws.getDate()+6);
+    out.push({ ws: fmtISO(ws), first, last: end > last ? last : end, fullEnd: end });
+  }
+  return out;
+}
+function monthWeekTargetSum(ym){ return weeksOfMonth(ym).reduce((a,w)=> a + weekTargetFor(w.ws), 0); }
+function updateWeekTargetSummary(){
+  const el = document.getElementById('regWeekTargetSummary');
+  if(!el) return;
+  const thisWs = fmtISO(weekStartOf(new Date()));
+  const inMonth = weeksOfMonth(selectedMonth).some(w=> w.ws === thisWs);
+  const t = inMonth ? weekTargetFor(thisWs) : Number(settings.weeklyTarget||0);
+  el.textContent = (inMonth ? 'this week: ' : 'weekly: ') + (t>0 ? fmtNum(t) : '—');
+}
+function renderWeekTargetsModal(){
+  document.getElementById('wkModalMonth').textContent = fmtMonthLabel(selectedMonth);
+  document.getElementById('wkDefaultInput').value = settings.weeklyTarget || '';
+  const thisWs = fmtISO(weekStartOf(new Date()));
+  const list = document.getElementById('wkModalList');
+  list.innerHTML = weeksOfMonth(selectedMonth).map((w,i)=>{
+    const custom = hasCustomWeekTarget(w.ws);
+    const range = fmtDateShort(w.first) + ' – ' + fmtDateShort(w.last);
+    const spill = w.fullEnd > w.last || new Date(w.ws+'T00:00') < w.first ? ' <span class="wk-spill" title="This week runs into another month; its target is shared with that month">shared</span>' : '';
+    return `<div class="wk-modal-row${w.ws===thisWs?' current':''}" data-ws="${w.ws}">
+      <div class="wk-modal-label"><b>Week ${i+1}</b> <span>${range}</span>${w.ws===thisWs?' <span class="day-cap-note">THIS WEEK</span>':''}${spill}</div>
+      <input type="number" step="0.25" min="0" class="wk-target-input${custom?' custom':''}" value="${custom ? settings.weekTargets[w.ws] : ''}" placeholder="${settings.weeklyTarget>0 ? fmtNum(settings.weeklyTarget) : '—'}" aria-label="Target for week ${i+1}">
+      <button type="button" class="wk-target-reset" title="Use the default" ${custom?'':'style="visibility:hidden"'}>↺</button>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.wk-modal-row').forEach(row=>{
+    const ws = row.dataset.ws, inp = row.querySelector('input'), rst = row.querySelector('.wk-target-reset');
+    inp.addEventListener('change', ()=>{ setWeekTarget(ws, inp.value); refreshWeekModalRow(row); });
+    inp.addEventListener('keydown', (ev)=>{ if(ev.key==='Enter') inp.blur(); });
+    rst.addEventListener('click', ()=>{ setWeekTarget(ws, ''); inp.value=''; refreshWeekModalRow(row); });
+  });
+  updateWeekModalSum();
+}
+function refreshWeekModalRow(row){
+  const custom = hasCustomWeekTarget(row.dataset.ws);
+  row.querySelector('input').classList.toggle('custom', custom);
+  row.querySelector('.wk-target-reset').style.visibility = custom ? '' : 'hidden';
+  updateWeekModalSum();
+}
+function updateWeekModalSum(){
+  document.getElementById('wkModalSum').textContent = fmtNum(monthWeekTargetSum(selectedMonth));
+}
+function setWeekTarget(wsIso, raw){
+  if(!settings.weekTargets || typeof settings.weekTargets !== 'object') settings.weekTargets = {};
+  const v = parseFloat(raw);
+  if(raw === '' || raw === null || isNaN(v)) delete settings.weekTargets[wsIso];
+  else settings.weekTargets[wsIso] = v;
+  persistAll();
+  renderRegular();
+}
+
 function renderRegular(){
   reindexRegular();
   ensureMonthKnown(selectedMonth);
   populateMonthSelect();
 
   document.getElementById('monthTitleDisplay').textContent = fmtMonthLabel(selectedMonth);
+  updateWeekTargetSummary();
 
   const nDays = daysInMonth(selectedMonth);
   let monthTotal = 0, daysLogged = 0, notStarted = 0, testingCount = 0, downloadingCount = 0;
@@ -1518,11 +1631,13 @@ function renderRegular(){
     });
   }
 
-  const target = Number(settings.monthlyTarget||0);
+  // Monthly target always follows the weekly targets of the weeks shown in this month
+  const target = monthWeekTargetSum(selectedMonth);
   const remaining = target - monthTotal;
 
   document.getElementById('regMonthTotal').textContent = fmtNum(monthTotal);
   document.getElementById('regMonthTargetDisplay').textContent = fmtNum(target);
+  document.getElementById('regMonthTargetSub').textContent = 'sum of ' + weeksOfMonth(selectedMonth).length + ' weekly targets';
   document.getElementById('regDaysLogged').textContent = daysLogged + ' / ' + nDays;
   document.getElementById('regDaysLoggedSub').textContent = 'out of ' + nDays + ' days';
   document.getElementById('regNotStarted').textContent = notStarted;
@@ -1554,7 +1669,6 @@ function renderRegular(){
   const container = document.getElementById('regDayGroups');
   container.innerHTML = '';
   const monthName = new Date(my, mm-1, 1).toLocaleDateString(undefined, { month:'long' }).toUpperCase();
-  const weekTarget = Number(settings.weeklyTarget||0);
   const todayMidnight = new Date(new Date().setHours(0,0,0,0));
   let weekNo = 0;
   for(let ws = weekStartOf(new Date(my, mm-1, 1)); ws <= monthEnd; ws.setDate(ws.getDate()+7)){
@@ -1565,6 +1679,8 @@ function renderRegular(){
       const d = new Date(ws.getFullYear(), ws.getMonth(), ws.getDate()+i);
       if(d.getMonth() === mm-1) days.push(d);
     }
+    const wsIso = fmtISO(ws);
+    const weekTarget = weekTargetFor(wsIso);
     const weekPts = days.reduce((sum,d)=> sum + (regEntriesByDate[fmtISO(d)]||[]).reduce((a,e)=> a + (pointsCount(e) ? Number(e.points||0) : 0), 0), 0);
     const first = days[0], last = days[days.length-1];
     const range = fmtDateShort(first) + ' – ' + fmtDateShort(last);
@@ -1584,7 +1700,8 @@ function renderRegular(){
     }
     const foot = document.createElement('div');
     foot.className = 'week-block-foot';
-    foot.innerHTML = `<span>Weekly total · ${range}</span><span style="display:flex;gap:10px;align-items:center;">${quota}<span class="wk-pts">${fmtNum(weekPts)}${weekTarget>0 ? ' / '+fmtNum(weekTarget) : ''} pts</span></span>`;
+    foot.innerHTML = `<span>Weekly total · ${range}</span><span class="wk-foot-right">
+        ${quota}<span class="wk-pts">${fmtNum(weekPts)}${weekTarget>0 ? ' / '+fmtNum(weekTarget) : ''} pts</span></span>`;
     block.appendChild(foot);
     container.appendChild(block);
   }
@@ -1646,12 +1763,12 @@ function renderWeekly(){
     const label = fmtDateShort(start) + ' – ' + fmtDateShort(end) + (start.getFullYear() !== new Date().getFullYear() ? ', ' + start.getFullYear() : '');
     return `<tr class="${k===thisWeek?'wk-current':''}"><td>${label}${k===thisWeek?' <span class="day-cap-note">THIS WEEK</span>':''}</td>${
       w.days.map(v=>`<td class="${v?'':'wk-zero'}">${v?fmtNum(v):'–'}</td>`).join('')
-    }<td class="wk-total">${fmtNum(total)}</td><td>${w.tests}</td></tr>`;
+    }<td class="wk-total">${fmtNum(total)}</td><td class="${hasCustomWeekTarget(k)?'wk-target-custom':''}">${weekTargetFor(k)>0 ? fmtNum(weekTargetFor(k)) : '–'}</td><td>${w.tests}</td></tr>`;
   }).join('');
   body.innerHTML = `<table class="weekly-table">
-    <thead><tr><th>Week</th>${dayNames.map(n=>`<th>${n}</th>`).join('')}<th>Total</th><th>Tests</th></tr></thead>
+    <thead><tr><th>Week</th>${dayNames.map(n=>`<th>${n}</th>`).join('')}<th>Total</th><th>Target</th><th>Tests</th></tr></thead>
     <tbody>${rows}</tbody>
-    <tfoot><tr><td>${weeklyScope==='month'?'All weeks shown':'All time'}</td>${colTotals.map(v=>`<td>${fmtNum(v)}</td>`).join('')}<td class="wk-total">${fmtNum(grand)}</td><td>${grandTests}</td></tr></tfoot>
+    <tfoot><tr><td>${weeklyScope==='month'?'All weeks shown':'All time'}</td>${colTotals.map(v=>`<td>${fmtNum(v)}</td>`).join('')}<td class="wk-total">${fmtNum(grand)}</td><td></td><td>${grandTests}</td></tr></tfoot>
   </table>`;
 }
 document.getElementById('weeklyHead').addEventListener('click', ()=>{ weeklyCollapsed = !weeklyCollapsed; renderWeekly(); });
@@ -3499,7 +3616,7 @@ document.getElementById('importFile').addEventListener('change', (ev)=>{
       regularEntries = (data.regularEntries||[]).map(e=> e.id ? e : {...e, id:uid()});
       backendEntries = (data.backendEntries||[]).map(e=> e.id ? e : {...e, id:uid()});
       contentEntries = (data.contentEntries||[]).map(e=> e.id ? e : {...e, id:uid()});
-      if(data.settings) settings = data.settings;
+      if(data.settings){ settings = data.settings; applyWeeklyDefault36(); }
       if(!settings.knownMonths) settings.knownMonths = [];
       if(settings.monthlyTarget == null) settings.monthlyTarget = 150;
       if(!settings.beKnownDays) settings.beKnownDays = [];
@@ -3511,7 +3628,6 @@ document.getElementById('importFile').addEventListener('change', (ev)=>{
       if(!settings.contentColumnOrder) settings.contentColumnOrder = ['ticketId','game','platform','status','date','notes'];
       if(!settings.references) settings.references = [];
       persistAll();
-      document.getElementById('regTargetInput').value = settings.monthlyTarget;
       const all = getAllMonths();
       selectedMonth = all.includes(ymNow()) ? ymNow() : all[all.length-1];
       const allBeDays = getAllBeDays();
