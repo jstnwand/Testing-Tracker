@@ -176,6 +176,20 @@ a{color:var(--lime);}
 .wk-target-reset{background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:6px;padding:2px 7px;cursor:pointer;font-size:12px;}
 .wk-target-reset:hover{color:var(--text);}
 .wk-target-custom{color:var(--amber, #e0a63a);}
+.scroll-today-fab{
+  position:fixed;right:4px;top:50%;transform:translateY(-50%);z-index:40;
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--card-2);color:var(--lime);border:1px solid var(--border);
+  font-size:13px;font-weight:700;line-height:1;cursor:pointer;padding:0;
+  opacity:.4;transition:opacity .2s ease, border-color .2s ease, background .2s ease;
+  box-shadow:0 4px 14px rgba(0,0,0,.45);
+}
+.scroll-today-fab:hover,.scroll-today-fab:focus-visible{opacity:1;border-color:var(--lime);background:var(--card);outline:none;}
+body.tab-content .scroll-today-fab{color:#b565f5;}
+body.tab-content .scroll-today-fab:hover,body.tab-content .scroll-today-fab:focus-visible{border-color:#b565f5;}
+@media (hover:none){ .scroll-today-fab:active{opacity:1;} }
+@media (max-width:640px){ .scroll-today-fab{top:auto;bottom:18px;transform:none;right:12px;width:34px;height:34px;} }
 .today-flash{animation:todayflash 1.6s ease-out;}
 @keyframes todayflash{0%,30%{box-shadow:0 0 0 2px var(--lime);}100%{box-shadow:0 0 0 2px transparent;}}
 .month-controls select{
@@ -1029,6 +1043,8 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
 
   <footer class="foot">QA Log · syncs to the cloud when the status says ☁ Synced · if it says ⚠ NOT synced, export a backup</footer>
 </div>
+
+<button type="button" class="scroll-today-fab" id="scrollTodayFab" title="Scroll to today" aria-label="Scroll to today"><span class="fab-arrow" id="scrollTodayArrow">↓</span></button>
 
 <script>
 (function(){
@@ -3756,6 +3772,41 @@ document.getElementById('contentTodayBtn').addEventListener('click', ()=>{
   renderContent();
   flashAndScroll(document.getElementById('contentSearch').closest('.filter-bar'));
 });
+
+/* Floating arrow by the scrollbar: same as the active tab's Today button,
+   and it points toward where today's list is. */
+function activeTabKey(){
+  const p = document.querySelector('.panel.active');
+  return p ? p.id.replace('panel-','') : 'regular';
+}
+function todayTargetEl(){
+  const tab = activeTabKey();
+  if(tab === 'regular') return document.querySelector('#regDayGroups .day-group[data-date="'+fmtISO(new Date())+'"]');
+  if(tab === 'backend') return document.getElementById('beSearch').closest('.filter-bar');
+  return document.getElementById('contentSearch').closest('.filter-bar');
+}
+function updateScrollTodayArrow(){
+  const tab = activeTabKey();
+  document.body.classList.toggle('tab-content', tab === 'content');
+  const el = todayTargetEl();
+  let up = false;
+  if(el){ up = el.getBoundingClientRect().top < 0; }
+  document.getElementById('scrollTodayArrow').textContent = up ? '↑' : '↓';
+}
+document.getElementById('scrollTodayFab').addEventListener('click', ()=>{
+  const tab = activeTabKey();
+  const btn = document.getElementById(tab === 'regular' ? 'regTodayBtn' : tab === 'backend' ? 'beTodayBtn' : 'contentTodayBtn');
+  btn.click();
+  document.getElementById('scrollTodayFab').blur();
+  setTimeout(updateScrollTodayArrow, 600);
+});
+let scrollArrowRaf = 0;
+window.addEventListener('scroll', ()=>{
+  if(scrollArrowRaf) return;
+  scrollArrowRaf = requestAnimationFrame(()=>{ scrollArrowRaf = 0; updateScrollTodayArrow(); });
+}, { passive:true });
+document.querySelectorAll('.tab-btn').forEach(b=> b.addEventListener('click', ()=> setTimeout(updateScrollTodayArrow, 0)));
+updateScrollTodayArrow();
 
 })();
 </script>
