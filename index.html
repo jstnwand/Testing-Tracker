@@ -154,6 +154,8 @@ a{color:var(--lime);}
 .month-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);font-weight:700;margin-bottom:4px;}
 .month-title{font-size:28px;font-weight:800;margin:0;letter-spacing:-0.01em;}
 .month-controls{display:flex;align-items:center;gap:10px;}
+.today-flash{animation:todayflash 1.6s ease-out;}
+@keyframes todayflash{0%,30%{box-shadow:0 0 0 2px var(--lime);}100%{box-shadow:0 0 0 2px transparent;}}
 .month-controls select{
   background:var(--card);border:1px solid var(--border);color:var(--text);
   border-radius:9px;padding:9px 14px;font-family:var(--sans);font-size:13px;font-weight:600;outline:none;cursor:pointer;
@@ -526,6 +528,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
         <h2 class="month-title" id="monthTitleDisplay">—</h2>
       </div>
       <div class="month-controls">
+        <button class="icon-btn today-btn" id="regTodayBtn" title="Jump to today">📍 Today</button>
         <select id="monthSelect"></select>
         <button class="icon-btn" id="addMonthBtn">+ Month</button>
       </div>
@@ -669,6 +672,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
         <h2 class="month-title" id="beDayTitleDisplay">—</h2>
       </div>
       <div class="month-controls">
+        <button class="icon-btn today-btn" id="beTodayBtn" title="Jump to today">📍 Today</button>
         <select id="beDaySelect"></select>
         <button class="icon-btn btn-neon" id="addBeDayBtn">+ New day</button>
       </div>
@@ -835,6 +839,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
         <h2 class="month-title" id="contentDayTitleDisplay">—</h2>
       </div>
       <div class="month-controls">
+        <button class="icon-btn today-btn" id="contentTodayBtn" title="Jump to today">📍 Today</button>
         <select id="contentDaySelect"></select>
         <button class="icon-btn btn-neon" id="addContentDayBtn">+ New day</button>
       </div>
@@ -1668,6 +1673,7 @@ function buildDayGroup(dateObj){
 
   const wrap = document.createElement('div');
   wrap.className = 'day-group';
+  wrap.dataset.date = iso;
 
   const head = document.createElement('div');
   head.className = 'day-head' + (collapsed?' collapsed':'');
@@ -3571,6 +3577,44 @@ window.addEventListener('resize', ()=>{
       renderContent();
     }
   }, 200);
+});
+
+/* =========================================================
+   JUMP TO TODAY — Regular / Backend / Copywrite
+   ========================================================= */
+function flashAndScroll(el){
+  if(!el) return;
+  el.scrollIntoView({ behavior:'smooth', block:'start' });
+  el.classList.remove('today-flash'); void el.offsetWidth; el.classList.add('today-flash');
+  setTimeout(()=> el.classList.remove('today-flash'), 1700);
+}
+document.getElementById('regTodayBtn').addEventListener('click', ()=>{
+  const iso = fmtISO(new Date());
+  if(selectedMonth !== ymNow()){ selectedMonth = ymNow(); ensureMonthKnown(selectedMonth); }
+  collapsedDays['day_'+iso] = false;
+  renderRegular();
+  flashAndScroll(document.querySelector('#regDayGroups .day-group[data-date="'+iso+'"]'));
+});
+document.getElementById('beTodayBtn').addEventListener('click', ()=>{
+  const iso = fmtISO(new Date());
+  if(selectedBeDay !== iso){
+    ensureBeDayKnown(iso);
+    selectedBeDay = iso;
+    document.getElementById('beDate').value = iso;
+    bePage = 0;
+  }
+  renderBackend();
+  flashAndScroll(document.getElementById('beSearch').closest('.filter-bar'));
+});
+document.getElementById('contentTodayBtn').addEventListener('click', ()=>{
+  const iso = fmtISO(new Date());
+  if(selectedContentDay !== iso){
+    ensureContentDayKnown(iso);
+    selectedContentDay = iso;
+    document.getElementById('contentDate').value = iso;
+  }
+  renderContent();
+  flashAndScroll(document.getElementById('contentSearch').closest('.filter-bar'));
 });
 
 })();
