@@ -190,6 +190,34 @@ body.tab-content .scroll-today-fab{color:#b565f5;}
 body.tab-content .scroll-today-fab:hover,body.tab-content .scroll-today-fab:focus-visible{border-color:#b565f5;}
 @media (hover:none){ .scroll-today-fab:active{opacity:1;} }
 @media (max-width:640px){ .fab-stack{top:auto;bottom:18px;transform:none;right:12px;gap:8px;} .scroll-today-fab{width:34px;height:34px;} }
+.nova-bar{justify-content:flex-start;gap:18px;}
+.nova-status{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-dim);}
+.nova-dot{width:9px;height:9px;border-radius:50%;background:var(--text-faint);flex-shrink:0;}
+.nova-status.live .nova-dot{background:var(--green);box-shadow:0 0 0 3px rgba(61,220,138,.18);animation:pulse 2s infinite;}
+.nova-status.live{color:var(--text);}
+.nova-status.stale .nova-dot{background:var(--amber);}
+.nova-status.stale{color:var(--amber);}
+.nova-picks{font-size:12.5px;font-weight:700;color:var(--text-dim);font-family:var(--mono);}
+.nova-picks.full{color:var(--amber);}
+.nova-hide{margin-left:auto;font-size:12.5px;color:var(--text-dim);display:inline-flex;gap:6px;align-items:center;cursor:pointer;}
+.nova-table td{vertical-align:middle;}
+.nova-game{font-weight:600;}
+.nova-new{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:4px;background:var(--lime);color:#0a0b08;font-size:9.5px;font-weight:800;letter-spacing:.06em;vertical-align:middle;}
+.nova-reason{display:inline-block;padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;background:var(--bg-raised);color:var(--text);white-space:nowrap;}
+.nova-reason.r-new{background:#16708c;color:#fff;}
+.nova-reason.r-update{background:#d9531e;color:#fff;}
+.nova-reason.r-support{background:#e03b3b;color:#fff;}
+.nova-reason.r-pre{background:#7c3aed;color:#fff;}
+.nova-sec{display:inline-block;margin:2px 2px 2px 0;padding:2px 7px;border-radius:5px;background:#1d8fe0;color:#fff;font-size:10.5px;font-weight:600;white-space:nowrap;}
+.nova-claim{font-weight:800;color:var(--text-faint);}
+.nova-claim.yes{color:var(--green);}
+.nova-claim.no{color:var(--red);}
+.nova-claimed td{opacity:.55;}
+.nova-dim{color:var(--text-dim);font-size:12px;}
+.mini-btn.nova-log-btn{width:auto;padding:4px 10px;color:var(--lime);border-color:rgba(var(--lime-rgb),.4);white-space:nowrap;}
+.nova-log-btn.done{color:var(--text-faint);border-color:var(--border);cursor:default;}
+.nova-help{margin-top:20px;}
+@media (max-width:640px){ #panel-nova .nova-wrap{display:block;} #panel-nova .table-scroll{overflow-x:auto;} .nova-table{min-width:820px;} .nova-hide{margin-left:0;} }
 .today-flash{animation:todayflash 1.6s ease-out;}
 @keyframes todayflash{0%,30%{box-shadow:0 0 0 2px var(--lime);}100%{box-shadow:0 0 0 2px transparent;}}
 .month-controls select{
@@ -260,6 +288,30 @@ table{width:100%;border-collapse:collapse;table-layout:fixed;}
 .game-table td{padding:10px 16px;font-size:13.5px;border:1px solid var(--border-soft);}
 .game-table tr:hover td{background:rgba(var(--lime-rgb),0.02);}
 .platform-tag{font-size:11px;color:var(--text-dim);font-family:var(--mono);}
+.plat-chip{display:inline-flex;align-items:center;margin-top:4px;padding:2px 8px;border-radius:5px;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;line-height:1.5;border:1px solid transparent;white-space:nowrap;}
+.plat-steam{background:linear-gradient(135deg,#0b1a2e 0%,#0a4a6e 55%,#0a7fb0 100%);color:#ffffff;border-color:#1b5f85;}
+.plat-epic{background:#2f2f2f;color:#ffffff;border-color:#4a4a4a;font-family:'Inter',sans-serif;font-stretch:condensed;letter-spacing:.08em;}
+.plat-xbox{background:linear-gradient(135deg,#0e5c0e 0%,#107c10 50%,#5dc21e 100%);color:#ffffff;border-color:#2a8f1a;}
+.plat-gog{background:linear-gradient(135deg,#9b51e0 0%,#7a3cc8 100%);color:#ffffff;border-color:#a970e6;border-radius:6px;text-transform:lowercase;letter-spacing:.03em;}
+.plat-ubisoft{background:linear-gradient(135deg,#2d1f5c 0%,#5b4a9e 55%,#a9a1db 100%);color:#ffffff;border-color:#6d5fb3;}
+.plat-ea{background:#ffffff;color:#000000;border-color:#000000;box-shadow:0 0 0 1px #ffffff;border-radius:999px;}
+.plat-other{background:var(--bg-raised);color:var(--text-dim);border-color:var(--border);text-transform:none;letter-spacing:0;font-weight:600;}
+.trainer-code-cell.has-edit-btn{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.cell-edit-btn{flex-shrink:0;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:5px;font-size:11px;line-height:1;padding:3px 5px;cursor:pointer;opacity:.55;transition:opacity .15s,color .15s,border-color .15s;}
+.cell-edit-btn:hover,.cell-edit-btn:focus-visible{opacity:1;color:var(--lime);border-color:var(--lime);outline:none;}
+.paste-card{background:linear-gradient(160deg, rgba(var(--lime-rgb),0.10) 0%, rgba(var(--lime-rgb),0.03) 60%), var(--card);border-color:rgba(var(--lime-rgb),0.45);}
+.paste-card h3{color:var(--lime);}
+.paste-card textarea{border-color:rgba(var(--lime-rgb),0.30) !important;}
+.btn-paste-big{align-self:stretch;min-height:64px;min-width:200px;padding:16px 26px;font-size:16px;font-weight:800;border-radius:12px;box-shadow:0 6px 20px rgba(var(--lime-rgb),0.18);}
+.btn-paste-big:hover{filter:brightness(1.05);box-shadow:0 8px 26px rgba(var(--lime-rgb),0.28);}
+.stat-grid.stat-grid-5{grid-template-columns:repeat(5,1fr);}
+@media(max-width:1100px){.stat-grid.stat-grid-5{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:640px){.stat-grid.stat-grid-5{grid-template-columns:1fr 1fr;} .stat-grid.stat-grid-5 .target-card{grid-column:1 / -1;} .btn-paste-big{width:100%;min-height:56px;}}
+.target-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.target-toggle{display:inline-flex;border:1px solid var(--border);border-radius:7px;overflow:hidden;margin-top:-3px;flex-shrink:0;}
+.target-toggle button{background:transparent;border:none;color:var(--text-faint);font-family:var(--sans);font-size:10.5px;font-weight:700;padding:3px 8px;cursor:pointer;}
+.target-toggle button.active{background:var(--bg-raised);color:var(--amber);}
+.target-toggle button:not(.active):hover{color:var(--text);}
 .mini-btn.has-link{color:var(--lime);border-color:rgba(var(--lime-rgb),0.4);}
 .result-tag{font-family:var(--mono);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-block;}
 .result-passed{background:rgba(61,220,138,0.1);color:var(--green);}
@@ -559,6 +611,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
     <button class="tab-btn active" data-tab="regular">Regular Testing</button>
     <button class="tab-btn" data-tab="backend">Backend Testing</button>
     <button class="tab-btn" data-tab="content">Copywrite Testing</button>
+    <button class="tab-btn" data-tab="nova">Nova Queue</button>
   </div>
 
   <!-- ============ REGULAR TESTING ============ -->
@@ -576,34 +629,27 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
       </div>
     </div>
 
-    <div class="stat-grid">
+    <div class="stat-grid stat-grid-5">
       <div class="stat-card">
         <div class="stat-label">Month Total</div>
         <div class="stat-value lime" id="regMonthTotal">0</div>
         <div class="stat-sub">from Passed/Failed tests only</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Monthly Target</div>
+      <div class="stat-card target-card">
+        <div class="target-card-top">
+          <div class="stat-label" id="regTargetLabel">Weekly Target</div>
+          <div class="target-toggle" role="group" aria-label="Show weekly or monthly target">
+            <button type="button" data-target-view="week">Week</button>
+            <button type="button" data-target-view="month">Month</button>
+          </div>
+        </div>
         <div class="stat-value amber" id="regMonthTargetDisplay">0</div>
-        <div class="stat-sub" id="regMonthTargetSub">sum of this month's weekly targets</div>
+        <div class="stat-sub" id="regMonthTargetSub">—</div>
         <div class="stat-sub wk-card-row">
           <span id="regWeekTargetSummary">weekly: —</span>
           <button type="button" class="icon-btn wk-edit-btn" id="editWeekTargetsBtn">✎ Weekly targets</button>
         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Remaining / Excess</div>
-        <div class="stat-value" id="regRemaining">0</div>
-        <div class="stat-sub" id="regRemainingSub">to hit target</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Days Logged</div>
-        <div class="stat-value purple" id="regDaysLogged">0</div>
-        <div class="stat-sub" id="regDaysLoggedSub">out of — days</div>
-      </div>
-    </div>
-
-    <div class="stat-grid">
       <div class="stat-card">
         <div class="stat-label">Not Started</div>
         <div class="stat-value" style="color:var(--slate);" id="regNotStarted">0</div>
@@ -666,7 +712,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
         </div>
         <div class="field">
           <label>Platform</label>
-          <input type="text" id="rgPlatform" placeholder="Steam / Xbox / GOG…" list="platformList">
+          <input type="text" id="rgPlatform" value="Steam" placeholder="Steam / Xbox / GOG…" list="platformList">
           <datalist id="platformList"></datalist>
         </div>
         <div class="field">
@@ -687,14 +733,14 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
       </div>
     </div>
 
-    <div class="form-card">
-      <h3>Paste from sheet</h3>
+    <div class="form-card paste-card">
+      <h3>📋 Paste from sheet</h3>
       <p class="hint">Paste game lines straight from your spreadsheet — one per line, like <code>The Last Faith (Steam)</code>. Tab-separated Game / Platform / Status / Points / Date also works. It also recognizes a Slack-workflow-style form dump — the game line, followed by other fields, with a <code>Test Value</code> label whose next line is read as Points. Anything left out defaults to today's date, Queued status, and 0 points.</p>
       <div class="form-row">
         <div class="field grow-2">
           <textarea id="rgPasteArea" rows="3" placeholder="The Last Faith (Steam)&#10;Palworld (Xbox)" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
         </div>
-        <button class="btn btn-primary" id="rgPasteBtn">+ Add pasted rows</button>
+        <button class="btn btn-primary btn-paste-big" id="rgPasteBtn">+ Add pasted rows</button>
       </div>
     </div>
 
@@ -806,15 +852,15 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
           </div>
         </div>
 
-        <div class="form-card">
-          <h3>Paste from sheet</h3>
+        <div class="form-card paste-card">
+          <h3>📋 Paste from sheet</h3>
           <p class="hint">Copy columns straight from your spreadsheet (tab-separated) and paste below — one row per line. Supports Game, Source, Status, Date, Notes in that order; Status/Date are optional and default to Queued / this page's day if left out. Re-pasting a Game + Source that already exists on this day updates that row instead of duplicating it.</p>
           <div class="form-row">
             <div class="field grow-2">
               <textarea id="bePasteArea" rows="3" placeholder="Palworld&#9;Steam&#9;Failed&#9;July 25&#10;Palworld&#9;Xbox&#9;Passed&#9;July 25" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
               <p class="hint" style="margin:6px 0 0;">Pasting always replaces what's in this box — it won't stack with anything left over from before.</p>
             </div>
-            <button class="btn btn-primary" id="bePasteBtn">+ Add pasted rows</button>
+            <button class="btn btn-primary btn-paste-big" id="bePasteBtn">+ Add pasted rows</button>
           </div>
         </div>
 
@@ -962,15 +1008,15 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
           </div>
         </div>
 
-        <div class="form-card">
-          <h3>Paste from sheet</h3>
+        <div class="form-card paste-card">
+          <h3>📋 Paste from sheet</h3>
           <p class="hint">Paste a ticket dump in <code>ID</code> / <code>Game</code> / <code>Platform</code> label-value format (one field per line) and it'll match/update by Ticket ID automatically. Tab-separated Game/Source/Status/Date/Notes and plain "Game (Platform)" lines also still work, defaulting to Queued / this page's day if left out.</p>
           <div class="form-row">
             <div class="field grow-2">
               <textarea id="contentPasteArea" rows="6" placeholder="ID&#10;49755&#10;Game&#10;Castle Crashers (Steam, STiNGERR)&#10;Platform&#10;Steam" style="width:100%;resize:vertical;font-family:var(--mono);"></textarea>
               <p class="hint" style="margin:6px 0 0;">Pasting always replaces what's in this box — it won't stack with anything left over from before.</p>
             </div>
-            <button class="btn btn-primary" id="contentPasteBtn">+ Add pasted rows</button>
+            <button class="btn btn-primary btn-paste-big" id="contentPasteBtn">+ Add pasted rows</button>
           </div>
         </div>
 
@@ -1039,6 +1085,39 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
       </div>
     </div>
 
+  </div>
+
+  <!-- ============ NOVA QUEUE (read-only mirror of Nova's Pending Tests) ============ -->
+  <div class="panel" id="panel-nova">
+    <div class="month-header">
+      <div>
+        <div class="month-eyebrow">Nova</div>
+        <h2 class="month-title">Testing Queue</h2>
+      </div>
+      <div class="month-controls">
+        <button class="btn btn-primary" id="novaOpenBtn" title="Opens Nova in a second window. Log in and go Online there as usual.">↗ Open Nova queue</button>
+      </div>
+    </div>
+
+    <div class="week-nav nova-bar">
+      <span class="nova-status" id="novaStatus"><span class="nova-dot"></span>Not connected yet</span>
+      <span class="nova-picks" id="novaPicks">Logged from Nova today: 0 / 3</span>
+      <label class="nova-hide"><input type="checkbox" id="novaHideClaimed"> Hide claimed</label>
+    </div>
+
+    <div class="table-wrap nova-wrap">
+      <div class="table-scroll">
+        <table class="game-table nova-table" id="novaTable">
+          <thead><tr><th>Game</th><th>Reason</th><th>Secondary</th><th style="text-align:right;">Value</th><th>Claimed</th><th>Since claimed</th><th style="text-align:right;">WAU</th><th>Added</th><th></th></tr></thead>
+          <tbody id="novaTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="form-card nova-help">
+      <h3>How this works</h3>
+      <p class="hint" style="margin:0;">Install the <b>Nova Queue → QA Log bridge</b> script in the Tampermonkey browser extension (one time). Then click <b>Open Nova queue</b> above, log in and go Online in that window as usual, and leave it open. The script reads the Pending Tests table, sends it here, and reloads Nova every 60 seconds. It only reads: it never claims games or flips the Online switch. Only the rows on Nova's current page are read, so raise Nova's rows-per-page if the queue is longer. <b>+ Log</b> adds a game to today's Regular Testing list with its test value as points.</p>
+    </div>
   </div>
 
   <footer class="foot">QA Log · syncs to the cloud when the status says ☁ Synced · if it says ⚠ NOT synced, export a backup</footer>
@@ -1477,7 +1556,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 (function restoreActiveTab(){
   let saved = null;
   try{ saved = localStorage.getItem(LS_TAB); }catch(e){}
-  setActiveTab(saved === 'backend' ? 'backend' : 'regular');
+  setActiveTab(['backend','content','nova'].includes(saved) ? saved : 'regular');
 })();
 
 /* =========================================================
@@ -1596,6 +1675,46 @@ function weeksOfMonth(ym){
   return out;
 }
 function monthWeekTargetSum(ym){ return weeksOfMonth(ym).reduce((a,w)=> a + weekTargetFor(w.ws), 0); }
+// Target card: Week view (default) or Month view, remembered on this device
+let targetView = 'week';
+try{ targetView = localStorage.getItem('qa_target_view') === 'month' ? 'month' : 'week'; }catch(e){}
+function cardWeek(){
+  // the current week when it's in the month being viewed, otherwise that month's first week
+  const weeks = weeksOfMonth(selectedMonth);
+  const thisWs = fmtISO(weekStartOf(new Date()));
+  return weeks.find(w=> w.ws === thisWs) || weeks[0];
+}
+function renderTargetCard(monthTarget){
+  document.querySelectorAll('[data-target-view]').forEach(b=> b.classList.toggle('active', b.dataset.targetView === targetView));
+  const label = document.getElementById('regTargetLabel');
+  const big = document.getElementById('regMonthTargetDisplay');
+  const sub = document.getElementById('regMonthTargetSub');
+  const summary = document.getElementById('regWeekTargetSummary');
+  if(targetView === 'month'){
+    label.textContent = 'Monthly Target';
+    big.textContent = fmtNum(monthTarget);
+    sub.textContent = 'sum of ' + weeksOfMonth(selectedMonth).length + ' weekly targets';
+    summary.style.display = '';
+    updateWeekTargetSummary();
+    return;
+  }
+  const w = cardWeek();
+  const t = weekTargetFor(w.ws);
+  let pts = 0;
+  for(let d = new Date(w.first); d <= w.last; d.setDate(d.getDate()+1)){
+    (regEntriesByDate[fmtISO(d)]||[]).forEach(e=>{ if(pointsCount(e)) pts += Number(e.points||0); });
+  }
+  const isThis = w.ws === fmtISO(weekStartOf(new Date()));
+  label.textContent = 'Weekly Target';
+  big.textContent = t > 0 ? fmtNum(t) : '—';
+  sub.textContent = (isThis ? 'This week' : fmtDateShort(w.first) + ' – ' + fmtDateShort(w.last)) + ' · ' + fmtNum(pts) + ' pts so far';
+  summary.style.display = 'none';
+}
+document.querySelectorAll('[data-target-view]').forEach(b=> b.addEventListener('click', ()=>{
+  targetView = b.dataset.targetView;
+  try{ localStorage.setItem('qa_target_view', targetView); }catch(e){}
+  renderRegular();
+}));
 function updateWeekTargetSummary(){
   const el = document.getElementById('regWeekTargetSummary');
   if(!el) return;
@@ -1669,22 +1788,13 @@ function renderRegular(){
 
   // Monthly target always follows the weekly targets of the weeks shown in this month
   const target = monthWeekTargetSum(selectedMonth);
-  const remaining = target - monthTotal;
 
   document.getElementById('regMonthTotal').textContent = fmtNum(monthTotal);
-  document.getElementById('regMonthTargetDisplay').textContent = fmtNum(target);
-  document.getElementById('regMonthTargetSub').textContent = 'sum of ' + weeksOfMonth(selectedMonth).length + ' weekly targets';
-  document.getElementById('regDaysLogged').textContent = daysLogged + ' / ' + nDays;
-  document.getElementById('regDaysLoggedSub').textContent = 'out of ' + nDays + ' days';
+  renderTargetCard(target);
   document.getElementById('regNotStarted').textContent = notStarted;
   document.getElementById('regTestingCount').textContent = testingCount;
   document.getElementById('regDownloadingCount').textContent = downloadingCount;
 
-  const remEl = document.getElementById('regRemaining');
-  const remSub = document.getElementById('regRemainingSub');
-  if(target <= 0){ remEl.textContent='—'; remEl.className='stat-value'; remSub.textContent='no target set'; }
-  else if(remaining <= 0){ remEl.textContent='+'+fmtNum(Math.abs(remaining)); remEl.className='stat-value green'; remSub.textContent='over target'; }
-  else{ remEl.textContent=fmtNum(remaining); remEl.className='stat-value amber'; remSub.textContent='to hit target'; }
 
   const badge = document.getElementById('monthStatusBadge');
   const [my,mm] = selectedMonth.split('-').map(Number);
@@ -1863,7 +1973,7 @@ function buildDayGroup(dateObj){
           <td class="drag-handle-cell" title="Drag to reorder">⋮⋮</td>
           <td>
             <div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game||'')}</div>
-            ${e.platform ? `<div class="platform-tag">(${escapeHtml(e.platform)})</div>` : ''}
+            ${e.platform ? platformChip(e.platform) : ''}
           </td>
           <td><select class="status-select" data-status-id="${e.id}" style="background-color:${statusColor};">${opts}</select></td>
           <td><input type="number" step="0.25" class="cell-input pts-input" data-points-id="${e.id}" value="${e.points}" title="${pointsCount(e) ? '' : 'Not counted yet — mark Passed or Failed to add these points to the total'}" style="text-align:right;font-family:var(--mono);${pointsCount(e) ? '' : 'opacity:0.45;'}"></td>
@@ -1960,7 +2070,7 @@ function buildDayGroup(dateObj){
           <div class="game-cell" data-game-id="${e.id}">${escapeHtml(e.game||'')}</div>
           <button class="mini-btn del" data-del="${e.id}" title="Delete">✕</button>
         </div>
-        ${e.platform ? `<div class="platform-tag" style="margin:-6px 0 8px;">(${escapeHtml(e.platform)})</div>` : ''}
+        ${e.platform ? `<div style="margin:-6px 0 8px;">${platformChip(e.platform)}</div>` : ''}
         <div class="be-card-row"><span class="be-card-label">Status</span><select class="status-select" data-status-id="${e.id}" style="background-color:${statusColor};">${opts}</select></div>
         <div class="be-card-row"><span class="be-card-label">Points</span><input type="number" step="0.25" class="cell-input pts-input" data-points-id="${e.id}" value="${e.points}" title="${pointsCount(e) ? '' : 'Not counted yet — mark Passed or Failed to add these points to the total'}" style="text-align:right;font-family:var(--mono);${pointsCount(e) ? '' : 'opacity:0.45;'}"></div>
         <div class="be-card-row"><span class="be-card-label">Code</span><div class="game-cell trainer-code-cell" data-trainer-id="${e.id}">${e.trainerCode ? escapeHtml(e.trainerCode) : '<span class="add-link-hint">+ Add code</span>'}</div></div>
@@ -1969,7 +2079,7 @@ function buildDayGroup(dateObj){
     });
     cardsHtml += `<div class="be-card quick-add-row">
       <div class="be-card-row"><span class="be-card-label">Game</span><input type="text" class="qa-game cell-input" placeholder="+ Add a game…"></div>
-      <div class="be-card-row"><span class="be-card-label">Platform</span><input type="text" class="qa-platform cell-input" placeholder="Platform" list="platformList"></div>
+      <div class="be-card-row"><span class="be-card-label">Platform</span><input type="text" class="qa-platform cell-input" value="Steam" placeholder="Platform" list="platformList"></div>
       <div class="be-card-row"><span class="be-card-label">Status</span><select class="qa-result status-select" style="background-color:${STATUS_COLORS.Queued};">${STATUS_OPTIONS.map(s=>`<option value="${s}">${s}</option>`).join('')}</select></div>
       <div class="be-card-row"><span class="be-card-label">Points</span><input type="number" step="0.25" class="qa-points cell-input" placeholder="pts"></div>
       <button class="btn btn-primary qa-add-btn" style="width:100%;margin-top:8px;">+ Add entry</button>
@@ -2062,7 +2172,7 @@ function quickAddRowHtml(dateIso){
     <td><input type="number" step="0.25" class="qa-points" placeholder="pts" style="width:100%;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 8px;font-family:var(--mono);font-size:12.5px;"></td>
     <td>
       <div style="display:flex;gap:6px;align-items:center;">
-        <input type="text" class="qa-platform" placeholder="Platform" style="flex:1;min-width:0;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 8px;font-family:var(--sans);font-size:11.5px;" list="platformList">
+        <input type="text" class="qa-platform" value="Steam" placeholder="Platform" style="flex:1;min-width:0;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 8px;font-family:var(--sans);font-size:11.5px;" list="platformList">
         <button class="mini-btn qa-add-btn" title="Add row" style="color:var(--lime);border-color:rgba(215,255,62,0.35);flex-shrink:0;">+</button>
       </div>
     </td>
@@ -2124,12 +2234,16 @@ document.getElementById('rgAddBtn').addEventListener('click', ()=>{
   selectedMonth = ymOf(date);
   ensureMonthKnown(selectedMonth);
   document.getElementById('rgGame').value='';
-  document.getElementById('rgPlatform').value='';
+  document.getElementById('rgPlatform').value='Steam';
   document.getElementById('rgPoints').value='';
   renderRegular(); renderTicker();
 });
 
 document.getElementById('rgDate').value = fmtISO(new Date());
+document.addEventListener('focusin', (ev)=>{
+  const t = ev.target;
+  if(t && (t.id === 'rgPlatform' || (t.classList && t.classList.contains('qa-platform')))) setTimeout(()=>{ try{ t.select(); }catch(e){} }, 0);
+});
 
 document.getElementById('rgPasteArea').addEventListener('paste', (ev)=>{
   // Always replace the whole box with exactly what was just pasted, rather
@@ -2139,6 +2253,19 @@ document.getElementById('rgPasteArea').addEventListener('paste', (ev)=>{
   ev.target.value = text;
 });
 
+/* Platform chip, coloured after each store's own branding. Unknown names get a neutral chip. */
+const PLATFORM_ALIASES = {
+  steam:'steam',
+  epic:'epic', 'epic games':'epic', 'epic games store':'epic', egs:'epic',
+  xbox:'xbox', 'xbox app':'xbox', 'game pass':'xbox', 'pc game pass':'xbox', 'microsoft store':'xbox', 'ms store':'xbox',
+  gog:'gog', 'gog.com':'gog', 'gog galaxy':'gog',
+  ubisoft:'ubisoft', 'ubisoft connect':'ubisoft', uplay:'ubisoft', 'ubi':'ubisoft',
+  ea:'ea', 'ea app':'ea', 'ea play':'ea', origin:'ea', 'electronic arts':'ea'
+};
+function platformKey(name){ return PLATFORM_ALIASES[(name||'').trim().toLowerCase()] || 'other'; }
+function platformChip(name){
+  return `<span class="plat-chip plat-${platformKey(name)}">${escapeHtml(name)}</span>`;
+}
 function parseRegularGameLine(line){
   // "Game Name (Platform)" style, matching the original spreadsheet layout
   const m = line.trim().match(/^(.*)\s+\(([^)]+)\)\s*$/);
@@ -2208,7 +2335,7 @@ document.getElementById('rgPasteBtn').addEventListener('click', ()=>{
   parsed.forEach(rec=>{
     if(!rec.game) return;
     const date = rec.date || today;
-    regularEntries.push({ id: uid(), date, game: rec.game, platform: rec.platform||'', result: rec.status||'Queued', points: isNaN(rec.points)?0:rec.points });
+    regularEntries.push({ id: uid(), date, game: rec.game, platform: rec.platform||'Steam', result: rec.status||'Queued', points: isNaN(rec.points)?0:rec.points });
     ensureMonthKnown(ymOf(date));
     lastDate = date;
     count++;
@@ -3464,7 +3591,7 @@ function wireGameCell(div, currentValue, onCommit){
  * edits on double-click/right-click.
  */
 function wireCopyEditCell(div, currentValue, onCommit){
-  div.title = currentValue ? 'Click to copy · double-click or right-click to edit' : 'Click to add';
+  div.title = currentValue ? 'Click to copy · ✎ to edit' : 'Click to add';
   const enterEdit = ()=>{
     const input = document.createElement('input');
     input.type = 'text';
@@ -3485,13 +3612,25 @@ function wireCopyEditCell(div, currentValue, onCommit){
       else if(e.key === 'Escape'){ done = true; input.blur(); onCommit(null); }
     });
   };
+  if(currentValue){
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.className = 'cell-edit-btn';
+    editBtn.title = 'Edit';
+    editBtn.setAttribute('aria-label', 'Edit');
+    editBtn.textContent = '✎';
+    editBtn.addEventListener('click', (ev)=>{ ev.preventDefault(); ev.stopPropagation(); enterEdit(); });
+    editBtn.addEventListener('dblclick', (ev)=> ev.stopPropagation());
+    div.classList.add('has-edit-btn');
+    div.appendChild(editBtn);
+  }
   div.addEventListener('click', ()=>{
     if(!currentValue){ enterEdit(); return; }
     const flash = ()=>{
-      const original = div.textContent;
+      const original = div.innerHTML;
       div.textContent = 'Copied ✓';
       div.classList.add('copied-flash');
-      setTimeout(()=>{ if(div.isConnected){ div.textContent = original; div.classList.remove('copied-flash'); } }, 900);
+      setTimeout(()=>{ if(div.isConnected){ div.innerHTML = original; div.classList.remove('copied-flash'); const b = div.querySelector('.cell-edit-btn'); if(b) b.addEventListener('click', (ev)=>{ ev.preventDefault(); ev.stopPropagation(); enterEdit(); }); } }, 900);
     };
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(currentValue).then(flash).catch(flash);
@@ -3790,6 +3929,7 @@ function todayTargetEl(){
 }
 function updateScrollTodayArrow(){
   const tab = activeTabKey();
+  document.getElementById('scrollTodayFab').style.display = tab === 'nova' ? 'none' : '';
   document.body.classList.toggle('tab-content', tab === 'content');
   const el = todayTargetEl();
   let up = false;
@@ -3798,6 +3938,7 @@ function updateScrollTodayArrow(){
 }
 document.getElementById('scrollTodayFab').addEventListener('click', ()=>{
   const tab = activeTabKey();
+  if(tab === 'nova') return;
   const btn = document.getElementById(tab === 'regular' ? 'regTodayBtn' : tab === 'backend' ? 'beTodayBtn' : 'contentTodayBtn');
   btn.click();
   document.getElementById('scrollTodayFab').blur();
@@ -3807,6 +3948,131 @@ document.getElementById('scrollTopFab').addEventListener('click', ()=>{
   window.scrollTo({ top:0, behavior:'smooth' });
   document.getElementById('scrollTopFab').blur();
 });
+/* =========================================================
+   NOVA QUEUE — receives rows from the Tampermonkey bridge script
+   ========================================================= */
+const NOVA_URL = 'https://www.wemod.com/nova/resources/testing-queue?testing-queue_page=1';
+const NOVA_ORIGIN = 'https://www.wemod.com';
+const NOVA_DAILY_LIMIT = 3; // 1 auto-assigned + 2 picks
+const LS_NOVA = 'qa_nova_snapshot';
+const LS_NOVA_HIDE = 'qa_nova_hide_claimed';
+let nova = { rows: [], scrapedAt: 0, note: '' };
+let novaSeenKeys = null; // keys from the previous update, for the NEW tag
+try{ const saved = JSON.parse(localStorage.getItem(LS_NOVA) || 'null'); if(saved && Array.isArray(saved.rows)) nova = saved; }catch(e){}
+try{ document.getElementById('novaHideClaimed').checked = localStorage.getItem(LS_NOVA_HIDE) === '1'; }catch(e){}
+
+const novaKey = (r)=> (r.game + '|' + r.platform).toLowerCase();
+const novaStr = (v, max)=> String(v == null ? '' : v).slice(0, max || 200);
+function cleanNovaRow(r){
+  return {
+    game: novaStr(r.game, 200).trim(),
+    platform: novaStr(r.platform, 60).trim(),
+    reason: novaStr(r.reason, 120),
+    secondary: Array.isArray(r.secondary) ? r.secondary.slice(0, 8).map(x=> novaStr(x, 60)) : [],
+    value: Number.isFinite(Number(r.value)) ? Number(r.value) : 0,
+    sinceClaimed: novaStr(r.sinceClaimed, 80),
+    wau: Number.isFinite(Number(r.wau)) ? Number(r.wau) : 0,
+    claimed: r.claimed === true ? true : r.claimed === false ? false : null,
+    addedOn: novaStr(r.addedOn, 40),
+  };
+}
+
+window.addEventListener('message', (ev)=>{
+  if(ev.origin !== NOVA_ORIGIN) return;
+  const d = ev.data;
+  if(!d || d.source !== 'nova-queue-bridge' || !Array.isArray(d.rows)) return;
+  novaSeenKeys = new Set(nova.rows.map(novaKey));
+  const hadData = nova.scrapedAt > 0;
+  nova = { rows: d.rows.slice(0, 500).map(cleanNovaRow).filter(r=> r.game), scrapedAt: Date.now(), note: novaStr(d.note, 20) };
+  if(!hadData) novaSeenKeys = null;
+  try{ localStorage.setItem(LS_NOVA, JSON.stringify(nova)); }catch(e){}
+  renderNova();
+});
+
+document.getElementById('novaOpenBtn').addEventListener('click', ()=>{
+  const w = window.open(NOVA_URL, 'qaNovaQueue');
+  if(!w) alert('Your browser blocked the Nova window. Allow pop-ups for this page and try again.');
+});
+document.getElementById('novaHideClaimed').addEventListener('change', (e)=>{
+  try{ localStorage.setItem(LS_NOVA_HIDE, e.target.checked ? '1' : '0'); }catch(err){}
+  renderNova();
+});
+
+function novaLoggedToday(){
+  const today = fmtISO(new Date());
+  return regularEntries.filter(e=> e.date === today && e.fromNova);
+}
+function novaAgeText(){
+  if(!nova.scrapedAt) return null;
+  const sec = Math.max(0, Math.round((Date.now() - nova.scrapedAt)/1000));
+  return sec < 60 ? sec + 's ago' : Math.round(sec/60) + ' min ago';
+}
+function renderNovaStatus(){
+  const el = document.getElementById('novaStatus');
+  if(!el) return;
+  const age = novaAgeText();
+  let cls = 'off', text = 'Not connected yet. Click Open Nova queue.';
+  if(age){
+    const sec = (Date.now() - nova.scrapedAt)/1000;
+    cls = sec < 90 ? 'live' : 'stale';
+    text = (cls === 'live' ? 'Live' : 'Last update') + ' · ' + age + ' · ' + nova.rows.length + ' games';
+    if(nova.note === 'offline') text += ' · Nova shows no games. Are you Online?';
+    else if(nova.note === 'no-table') text += " · couldn't find the table on the Nova page";
+    if(cls === 'stale') text += ' · is the Nova window still open?';
+  }
+  el.className = 'nova-status ' + cls;
+  el.innerHTML = '<span class="nova-dot"></span>' + escapeHtml(text);
+}
+const NOVA_REASON_CLASS = { 'new trainer':'r-new', 'game update':'r-update', 'support':'r-support', 'prerelease':'r-pre' };
+function renderNova(){
+  renderNovaStatus();
+  const logged = novaLoggedToday();
+  const picks = document.getElementById('novaPicks');
+  picks.textContent = 'Logged from Nova today: ' + logged.length + ' / ' + NOVA_DAILY_LIMIT + ' (1 auto + 2 picks)';
+  picks.classList.toggle('full', logged.length >= NOVA_DAILY_LIMIT);
+  const loggedKeys = new Set(logged.map(e=> (e.game + '|' + e.platform).toLowerCase()));
+  const hide = document.getElementById('novaHideClaimed').checked;
+  const rows = nova.rows.filter(r=> !(hide && r.claimed === true));
+  const tbody = document.getElementById('novaTbody');
+  if(!rows.length){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="9">${nova.scrapedAt ? 'No games to show.' : 'Nothing yet. Open the Nova queue to start receiving games.'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map((r, i)=>{
+    const key = novaKey(r);
+    const isNew = novaSeenKeys && !novaSeenKeys.has(key);
+    const rc = NOVA_REASON_CLASS[r.reason.toLowerCase()] || '';
+    const claimed = r.claimed === true ? '<span class="nova-claim yes" title="Claimed">✓</span>'
+                  : r.claimed === false ? '<span class="nova-claim no" title="Not claimed">✕</span>' : '<span class="nova-claim">–</span>';
+    const done = loggedKeys.has(key);
+    return `<tr class="${r.claimed === true ? 'nova-claimed' : ''}">
+      <td><div class="nova-game">${escapeHtml(r.game)}${isNew ? ' <span class="nova-new">NEW</span>' : ''}</div>${r.platform ? platformChip(r.platform) : ''}</td>
+      <td>${r.reason ? `<span class="nova-reason ${rc}">${escapeHtml(r.reason)}</span>` : ''}</td>
+      <td>${r.secondary.map(x=> `<span class="nova-sec">${escapeHtml(x)}</span>`).join(' ')}</td>
+      <td style="text-align:right;font-family:var(--mono);">${fmtNum(r.value)}</td>
+      <td>${claimed}</td>
+      <td class="nova-dim">${r.sinceClaimed ? escapeHtml(r.sinceClaimed) : '—'}</td>
+      <td style="text-align:right;font-family:var(--mono);">${r.wau}</td>
+      <td class="nova-dim" style="font-family:var(--mono);">${escapeHtml(r.addedOn)}</td>
+      <td><button class="mini-btn nova-log-btn ${done ? 'done' : ''}" data-nova-idx="${nova.rows.indexOf(r)}" title="${done ? 'Already in today\'s Regular list' : 'Add to today\'s Regular list'}">${done ? 'Logged ✓' : '+ Log'}</button></td>
+    </tr>`;
+  }).join('');
+  tbody.querySelectorAll('[data-nova-idx]').forEach(btn=> btn.addEventListener('click', ()=>{
+    const r = nova.rows[Number(btn.dataset.novaIdx)];
+    if(!r || btn.classList.contains('done')) return;
+    const count = novaLoggedToday().length;
+    if(count >= NOVA_DAILY_LIMIT && !confirm('You already logged ' + count + ' games from Nova today (limit ' + NOVA_DAILY_LIMIT + ': 1 auto + 2 picks). Log this one anyway?')) return;
+    regularEntries.push({ id: uid(), date: fmtISO(new Date()), game: r.game, platform: r.platform || 'Steam', result: 'Queued', points: r.value, fromNova: true });
+    persistAll();
+    renderRegular(); renderTicker();
+    renderNova();
+    showToast('Added ' + r.game + ' to today');
+  }));
+}
+setInterval(()=>{ if(activeTabKey() === 'nova') renderNovaStatus(); }, 1000);
+document.querySelector('.tab-btn[data-tab="nova"]').addEventListener('click', renderNova);
+renderNova();
+
 let scrollArrowRaf = 0;
 window.addEventListener('scroll', ()=>{
   if(scrollArrowRaf) return;
