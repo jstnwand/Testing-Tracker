@@ -217,7 +217,72 @@ body.tab-content .scroll-today-fab:hover,body.tab-content .scroll-today-fab:focu
 .mini-btn.nova-log-btn{width:auto;padding:4px 10px;color:var(--lime);border-color:rgba(var(--lime-rgb),.4);white-space:nowrap;}
 .nova-log-btn.done{color:var(--text-faint);border-color:var(--border);cursor:default;}
 .nova-help{margin-top:20px;}
-@media (max-width:640px){ #panel-nova .nova-wrap{display:block;} #panel-nova .table-scroll{overflow-x:auto;} .nova-table{min-width:820px;} .nova-hide{margin-left:0;} }
+.nova-relay-btn{padding:5px 10px;font-size:11.5px;}
+.nova-relay-btn.on{color:var(--green);border-color:rgba(61,220,138,.4);}
+.nova-relay-btn.warn{color:var(--amber);border-color:rgba(242,184,75,.45);}
+.nova-section td{background:var(--card-2);color:var(--text-dim);font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;padding:8px 14px !important;}
+.nova-section td span{color:var(--lime);font-family:var(--mono);margin-left:6px;}
+.nova-mine td{background:rgba(var(--lime-rgb),0.07);}
+.nova-mine td:first-child{box-shadow:inset 3px 0 0 var(--lime);}
+.nova-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end;}
+.nova-pin-btn{opacity:.35;filter:grayscale(1);}
+.nova-pin-btn:hover{opacity:.8;}
+.nova-pin-btn.on{opacity:1;filter:none;border-color:var(--lime);}
+.nova-overlay{position:fixed;inset:0;z-index:60;background:rgba(5,6,3,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px;}
+.nova-overlay.hidden{display:none;}
+body.nova-open{overflow:hidden;}
+body.nova-open .fab-stack{display:none;}
+.nova-window{background:var(--bg);border:1px solid var(--border);border-radius:16px;width:min(1240px,100%);max-height:100%;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.65);overflow:hidden;}
+.nova-window-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:18px 22px 14px;border-bottom:1px solid var(--border);background:var(--card);flex-wrap:wrap;}
+.nova-window-head .month-title{margin:0;}
+.nova-window-actions{display:flex;gap:10px;align-items:center;}
+.nova-close{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--card-2);color:var(--text-dim);font-size:16px;cursor:pointer;}
+.nova-close:hover{color:var(--text);border-color:var(--lime);}
+.nova-window-body{padding:18px 22px 22px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.nova-window-body .week-nav{margin-bottom:16px;}
+.nova-cards{display:none;flex-direction:column;gap:10px;}
+.nova-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;}
+.nova-card.nova-mine{border-color:rgba(var(--lime-rgb),.55);background:linear-gradient(0deg,rgba(var(--lime-rgb),.06),rgba(var(--lime-rgb),.06)),var(--card);box-shadow:inset 3px 0 0 var(--lime);}
+.nova-card.nova-claimed{opacity:.55;}
+.nova-card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;}
+.nova-card-title{min-width:0;}
+.nova-card-title .nova-game{font-size:14.5px;line-height:1.3;word-break:break-word;}
+.nova-card-value{text-align:right;flex-shrink:0;font-family:var(--mono);}
+.nova-card-value b{display:block;font-size:20px;color:var(--lime);line-height:1;}
+.nova-card-value span{font-size:10px;color:var(--text-faint);}
+.nova-card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+.nova-card-tags .nova-sec{margin:0;}
+.nova-card-meta{margin-top:9px;font-size:12px;color:var(--text-dim);line-height:1.6;}
+.nova-card-actions{display:flex;gap:8px;margin-top:12px;}
+.nova-card-actions .mini-btn.nova-pin-btn{width:44px;height:40px;font-size:15px;}
+.nova-card-actions .mini-btn.nova-log-btn{flex:1;height:40px;font-size:13.5px;font-weight:700;justify-content:center;}
+.nova-card-section{font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--text-dim);margin:6px 2px 0;}
+.nova-card-section span{color:var(--lime);font-family:var(--mono);margin-left:6px;}
+.nova-card-empty{padding:18px;text-align:center;color:var(--text-faint);font-size:13px;border:1px dashed var(--border);border-radius:12px;}
+/* tablets and phones: cards instead of the wide table */
+@media (max-width:1024px){
+  .nova-window .nova-wrap{display:none !important;}
+  .nova-cards{display:flex;}
+  .nova-bar{flex-wrap:wrap;gap:10px 16px;}
+  .nova-hide{margin-left:0;}
+}
+@media (min-width:641px) and (max-width:1024px){
+  .nova-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .nova-card-section{grid-column:1 / -1;}
+  .nova-card-empty{grid-column:1 / -1;}
+}
+@media (max-width:640px){
+  .nova-overlay{padding:0;align-items:stretch;}
+  .nova-window{border-radius:0;border:none;height:100%;max-height:100%;}
+  .nova-window-head{padding:14px 14px 12px;align-items:center;}
+  .nova-window-head .month-title{font-size:22px;}
+  .nova-window-actions{width:100%;}
+  .nova-window-actions .btn{flex:1;min-height:44px;}
+  .nova-close{width:44px;height:44px;flex-shrink:0;}
+  .nova-window-head > div:first-child{width:100%;}
+  .nova-window-body{padding:14px 14px calc(18px + env(safe-area-inset-bottom));}
+  .nova-picks{font-size:11.5px;}
+}
 .today-flash{animation:todayflash 1.6s ease-out;}
 @keyframes todayflash{0%,30%{box-shadow:0 0 0 2px var(--lime);}100%{box-shadow:0 0 0 2px transparent;}}
 .month-controls select{
@@ -546,6 +611,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
     <div class="brand">
       <button class="hamburger-btn" id="hamburgerBtn" title="Menu" aria-label="Menu">☰</button>
       <div class="hamburger-menu hidden" id="hamburgerMenu">
+        <button class="hamburger-item" id="menuNovaBtn">🛰 Nova queue</button>
         <button class="hamburger-item" id="menuReferencesBtn">📎 References</button>
         <button class="hamburger-item" id="menuSyncKeyBtn">🔑 Change sync word</button>
       </div>
@@ -611,7 +677,6 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
     <button class="tab-btn active" data-tab="regular">Regular Testing</button>
     <button class="tab-btn" data-tab="backend">Backend Testing</button>
     <button class="tab-btn" data-tab="content">Copywrite Testing</button>
-    <button class="tab-btn" data-tab="nova">Nova Queue</button>
   </div>
 
   <!-- ============ REGULAR TESTING ============ -->
@@ -712,7 +777,7 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
         </div>
         <div class="field">
           <label>Platform</label>
-          <input type="text" id="rgPlatform" value="Steam" placeholder="Steam / Xbox / GOG…" list="platformList">
+          <select id="rgPlatform" class="plat-select"></select>
           <datalist id="platformList"></datalist>
         </div>
         <div class="field">
@@ -1087,22 +1152,26 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
 
   </div>
 
-  <!-- ============ NOVA QUEUE (read-only mirror of Nova's Pending Tests) ============ -->
-  <div class="panel" id="panel-nova">
-    <div class="month-header">
+  <!-- ============ NOVA QUEUE window (read-only mirror of Nova's Pending Tests) ============ -->
+  <div class="nova-overlay hidden" id="novaOverlay">
+  <div class="nova-window" id="novaWindow" role="dialog" aria-modal="true" aria-labelledby="novaWindowTitle">
+    <div class="nova-window-head">
       <div>
         <div class="month-eyebrow">Nova</div>
-        <h2 class="month-title">Testing Queue</h2>
+        <h2 class="month-title" id="novaWindowTitle">Testing Queue</h2>
       </div>
-      <div class="month-controls">
+      <div class="nova-window-actions">
         <button class="btn btn-primary" id="novaOpenBtn" title="Opens Nova in a second window. Log in and go Online there as usual.">↗ Open Nova queue</button>
+        <button class="nova-close" id="novaCloseBtn" title="Close (Esc)" aria-label="Close">✕</button>
       </div>
     </div>
+    <div class="nova-window-body">
 
     <div class="week-nav nova-bar">
       <span class="nova-status" id="novaStatus"><span class="nova-dot"></span>Not connected yet</span>
       <span class="nova-picks" id="novaPicks">Logged from Nova today: 0 / 3</span>
-      <label class="nova-hide"><input type="checkbox" id="novaHideClaimed"> Hide claimed</label>
+      <button type="button" class="icon-btn nova-relay-btn" id="novaRelayBtn" title="Share this queue with your other devices">📱 Phone sync: off</button>
+      <label class="nova-hide"><input type="checkbox" id="novaHideClaimed"> Hide games claimed by others</label>
     </div>
 
     <div class="table-wrap nova-wrap">
@@ -1113,11 +1182,14 @@ footer.foot{margin-top:36px;text-align:center;color:var(--text-faint);font-size:
         </table>
       </div>
     </div>
+    <div class="nova-cards" id="novaCards"></div>
 
     <div class="form-card nova-help">
       <h3>How this works</h3>
-      <p class="hint" style="margin:0;">Install the <b>Nova Queue → QA Log bridge</b> script in the Tampermonkey browser extension (one time). Then click <b>Open Nova queue</b> above, log in and go Online in that window as usual, and leave it open. The script reads the Pending Tests table, sends it here, and reloads Nova every 60 seconds. It only reads: it never claims games or flips the Online switch. Only the rows on Nova's current page are read, so raise Nova's rows-per-page if the queue is longer. <b>+ Log</b> adds a game to today's Regular Testing list with its test value as points.</p>
+      <p class="hint" style="margin:0;">Install the <b>Nova Queue → QA Log bridge</b> script in the Tampermonkey browser extension (one time). Then click <b>Open Nova queue</b> above, log in and go Online in that window as usual, and leave it open. The script reads the Pending Tests table, sends it here, and reloads Nova every 60 seconds. It only reads: it never claims games or flips the Online switch. Only the rows on Nova's current page are read, so raise Nova's rows-per-page if the queue is longer. <b>+ Log</b> adds a game to today's Regular Testing list with its test value as points. You can close this window; the queue keeps updating while the Nova window stays open.</p>
     </div>
+    </div>
+  </div>
   </div>
 
   <footer class="foot">QA Log · syncs to the cloud when the status says ☁ Synced · if it says ⚠ NOT synced, export a backup</footer>
@@ -1556,7 +1628,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 (function restoreActiveTab(){
   let saved = null;
   try{ saved = localStorage.getItem(LS_TAB); }catch(e){}
-  setActiveTab(['backend','content','nova'].includes(saved) ? saved : 'regular');
+  setActiveTab(['backend','content'].includes(saved) ? saved : 'regular');
 })();
 
 /* =========================================================
@@ -2079,7 +2151,7 @@ function buildDayGroup(dateObj){
     });
     cardsHtml += `<div class="be-card quick-add-row">
       <div class="be-card-row"><span class="be-card-label">Game</span><input type="text" class="qa-game cell-input" placeholder="+ Add a game…"></div>
-      <div class="be-card-row"><span class="be-card-label">Platform</span><input type="text" class="qa-platform cell-input" value="Steam" placeholder="Platform" list="platformList"></div>
+      <div class="be-card-row"><span class="be-card-label">Platform</span><select class="qa-platform cell-input plat-select">${platformOptionsHtml('Steam')}</select></div>
       <div class="be-card-row"><span class="be-card-label">Status</span><select class="qa-result status-select" style="background-color:${STATUS_COLORS.Queued};">${STATUS_OPTIONS.map(s=>`<option value="${s}">${s}</option>`).join('')}</select></div>
       <div class="be-card-row"><span class="be-card-label">Points</span><input type="number" step="0.25" class="qa-points cell-input" placeholder="pts"></div>
       <button class="btn btn-primary qa-add-btn" style="width:100%;margin-top:8px;">+ Add entry</button>
@@ -2172,7 +2244,7 @@ function quickAddRowHtml(dateIso){
     <td><input type="number" step="0.25" class="qa-points" placeholder="pts" style="width:100%;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 8px;font-family:var(--mono);font-size:12.5px;"></td>
     <td>
       <div style="display:flex;gap:6px;align-items:center;">
-        <input type="text" class="qa-platform" value="Steam" placeholder="Platform" style="flex:1;min-width:0;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 8px;font-family:var(--sans);font-size:11.5px;" list="platformList">
+        <select class="qa-platform plat-select" style="flex:1;min-width:0;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 6px;font-family:var(--sans);font-size:11.5px;">${platformOptionsHtml('Steam')}</select>
         <button class="mini-btn qa-add-btn" title="Add row" style="color:var(--lime);border-color:rgba(215,255,62,0.35);flex-shrink:0;">+</button>
       </div>
     </td>
@@ -2234,15 +2306,27 @@ document.getElementById('rgAddBtn').addEventListener('click', ()=>{
   selectedMonth = ymOf(date);
   ensureMonthKnown(selectedMonth);
   document.getElementById('rgGame').value='';
-  document.getElementById('rgPlatform').value='Steam';
+  fillPlatformSelect(document.getElementById('rgPlatform'), 'Steam');
   document.getElementById('rgPoints').value='';
   renderRegular(); renderTicker();
 });
 
 document.getElementById('rgDate').value = fmtISO(new Date());
-document.addEventListener('focusin', (ev)=>{
-  const t = ev.target;
-  if(t && (t.id === 'rgPlatform' || (t.classList && t.classList.contains('qa-platform')))) setTimeout(()=>{ try{ t.select(); }catch(e){} }, 0);
+fillPlatformSelect(document.getElementById('rgPlatform'), 'Steam');
+// "Other…" in any platform dropdown: type a new platform; it's remembered (and synced) for next time
+document.addEventListener('change', (ev)=>{
+  const sel = ev.target;
+  if(!sel || !sel.classList || !sel.classList.contains('plat-select') || sel.value !== '__other__') return;
+  const name = (prompt('Platform name (e.g. Battle.net, Itch, Microsoft Store):', '') || '').trim();
+  if(name){
+    if(!platformPresets().some(p=> p.toLowerCase() === name.toLowerCase())){
+      if(!Array.isArray(settings.customPlatforms)) settings.customPlatforms = [];
+      if(!settings.customPlatforms.some(p=> p.toLowerCase() === name.toLowerCase())){ settings.customPlatforms.push(name); persistAll(); }
+    }
+    fillPlatformSelect(sel, name);
+  } else {
+    fillPlatformSelect(sel, 'Steam');
+  }
 });
 
 document.getElementById('rgPasteArea').addEventListener('paste', (ev)=>{
@@ -2265,6 +2349,25 @@ const PLATFORM_ALIASES = {
 function platformKey(name){ return PLATFORM_ALIASES[(name||'').trim().toLowerCase()] || 'other'; }
 function platformChip(name){
   return `<span class="plat-chip plat-${platformKey(name)}">${escapeHtml(name)}</span>`;
+}
+function platformPresets(){ return ['Steam','Epic Games','Xbox','GOG','Ubisoft','EA']; }
+function allPlatforms(){
+  const out = [...platformPresets()];
+  const seen = new Set(out.map(p=> p.toLowerCase()));
+  const add = (p)=>{ p = (p||'').trim(); if(p && !seen.has(p.toLowerCase())){ seen.add(p.toLowerCase()); out.push(p); } };
+  (settings.customPlatforms || []).forEach(add);
+  regularEntries.forEach(e=> add(e.platform));
+  return out;
+}
+function platformOptionsHtml(selected){
+  const list = allPlatforms();
+  if(selected && !list.some(p=> p.toLowerCase() === selected.toLowerCase())) list.push(selected);
+  return list.map(p=> `<option value="${escAttr(p)}" ${selected && p.toLowerCase() === selected.toLowerCase() ? 'selected' : ''}>${escapeHtml(p)}</option>`).join('')
+    + '<option value="__other__">✎ Other…</option>';
+}
+function fillPlatformSelect(sel, selected){
+  if(!sel) return;
+  sel.innerHTML = platformOptionsHtml(selected || 'Steam');
 }
 function parseRegularGameLine(line){
   // "Game Name (Platform)" style, matching the original spreadsheet layout
@@ -3929,7 +4032,6 @@ function todayTargetEl(){
 }
 function updateScrollTodayArrow(){
   const tab = activeTabKey();
-  document.getElementById('scrollTodayFab').style.display = tab === 'nova' ? 'none' : '';
   document.body.classList.toggle('tab-content', tab === 'content');
   const el = todayTargetEl();
   let up = false;
@@ -3938,7 +4040,6 @@ function updateScrollTodayArrow(){
 }
 document.getElementById('scrollTodayFab').addEventListener('click', ()=>{
   const tab = activeTabKey();
-  if(tab === 'nova') return;
   const btn = document.getElementById(tab === 'regular' ? 'regTodayBtn' : tab === 'backend' ? 'beTodayBtn' : 'contentTodayBtn');
   btn.click();
   document.getElementById('scrollTodayFab').blur();
@@ -3983,10 +4084,86 @@ window.addEventListener('message', (ev)=>{
   if(!d || d.source !== 'nova-queue-bridge' || !Array.isArray(d.rows)) return;
   novaSeenKeys = new Set(nova.rows.map(novaKey));
   const hadData = nova.scrapedAt > 0;
-  nova = { rows: d.rows.slice(0, 500).map(cleanNovaRow).filter(r=> r.game), scrapedAt: Date.now(), note: novaStr(d.note, 20) };
+  nova = { rows: d.rows.slice(0, 500).map(cleanNovaRow).filter(r=> r.game), scrapedAt: Date.now(), note: novaStr(d.note, 20), via: 'local' };
   if(!hadData) novaSeenKeys = null;
   try{ localStorage.setItem(LS_NOVA, JSON.stringify(nova)); }catch(e){}
   renderNova();
+  pushNovaToRelay();
+});
+
+/* ---- Phone sync: a separate tiny Apps Script ("Nova relay") holds only the latest queue.
+   It never touches your entries, so the main sync can't be overwritten by queue updates. ---- */
+let novaRelayState = '';   // '', 'ok', 'error', 'wrong-key'
+let novaRelayLastPush = 0;
+function novaRelayUrl(){
+  const u = (settings.novaRelayUrl || '').trim();
+  return /^https:\/\/script\.google(usercontent)?\.com\//.test(u) ? u : '';
+}
+function novaRelayReady(){ return !!(novaRelayUrl() && syncKey); }
+async function pushNovaToRelay(){
+  if(!novaRelayReady() || nova.via !== 'local') return;
+  if(Date.now() - novaRelayLastPush < 20000) return; // at most every 20 s
+  novaRelayLastPush = Date.now();
+  try{
+    const res = await fetch(novaRelayUrl(), {
+      method:'POST',
+      headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+      body: JSON.stringify({ key: syncKey, snapshot: { rows: nova.rows, scrapedAt: nova.scrapedAt, note: nova.note } })
+    });
+    const data = await res.json();
+    novaRelayState = data && data.ok ? 'ok' : (data && data.error === 'wrong key' ? 'wrong-key' : 'error');
+  }catch(e){ novaRelayState = 'error'; }
+  renderNovaRelayBtn();
+}
+let novaPulling = false;
+async function pullNovaFromRelay(){
+  if(!novaRelayReady() || novaPulling) return;
+  // this device has its own live Nova window: nothing to pull
+  if(nova.via === 'local' && Date.now() - nova.scrapedAt < 90000) return;
+  novaPulling = true;
+  try{
+    const res = await fetch(novaRelayUrl() + '?key=' + encodeURIComponent(syncKey), { method:'GET', cache:'no-store' });
+    const data = await res.json();
+    if(data && data.error === 'wrong key'){ novaRelayState = 'wrong-key'; }
+    else if(data && data.ok){
+      novaRelayState = 'ok';
+      const snap = data.snapshot;
+      if(snap && Array.isArray(snap.rows) && Number(snap.scrapedAt) > nova.scrapedAt){
+        const hadData = nova.scrapedAt > 0;
+        novaSeenKeys = hadData ? new Set(nova.rows.map(novaKey)) : null;
+        nova = { rows: snap.rows.slice(0, 500).map(cleanNovaRow).filter(r=> r.game), scrapedAt: Number(snap.scrapedAt), note: novaStr(snap.note, 20), via: 'cloud' };
+        try{ localStorage.setItem(LS_NOVA, JSON.stringify(nova)); }catch(e){}
+        renderNova();
+      }
+    } else { novaRelayState = 'error'; }
+  }catch(e){ novaRelayState = 'error'; }
+  novaPulling = false;
+  renderNovaRelayBtn();
+}
+function renderNovaRelayBtn(){
+  const b = document.getElementById('novaRelayBtn');
+  if(!b) return;
+  let t = '📱 Phone sync: off', cls = '';
+  if(novaRelayUrl()){
+    if(!syncKey){ t = '📱 Phone sync: needs your sync word'; cls = 'warn'; }
+    else if(novaRelayState === 'wrong-key'){ t = '📱 Phone sync: sync word not accepted'; cls = 'warn'; }
+    else if(novaRelayState === 'error'){ t = '📱 Phone sync: can\'t reach relay'; cls = 'warn'; }
+    else { t = '📱 Phone sync: on'; cls = 'on'; }
+  }
+  b.textContent = t;
+  b.className = 'icon-btn nova-relay-btn ' + cls;
+}
+document.getElementById('novaRelayBtn').addEventListener('click', ()=>{
+  const cur = settings.novaRelayUrl || '';
+  const v = prompt('Paste your Nova relay web app URL (from Apps Script > Deploy > Web app).\nLeave empty to turn phone sync off.', cur);
+  if(v === null) return;
+  const url = v.trim();
+  if(url && !/^https:\/\/script\.google(usercontent)?\.com\//.test(url)){ alert('That does not look like an Apps Script web app URL (it should start with https://script.google.com/).'); return; }
+  settings.novaRelayUrl = url; // saved with your settings, so your other devices pick it up
+  persistAll();
+  novaRelayState = '';
+  renderNovaRelayBtn();
+  if(url){ novaRelayLastPush = 0; pushNovaToRelay(); pullNovaFromRelay(); }
 });
 
 document.getElementById('novaOpenBtn').addEventListener('click', ()=>{
@@ -3998,6 +4175,19 @@ document.getElementById('novaHideClaimed').addEventListener('change', (e)=>{
   renderNova();
 });
 
+// Per-game override of "assigned to me" (true/false); without one, a claimed ✓ counts as mine.
+const LS_NOVA_MINE = 'qa_nova_mine';
+let novaMine = {};
+try{ novaMine = JSON.parse(localStorage.getItem(LS_NOVA_MINE) || '{}') || {}; }catch(e){ novaMine = {}; }
+function novaIsMine(r){
+  const k = novaKey(r);
+  return Object.prototype.hasOwnProperty.call(novaMine, k) ? novaMine[k] === true : r.claimed === true;
+}
+function setNovaMine(r, on){
+  const k = novaKey(r);
+  if(on === (r.claimed === true)) delete novaMine[k]; else novaMine[k] = on;
+  try{ localStorage.setItem(LS_NOVA_MINE, JSON.stringify(novaMine)); }catch(e){}
+}
 function novaLoggedToday(){
   const today = fmtISO(new Date());
   return regularEntries.filter(e=> e.date === today && e.fromNova);
@@ -4015,10 +4205,10 @@ function renderNovaStatus(){
   if(age){
     const sec = (Date.now() - nova.scrapedAt)/1000;
     cls = sec < 90 ? 'live' : 'stale';
-    text = (cls === 'live' ? 'Live' : 'Last update') + ' · ' + age + ' · ' + nova.rows.length + ' games';
+    text = (cls === 'live' ? (nova.via === 'cloud' ? 'Live from your PC' : 'Live') : 'Last update') + ' · ' + age + ' · ' + nova.rows.length + ' games';
     if(nova.note === 'offline') text += ' · Nova shows no games. Are you Online?';
     else if(nova.note === 'no-table') text += " · couldn't find the table on the Nova page";
-    if(cls === 'stale') text += ' · is the Nova window still open?';
+    if(cls === 'stale') text += nova.via === 'cloud' ? ' · is Nova still open on your PC?' : ' · is the Nova window still open?';
   }
   el.className = 'nova-status ' + cls;
   el.innerHTML = '<span class="nova-dot"></span>' + escapeHtml(text);
@@ -4032,20 +4222,28 @@ function renderNova(){
   picks.classList.toggle('full', logged.length >= NOVA_DAILY_LIMIT);
   const loggedKeys = new Set(logged.map(e=> (e.game + '|' + e.platform).toLowerCase()));
   const hide = document.getElementById('novaHideClaimed').checked;
-  const rows = nova.rows.filter(r=> !(hide && r.claimed === true));
+  // "Mine" = claimed on Nova, unless overridden with the pin button. Mine always sits on top.
+  const visible = nova.rows.filter(r=> novaIsMine(r) || !(hide && r.claimed === true));
+  const mineRows = visible.filter(novaIsMine), otherRows = visible.filter(r=> !novaIsMine(r));
+  const rows = mineRows.concat(otherRows);
   const tbody = document.getElementById('novaTbody');
+  const cards = document.getElementById('novaCards');
   if(!rows.length){
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="9">${nova.scrapedAt ? 'No games to show.' : 'Nothing yet. Open the Nova queue to start receiving games.'}</td></tr>`;
+    const msg = nova.scrapedAt ? 'No games to show.' : 'Nothing yet. Open the Nova queue to start receiving games.';
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="9">${msg}</td></tr>`;
+    cards.innerHTML = `<div class="nova-card-empty">${msg}</div>`;
     return;
   }
-  tbody.innerHTML = rows.map((r, i)=>{
+  const section = (label, n)=> `<tr class="nova-section"><td colspan="9">${label} <span>${n}</span></td></tr>`;
+  const rowHtml = (r)=>{
     const key = novaKey(r);
     const isNew = novaSeenKeys && !novaSeenKeys.has(key);
     const rc = NOVA_REASON_CLASS[r.reason.toLowerCase()] || '';
     const claimed = r.claimed === true ? '<span class="nova-claim yes" title="Claimed">✓</span>'
                   : r.claimed === false ? '<span class="nova-claim no" title="Not claimed">✕</span>' : '<span class="nova-claim">–</span>';
     const done = loggedKeys.has(key);
-    return `<tr class="${r.claimed === true ? 'nova-claimed' : ''}">
+    const mine = novaIsMine(r);
+    return `<tr class="${mine ? 'nova-mine' : (r.claimed === true ? 'nova-claimed' : '')}">
       <td><div class="nova-game">${escapeHtml(r.game)}${isNew ? ' <span class="nova-new">NEW</span>' : ''}</div>${r.platform ? platformChip(r.platform) : ''}</td>
       <td>${r.reason ? `<span class="nova-reason ${rc}">${escapeHtml(r.reason)}</span>` : ''}</td>
       <td>${r.secondary.map(x=> `<span class="nova-sec">${escapeHtml(x)}</span>`).join(' ')}</td>
@@ -4054,10 +4252,45 @@ function renderNova(){
       <td class="nova-dim">${r.sinceClaimed ? escapeHtml(r.sinceClaimed) : '—'}</td>
       <td style="text-align:right;font-family:var(--mono);">${r.wau}</td>
       <td class="nova-dim" style="font-family:var(--mono);">${escapeHtml(r.addedOn)}</td>
-      <td><button class="mini-btn nova-log-btn ${done ? 'done' : ''}" data-nova-idx="${nova.rows.indexOf(r)}" title="${done ? 'Already in today\'s Regular list' : 'Add to today\'s Regular list'}">${done ? 'Logged ✓' : '+ Log'}</button></td>
+      <td><div class="nova-actions"><button class="mini-btn nova-pin-btn ${mine ? 'on' : ''}" data-nova-pin="${nova.rows.indexOf(r)}" title="${mine ? 'Assigned to me · click if it isn\'t yours' : 'Mark as assigned to me'}">📌</button><button class="mini-btn nova-log-btn ${done ? 'done' : ''}" data-nova-idx="${nova.rows.indexOf(r)}" title="${done ? 'Already in today\'s Regular list' : 'Add to today\'s Regular list'}">${done ? 'Logged ✓' : '+ Log'}</button></div></td>
     </tr>`;
-  }).join('');
-  tbody.querySelectorAll('[data-nova-idx]').forEach(btn=> btn.addEventListener('click', ()=>{
+  };
+  // card layout for tablets and phones
+  const cardHtml = (r)=>{
+    const key = novaKey(r);
+    const isNew = novaSeenKeys && !novaSeenKeys.has(key);
+    const rc = NOVA_REASON_CLASS[r.reason.toLowerCase()] || '';
+    const done = loggedKeys.has(key);
+    const mine = novaIsMine(r);
+    const idx = nova.rows.indexOf(r);
+    const claimTxt = r.claimed === true ? `<span class="nova-claim yes">✓ Claimed</span>${r.sinceClaimed ? ' · ' + escapeHtml(r.sinceClaimed) : ''}`
+                   : r.claimed === false ? '<span class="nova-claim no">✕ Not claimed</span>' : '';
+    return `<div class="nova-card ${mine ? 'nova-mine' : (r.claimed === true ? 'nova-claimed' : '')}">
+      <div class="nova-card-top">
+        <div class="nova-card-title"><div class="nova-game">${escapeHtml(r.game)}${isNew ? ' <span class="nova-new">NEW</span>' : ''}</div>${r.platform ? platformChip(r.platform) : ''}</div>
+        <div class="nova-card-value"><b>${fmtNum(r.value)}</b><span>pts</span></div>
+      </div>
+      <div class="nova-card-tags">${r.reason ? `<span class="nova-reason ${rc}">${escapeHtml(r.reason)}</span>` : ''}${r.secondary.map(x=> `<span class="nova-sec">${escapeHtml(x)}</span>`).join('')}</div>
+      <div class="nova-card-meta">${claimTxt}${claimTxt ? '<br>' : ''}WAU ${r.wau} · Added ${escapeHtml(r.addedOn)}</div>
+      <div class="nova-card-actions">
+        <button class="mini-btn nova-pin-btn ${mine ? 'on' : ''}" data-nova-pin="${idx}" title="${mine ? 'Assigned to me · tap if it isn\'t yours' : 'Mark as assigned to me'}">📌</button>
+        <button class="mini-btn nova-log-btn ${done ? 'done' : ''}" data-nova-idx="${idx}">${done ? 'Logged ✓' : '+ Log'}</button>
+      </div>
+    </div>`;
+  };
+  const cardSection = (label, n)=> `<div class="nova-card-section">${label} <span>${n}</span></div>`;
+  tbody.innerHTML = (mineRows.length ? section('Assigned to me', mineRows.length) + mineRows.map(rowHtml).join('') : '')
+    + (otherRows.length ? section('Queue', otherRows.length) + otherRows.map(rowHtml).join('') : '');
+  cards.innerHTML = (mineRows.length ? cardSection('Assigned to me', mineRows.length) + mineRows.map(cardHtml).join('') : '')
+    + (otherRows.length ? cardSection('Queue', otherRows.length) + otherRows.map(cardHtml).join('') : '');
+  const root = document.getElementById('novaWindow');
+  root.querySelectorAll('[data-nova-pin]').forEach(btn=> btn.addEventListener('click', ()=>{
+    const r = nova.rows[Number(btn.dataset.novaPin)];
+    if(!r) return;
+    setNovaMine(r, !novaIsMine(r));
+    renderNova();
+  }));
+  root.querySelectorAll('[data-nova-idx]').forEach(btn=> btn.addEventListener('click', ()=>{
     const r = nova.rows[Number(btn.dataset.novaIdx)];
     if(!r || btn.classList.contains('done')) return;
     const count = novaLoggedToday().length;
@@ -4069,8 +4302,27 @@ function renderNova(){
     showToast('Added ' + r.game + ' to today');
   }));
 }
-setInterval(()=>{ if(activeTabKey() === 'nova') renderNovaStatus(); }, 1000);
-document.querySelector('.tab-btn[data-tab="nova"]').addEventListener('click', renderNova);
+const novaIsOpen = ()=> !document.getElementById('novaOverlay').classList.contains('hidden');
+function openNovaWindow(){
+  document.getElementById('hamburgerMenu').classList.add('hidden');
+  renderNova();
+  document.getElementById('novaOverlay').classList.remove('hidden');
+  document.body.classList.add('nova-open');
+  document.getElementById('novaCloseBtn').focus();
+  renderNovaRelayBtn();
+  pullNovaFromRelay();
+}
+function closeNovaWindow(){
+  document.getElementById('novaOverlay').classList.add('hidden');
+  document.body.classList.remove('nova-open');
+}
+document.getElementById('menuNovaBtn').addEventListener('click', openNovaWindow);
+document.getElementById('novaCloseBtn').addEventListener('click', closeNovaWindow);
+document.getElementById('novaOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'novaOverlay') closeNovaWindow(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && novaIsOpen()) closeNovaWindow(); });
+setInterval(()=>{ if(novaIsOpen()) renderNovaStatus(); }, 1000);
+setInterval(()=>{ if(novaIsOpen()) pullNovaFromRelay(); }, 30000);
+renderNovaRelayBtn();
 renderNova();
 
 let scrollArrowRaf = 0;
